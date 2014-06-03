@@ -1,19 +1,27 @@
 'use strict';
 
-angular
-  .module('drawingApp', [
-    'ngCookies',
-    'ngResource',
-    'ngSanitize',
-    'ngRoute'
-  ])
-  .config(function ($routeProvider) {
-    $routeProvider
-      .when('/', {
-        templateUrl: 'views/main.html',
-        controller: 'MainCtrl'
-      })
-      .otherwise({
-        redirectTo: '/'
-      });
-  });
+var drawingApp = angular.module('drawingApp', [
+  'ngCookies',
+  'ngResource',
+  'ngSanitize',
+  'ngRoute'
+]);
+
+drawingApp.config(function ($routeProvider) {
+  $routeProvider
+    .when('/', {
+      templateUrl: 'views/index.html',
+      controller: 'IndexController'
+    })
+    .when('/screens', {
+      templateUrl: 'views/screens/index.html',
+      controller: 'ScreensIndexController'
+    })
+    .when('/screens/:slug', {
+      templateUrl: 'views/screens/show.html',
+      controller: 'ScreensShowController'
+    })
+    .otherwise({
+      redirectTo: '/'
+    });
+});

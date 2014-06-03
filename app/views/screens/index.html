@@ -1,0 +1,9 @@
+<div ng-include src="'views/layouts/header.html'"></div>
+
+<ul class="screens">
+  <li ng-repeat="screen in screens">
+    <a ng-href="#/screens/{{screen.slug}}">{{screen.name}}</a>
+  </li>
+</ul>
+
+<div ng-include src="'views/layouts/footer.html'"></div>
