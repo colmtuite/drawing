@@ -2,12 +2,8 @@
 
 <h1>Screen: {{screen.name}}</h1>
 
-<svg height="400" width="600" id="svg">
-  <rect ng-repeat="rect in shapes" ng-attr-x="{{rect.x}}" ng-attr-y="{{rect.y}}"
-    ng-attr-height="{{rect.height}}" ng-attr-width="{{rect.width}}" 
-    ng-stroke-width="{{rect.strokeWidth}}" ng-attr-fill="{{rect.fill}}"
-    ng-attr-stroke="{{rect.stroke}}" ng-controller="ShapesShowController"
-    ng-click="rectClicked()">
+<svg height="400" width="600">
+  <dr-shape ng-repeat="shape in shapes"></dr-shape>
 </svg>
 
 

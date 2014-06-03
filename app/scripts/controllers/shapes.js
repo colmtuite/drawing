@@ -1,7 +1,7 @@
 'use strict';
 
 drawingApp.controller('ShapesShowController', ['$scope', function($scope) {
-  $scope.rectClicked = function() {
-    console.log("Rect clicked");
+  $scope.shapeClicked = function() {
+    console.log("Shape clicked");
   };
 }]);

@@ -23,7 +23,7 @@
       y: randomNumber(350),
       width: randomNumber(50),
       height: randomNumber(50),
-      shape: 'rect'
+      tagName: 'rect'
     });
   }
 
@@ -32,7 +32,7 @@
       cx: randomNumber(350),
       cy: randomNumber(350),
       r: randomNumber(50),
-      shape: 'circle'
+      tagName: 'circle'
     });
   }
 
@@ -47,7 +47,7 @@
 
   app.factory('ShapesFactory', function() {
     var factory = {};
-    var data = [randomShapeAttributes(), randomShapeAttributes()];
+    var data = [randomShapeAttributes('rect'), randomShapeAttributes('rect')];
 
     factory.all = function() {
       return data;
