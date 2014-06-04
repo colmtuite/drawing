@@ -29,22 +29,33 @@
   app.directive('drShape', ['$compile', function($compile) {
     return {
       restrict: 'E',
-      link: function(scope, element, attrs) {
-        var shape = makeNode(scope.shape.tagName, element, attrs);
-        var elementShape = angular.element(shape);
+      scope: {
+        shape: '='
+      },
+      link: function(scope, element, attrs, ctrl) {
+        var node = makeNode(scope.shape.tagName, element, attrs);
+        var shape = angular.element(node);
 
         for (var attribute in scope.shape) {
           if (isPublic(attribute, scope.shape[attribute])) {
-            bindNgAttr(elementShape, attribute);
+            bindNgAttr(shape, attribute);
           }
         }
-        elementShape.attr('ng-controller', 'ShapesShowController');
-        elementShape.attr('ng-click', 'shapeClicked()');
-        element.replaceWith(shape);
+        // TODO: Try to do away with this by improving #makeNode.
+        shape.attr('ng-controller', 'ShapesShowController');
+        shape.attr('ng-click', 'shapeClicked()');
+
+        shape.on('dblclick', function() {
+          console.log('element double clicked');
+          scope.$apply(function() {
+            scope.shape.fill = '#222';
+          });
+        });
+        element.replaceWith(node);
 
         attrs.$observe('value', function(value) {
           scope['value'] = parseInt(value, 10);
-          $compile(shape)(scope);
+          $compile(node)(scope);
         });
       }
     };

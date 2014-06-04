@@ -1,12 +1,12 @@
 'use strict';
 
 (function(app) {
-  var randomNumber = function(max) {
+  var randomNumber = function(max, min) {
     return Math.floor(Math.random() * max) + 1;
   };
 
   var randomHex = function() {
-    return '#'+Math.floor(Math.random()*16777215).toString(16);
+    return '#'+ ('000000' + (Math.random()*0xFFFFFF<<0).toString(16)).slice(-6);
   }
 
   var baseShapeAttributes = function() {

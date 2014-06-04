@@ -2,6 +2,6 @@
 
 drawingApp.controller('ShapesShowController', ['$scope', function($scope) {
   $scope.shapeClicked = function() {
-    console.log("Shape clicked");
+    console.log('Running shapeClicked in controller');
   };
 }]);
