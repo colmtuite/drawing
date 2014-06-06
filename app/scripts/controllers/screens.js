@@ -5,7 +5,7 @@ drawingApp.controller('ScreensIndexController', ['$scope', 'ScreensFactory',
     $scope.screens = ScreensFactory.all();
 }]);
 
-drawingApp.controller('ScreensShowController', 
+drawingApp.controller('ScreensEditController', 
   ['$scope', '$routeParams', '$filter', 'RectFactory', 'ScreensFactory',
   function($scope, $routeParams, $filter, RectFactory, ScreensFactory) {
     $scope.screen = ScreensFactory.find($routeParams.slug);
