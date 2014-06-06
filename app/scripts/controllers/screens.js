@@ -6,16 +6,18 @@ drawingApp.controller('ScreensIndexController', ['$scope', 'ScreensFactory',
 }]);
 
 drawingApp.controller('ScreensShowController', 
-  ['$scope', '$routeParams', '$filter', 'ShapesFactory', 'ScreensFactory',
-  function($scope, $routeParams, $filter, ShapesFactory, ScreensFactory) {
+  ['$scope', '$routeParams', '$filter', 'RectFactory', 'ScreensFactory',
+  function($scope, $routeParams, $filter, RectFactory, ScreensFactory) {
     $scope.screen = ScreensFactory.find($routeParams.slug);
-    $scope.shapes = ShapesFactory.all();
+    $scope.rectangles = RectFactory.all();
 
     $scope.createRect = function() {
-      ShapesFactory.create('rect');
+      RectFactory.create();
     };
 
-    $scope.createCircle = function() {
-      ShapesFactory.create('circle');
+    $scope.changeSelected = function(rectangle) {
+      $scope.selectedRectangle = rectangle;
     };
+    
+    $scope.changeSelected($scope.rectangles[0]);
   }]);

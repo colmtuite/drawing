@@ -9,52 +9,28 @@
     return '#'+ ('000000' + (Math.random()*0xFFFFFF<<0).toString(16)).slice(-6);
   }
 
-  var baseShapeAttributes = function() {
+  var randomRectAttributes = function() {
     return {
       stroke: randomHex(),
       strokeWidth: 3,
       fill: '#fff',
-    };
-  };
-
-  var randomRectAttributes = function() {
-    return angular.extend(baseShapeAttributes(), {
       x: randomNumber(350),
       y: randomNumber(350),
       width: randomNumber(50),
-      height: randomNumber(50),
-      tagName: 'rect'
-    });
+      height: randomNumber(50)
+    };
   }
 
-  var randomCircleAttributes = function() {
-    return angular.extend(baseShapeAttributes(), {
-      cx: randomNumber(350),
-      cy: randomNumber(350),
-      r: randomNumber(50),
-      tagName: 'circle'
-    });
-  }
-
-  var randomShapeAttributes = function(shape) {
-    shape || (shape = randomNumber(2) === 1 ? 'rect' : 'circle');
-    if (shape === 'rect') {
-      return randomRectAttributes();
-    } else {
-      return randomCircleAttributes();
-    }
-  };
-
-  app.factory('ShapesFactory', function() {
+  app.factory('RectFactory', function() {
     var factory = {};
-    var data = [randomShapeAttributes('rect'), randomShapeAttributes('rect')];
+    var data = [randomRectAttributes(), randomRectAttributes()];
 
     factory.all = function() {
       return data;
     };
 
-    factory.create = function(shape) {
-      data.push(randomShapeAttributes(shape));
+    factory.create = function() {
+      data.push(randomRectAttributes());
     };
 
     return factory;

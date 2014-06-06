@@ -3,11 +3,18 @@
 <h1>Screen: {{screen.name}}</h1>
 
 <svg height="400" width="600">
-  <dr-shape ng-repeat="shape in shapes" shape="shape"></dr-shape>
+  <dr-rect ng-repeat="shape in rectangles" fill="{{shape.fill}}"
+    x="{{shape.x}}" y="{{shape.y}}" height="{{shape.height}}"
+    width="{{shape.width}}" stroke="{{shape.stroke}}" 
+    stroke-width="{{shape.strokeWidth}}"></dr-rect>
 </svg>
 
+<div>
+  x: <input type="text" ng-model="selectedRectangle.x" />{{selectedRectangle.x}}<br>
+  y: <input type="text" ng-model="selectedRectangle.y" />{{selectedRectangle.y}}<br>
+  fill: <input type="text" ng-model="selectedRectangle.fill" />{{selectedRectangle.fill}}<br>
+</div>
 
 <button ng-click="createRect()" class="btn">Create rectangle</button>
-<button ng-click="createCircle()" class="btn">Create circle</button>
 
 <div ng-include src="'views/layouts/footer.html'"></div>

@@ -6,7 +6,8 @@
 
 (function(app) {
   var isPublic = function(attrName, value) {
-    return value !== null && !attrName.match(/\$/) && (typeof value !== 'string' || value !== '');
+    return value !== null && !attrName.match(/\$/) && 
+      (typeof value !== 'string' || value !== '');
   };
 
   /* Create a shape node with the given settings. */
@@ -26,31 +27,54 @@
     el.attr('ng-attr-' + attribute, '{{shape.' + attribute + '}}');
   };
 
-  app.directive('drShape', ['$compile', function($compile) {
+  app.directive('drRect', ['$compile', function($compile) {
     return {
       restrict: 'E',
-      scope: {
-        shape: '='
-      },
+      scope: true,
       link: function(scope, element, attrs, ctrl) {
-        var node = makeNode(scope.shape.tagName, element, attrs);
+        var node = makeNode('rect', element, attrs);
         var shape = angular.element(node);
-
-        for (var attribute in scope.shape) {
-          if (isPublic(attribute, scope.shape[attribute])) {
-            bindNgAttr(shape, attribute);
+        var originalShapeX, originalShapeY,
+            originalMouseX, originalMouseY;
+        
+        scope.$watch('shape', function(newVal, oldVal) {
+          for (var key in newVal) {
+            if (newVal.hasOwnProperty(key) && isPublic(key, newVal[key])) {
+              if (newVal[key] !== oldVal[key]) {
+                shape.attr(key, newVal[key]);
+              }
+            }
           }
-        }
-        // TODO: Try to do away with this by improving #makeNode.
-        shape.attr('ng-controller', 'ShapesShowController');
-        shape.attr('ng-click', 'shapeClicked()');
+        }, true);
 
         shape.on('dblclick', function() {
-          console.log('element double clicked');
           scope.$apply(function() {
-            scope.shape.fill = '#222';
+            scope.changeSelected(scope.shape);
           });
         });
+
+        var moveShape = function(e) {
+          var dx = originalMouseX - e.clientX;
+          var dy = originalMouseY - e.clientY;
+
+          scope.$apply(function() {
+            scope.shape.x = originalShapeX - dx;
+            scope.shape.y = originalShapeY - dy;
+          });
+        };
+
+        shape.on('mousedown', function(e) {
+          originalShapeX = scope.shape.x;
+          originalShapeY = scope.shape.y;
+          originalMouseX = e.clientX;
+          originalMouseY = e.clientY;
+
+          shape.on('mousemove', moveShape);
+          shape.on('mouseup', function() {
+            shape.off('mousemove', moveShape)
+          });
+        });
+
         element.replaceWith(node);
 
         attrs.$observe('value', function(value) {
