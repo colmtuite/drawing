@@ -9,8 +9,8 @@ drawingApp.directive('drDraggable', ['$compile', function($compile) {
         var dy = originalMouseY - e.clientY;
 
         scope.$apply(function() {
-          scope.shape.x = originalShapeX - dx;
-          scope.shape.y = originalShapeY - dy;
+          scope.rect.x = originalShapeX - dx;
+          scope.rect.y = originalShapeY - dy;
         });
       };
 
@@ -21,8 +21,8 @@ drawingApp.directive('drDraggable', ['$compile', function($compile) {
 
       element.on('mousedown', function(e) {
         e.preventDefault();
-        originalShapeX = scope.shape.x;
-        originalShapeY = scope.shape.y;
+        originalShapeX = scope.rect.x;
+        originalShapeY = scope.rect.y;
         originalMouseX = e.clientX;
         originalMouseY = e.clientY;
 
