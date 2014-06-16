@@ -17,6 +17,10 @@ drawingApp.config(function ($routeProvider) {
       templateUrl: 'views/screens/index.html',
       controller: 'ScreensIndexController'
     })
+    .when('/screens/:slug', {
+      templateUrl: 'views/screens/show.html',
+      controller: 'ScreensShowController'
+    })
     .when('/screens/:slug/edit', {
       templateUrl: 'views/screens/edit.html',
       controller: 'ScreensEditController'

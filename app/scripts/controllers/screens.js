@@ -6,23 +6,17 @@ drawingApp.controller('ScreensIndexController', ['$scope', 'ScreensFactory',
 }]);
 
 drawingApp.controller('ScreensEditController', 
-  ['$scope', '$routeParams', '$filter', 'RectFactory', 'ScreensFactory',
-  function($scope, $routeParams, $filter, RectFactory, ScreensFactory) {
+  ['$scope', '$routeParams', '$filter', 'RectFactory', 'ScreensFactory', 
+   'InteractionsFactory',
+  function($scope, $routeParams, $filter, RectFactory, ScreensFactory, InteractionsFactory) {
     $scope.screen = ScreensFactory.find($routeParams.slug);
     $scope.rectangles = RectFactory.all();
 
-    $scope.interactionTriggers = [{ name: 'click' }];
-    $scope.interactionActions = [{ name: 'hide' }];
-    $scope.actorNames = $scope.rectangles.map(function(rect) {
-      return { name: rect.name };
-    });
+    $scope.interactionTriggers = InteractionsFactory.triggers();
+    $scope.interactionActions = InteractionsFactory.actions();
 
-    $scope.interactions = [{
-      actor: $scope.actorNames[0],
-      actee: $scope.actorNames[1],
-      action: $scope.interactionActions[0],
-      trigger: $scope.interactionTriggers[0]
-    }];
+    InteractionsFactory.init($scope.rectangles);
+    $scope.interactions = InteractionsFactory.all();
 
     $scope.createRect = function() {
       RectFactory.create();
@@ -33,13 +27,22 @@ drawingApp.controller('ScreensEditController',
     };
     
     $scope.createInteraction = function() {
-      $scope.interactions.push({});
+      InteractionsFactory.create();
     };
 
     $scope.deleteInteraction = function(interaction) {
-      var index = $scope.interactions.indexOf(interaction)
-      $scope.interactions.splice(index, 1);   
+      InteractionsFactory.destroy(interaction);
     };
 
     $scope.changeSelected($scope.rectangles[0]);
+  }]);
+
+drawingApp.controller('ScreensShowController', 
+  ['$scope', '$routeParams', 'RectFactory', 'ScreensFactory', 
+   'InteractionsFactory',
+  function($scope, $routeParams, RectFactory, ScreensFactory, InteractionsFactory) {
+    $scope.screen = ScreensFactory.find($routeParams.slug);
+    $scope.rectangles = RectFactory.all();
+    InteractionsFactory.init($scope.rectangles);
+    $scope.interactions = InteractionsFactory.all();
   }]);

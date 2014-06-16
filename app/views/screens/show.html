@@ -1,0 +1,13 @@
+<div ng-include src="'views/layouts/header.html'"></div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div id="canvas" dr-interactive interactions="interactions">
+      <div ng-repeat="rect in rectangles" ng-style="rect.style()" 
+        id="{{rect.name}}" title="{{rect.name}}"></div>
+    </div>
+    <a href="#/screens/{{screen.slug}}/edit">Exit Preview</a>
+  </div>
+</div>
+
+<div ng-include src="'views/layouts/footer.html'"></div>

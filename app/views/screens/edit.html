@@ -2,9 +2,9 @@
 
 <div class="row">
   <div class="col-md-8">
-    <div id="canvas" style="width: 100%; height: 600px">
-      <div ng-repeat="shape in rectangles" ng-style="shape.style()"
-        ng-dblclick="changeSelected(shape)" dr-draggable class="rect"></div>
+    <div id="canvas">
+      <div ng-repeat="rect in rectangles" ng-style="rect.style()"
+        ng-dblclick="changeSelected(rect)" dr-draggable class="selectable"></div>
     </div>
 
     <button ng-click="createRect()" class="btn btn-default">Create rectangle</button>
@@ -27,6 +27,8 @@
     </div>
 
     <hr>
+
+    <a href="#/screens/{{screen.slug}}">Preview</a>
   </div>
 </div>
 
@@ -37,12 +39,12 @@
     <div ng-repeat="interaction in interactions">
       <select ng-model="interaction.action" ng-options="action.name for action in interactionActions">
       </select>
-      <select ng-model="interaction.actee" ng-options="actee.name for actee in actorNames">
+      <select ng-model="interaction.actee" ng-options="rect.name for rect in rectangles">
       </select>
       when
       <select ng-model="interaction.trigger" ng-options="trigger.name for trigger in interactionTriggers">
       </select>
-      <select ng-model="interaction.actor" ng-options="actor.name for actor in actorNames">
+      <select ng-model="interaction.actor" ng-options="rect.name for rect in rectangles">
       </select>
       <a href="javascript:boid(0)" ng-click="deleteInteraction(interaction)">&times;</a>
     </div>

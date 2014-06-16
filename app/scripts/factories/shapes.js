@@ -1,8 +1,9 @@
 'use strict';
 
 (function(app) {
-  var randomNumber = function(max) {
-    return Math.floor(Math.random() * max) + 1;
+  var randomNumber = function(max, min) {
+    min || (min = 1);
+    return Math.floor(Math.random() * (max - min)) + min;
   };
 
   var randomHex = function() {
@@ -24,12 +25,11 @@
       fill: 'rgb(236, 240, 241)',
       x: randomNumber(350),
       y: randomNumber(350),
-      width: randomNumber(50),
-      height: randomNumber(50),
+      width: randomNumber(100, 50),
+      height: randomNumber(100, 50),
       style: function() {
         return {
           position: 'relative',
-          cursor: 'pointer',
           "top": this.y,
           "left": this.x,
           "background-color": this.fill,

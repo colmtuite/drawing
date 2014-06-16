@@ -41,9 +41,15 @@ $icon-font-path: "/bower_components/bootstrap-sass-official/vendor/assets/fonts/
 }
 
 
-.rect {
+.selectable {
+  cursor: pointer;
   &:hover { 
     // Needs !important to overcome the inline styling.
     border-color: blue !important;
   }
+}
+
+#canvas {
+  height: 600px;
+  width: 100%;
 }
