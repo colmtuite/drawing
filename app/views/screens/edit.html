@@ -1,20 +1,46 @@
 <div ng-include src="'views/layouts/header.html'"></div>
 
-<h1>Screen: {{screen.name}}</h1>
+<div class="row">
+  <div class="col-md-8">
+    <svg height="400" style="width: 100%;">
+      <dr-rect ng-repeat="shape in rectangles" fill="{{shape.fill}}"
+        x="{{shape.x}}" y="{{shape.y}}" height="{{shape.height}}"
+        width="{{shape.width}}" stroke="{{shape.stroke}}" 
+        stroke-width="{{shape.strokeWidth}}"></dr-rect>
+    </svg>
 
-<svg height="400" width="600">
-  <dr-rect ng-repeat="shape in rectangles" fill="{{shape.fill}}"
-    x="{{shape.x}}" y="{{shape.y}}" height="{{shape.height}}"
-    width="{{shape.width}}" stroke="{{shape.stroke}}" 
-    stroke-width="{{shape.strokeWidth}}"></dr-rect>
-</svg>
+    <button ng-click="createRect()" class="btn btn-default">Create rectangle</button>
+  </div>
 
-<div>
-  x: <input type="text" ng-model="selectedRectangle.x" />{{selectedRectangle.x}}<br>
-  y: <input type="text" ng-model="selectedRectangle.y" />{{selectedRectangle.y}}<br>
-  fill: <input type="text" ng-model="selectedRectangle.fill" />{{selectedRectangle.fill}}<br>
+  <div class="col-md-4">
+    <div>
+      <label for="selected-rectangle-x">X Position</label>
+      <input type="text" ng-model="selectedRectangle.x" id="selected-rectangle-x"/>
+    </div>
+
+    <div>
+      <label for="selected-rectangle-y">Y Position</label>
+      <input type="text" ng-model="selectedRectangle.y" id="selected-rectangle-y"/>
+    </div>
+
+    <hr>
+  </div>
 </div>
 
-<button ng-click="createRect()" class="btn">Create rectangle</button>
+<div class="row">
+  <div class="col-md-12">
+    <hr>
+
+    <div ng-repeat="interaction in interactions">
+      <select ng-model="interaction.action" ng-options="action.name for action in interactionActions">
+      </select>
+      <input ng-model="interaction.actee" type="text">
+      when
+      <select ng-model="interaction.trigger" ng-options="trigger.name for trigger in interactionTriggers">
+      <input ng-model="interaction.actor" type="text">
+    </div>
+    <button ng-click="createInteraction()" class="btn btn-default">New Interaction</button>
+  </div>
+</div>
 
 <div ng-include src="'views/layouts/footer.html'"></div>
