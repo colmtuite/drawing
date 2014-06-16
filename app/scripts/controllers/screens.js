@@ -13,10 +13,13 @@ drawingApp.controller('ScreensEditController',
 
     $scope.interactionTriggers = [{ name: 'click' }];
     $scope.interactionActions = [{ name: 'hide' }];
+    $scope.actorNames = $scope.rectangles.map(function(rect) {
+      return { name: rect.name };
+    });
 
     $scope.interactions = [{
-      actor: 'one',
-      actee: 'two',
+      actor: $scope.actorNames[0],
+      actee: $scope.actorNames[1],
       action: $scope.interactionActions[0],
       trigger: $scope.interactionTriggers[0]
     }];
@@ -31,6 +34,11 @@ drawingApp.controller('ScreensEditController',
     
     $scope.createInteraction = function() {
       $scope.interactions.push({});
+    };
+
+    $scope.deleteInteraction = function(interaction) {
+      var index = $scope.interactions.indexOf(interaction)
+      $scope.interactions.splice(index, 1);   
     };
 
     $scope.changeSelected($scope.rectangles[0]);

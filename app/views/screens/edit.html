@@ -2,17 +2,20 @@
 
 <div class="row">
   <div class="col-md-8">
-    <svg height="400" style="width: 100%;">
-      <dr-rect ng-repeat="shape in rectangles" fill="{{shape.fill}}"
-        x="{{shape.x}}" y="{{shape.y}}" height="{{shape.height}}"
-        width="{{shape.width}}" stroke="{{shape.stroke}}" 
-        stroke-width="{{shape.strokeWidth}}"></dr-rect>
-    </svg>
+    <div id="canvas" style="width: 100%; height: 600px">
+      <div ng-repeat="shape in rectangles" ng-style="shape.style()"
+        ng-dblclick="changeSelected(shape)" dr-draggable class="rect"></div>
+    </div>
 
     <button ng-click="createRect()" class="btn btn-default">Create rectangle</button>
   </div>
 
   <div class="col-md-4">
+    <div>
+      <label for="selected-rectangle-x">Name</label>
+      <span>{{selectedRectangle.name}}</span>
+    </div>
+
     <div>
       <label for="selected-rectangle-x">X Position</label>
       <input type="text" ng-model="selectedRectangle.x" id="selected-rectangle-x"/>
@@ -34,10 +37,14 @@
     <div ng-repeat="interaction in interactions">
       <select ng-model="interaction.action" ng-options="action.name for action in interactionActions">
       </select>
-      <input ng-model="interaction.actee" type="text">
+      <select ng-model="interaction.actee" ng-options="actee.name for actee in actorNames">
+      </select>
       when
       <select ng-model="interaction.trigger" ng-options="trigger.name for trigger in interactionTriggers">
-      <input ng-model="interaction.actor" type="text">
+      </select>
+      <select ng-model="interaction.actor" ng-options="actor.name for actor in actorNames">
+      </select>
+      <a href="javascript:boid(0)" ng-click="deleteInteraction(interaction)">&times;</a>
     </div>
     <button ng-click="createInteraction()" class="btn btn-default">New Interaction</button>
   </div>
