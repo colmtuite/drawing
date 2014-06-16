@@ -2,9 +2,9 @@
 
 <div class="row">
   <div class="col-md-8">
-    <div id="canvas">
+    <div id="canvas" dr-canvas>
       <div ng-repeat="rect in rectangles" ng-style="rect.style()"
-        ng-dblclick="changeSelected(rect)" dr-draggable class="selectable"></div>
+        ng-dblclick="inspectShape(rect)" dr-draggable class="selectable"></div>
     </div>
 
     <button ng-click="createRect()" class="btn btn-default">Create rectangle</button>
@@ -12,23 +12,23 @@
 
   <div class="col-md-4">
     <div>
-      <label for="selected-rectangle-x">Name</label>
-      <span>{{selectedRectangle.name}}</span>
+      <label for="inspected-shape-name">Name</label>
+      <span id="inspected-shape-name">{{inspectedShape.name}}</span>
     </div>
 
     <div>
-      <label for="selected-rectangle-x">X Position</label>
-      <input type="text" ng-model="selectedRectangle.x" id="selected-rectangle-x"/>
+      <label for="inspected-shape-x">X Position</label>
+      <input type="text" ng-model="inspectedShape.x" id="inspected-shape-x"/>
     </div>
 
     <div>
-      <label for="selected-rectangle-y">Y Position</label>
-      <input type="text" ng-model="selectedRectangle.y" id="selected-rectangle-y"/>
+      <label for="inspected-shape-y">Y Position</label>
+      <input type="text" ng-model="inspectedShape.y" id="inspected-shape-y"/>
     </div>
 
     <div>
-      <label for="selected-rectangle-fill">Fill</label>
-      <input type="text" ng-model="selectedRectangle.fill" id="selected-rectangle-fill"/>
+      <label for="inspected-shape-fill">Fill</label>
+      <input type="text" ng-model="inspectedShape.fill" id="inspected-shape-fill"/>
     </div>
 
     <hr>

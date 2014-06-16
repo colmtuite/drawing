@@ -11,10 +11,6 @@ drawingApp.controller('ScreensEditController',
   function($scope, $routeParams, $filter, RectFactory, ScreensFactory, InteractionsFactory) {
     $scope.screen = ScreensFactory.find($routeParams.slug);
     $scope.rectangles = RectFactory.all();
-
-    $scope.interactionTriggers = InteractionsFactory.triggers();
-    $scope.interactionActions = InteractionsFactory.actions();
-
     InteractionsFactory.init($scope.rectangles);
     $scope.interactions = InteractionsFactory.all();
 
@@ -22,8 +18,12 @@ drawingApp.controller('ScreensEditController',
       RectFactory.create();
     };
 
-    $scope.changeSelected = function(rectangle) {
-      $scope.selectedRectangle = rectangle;
+    $scope.inspectShape = function(shape) {
+      $scope.inspectedShape = shape;
+    };
+
+    $scope.clearInspectedShape = function(e) {
+      delete $scope.inspectedShape;
     };
     
     $scope.createInteraction = function() {
@@ -33,8 +33,6 @@ drawingApp.controller('ScreensEditController',
     $scope.deleteInteraction = function(interaction) {
       InteractionsFactory.destroy(interaction);
     };
-
-    $scope.changeSelected($scope.rectangles[0]);
   }]);
 
 drawingApp.controller('ScreensShowController', 
