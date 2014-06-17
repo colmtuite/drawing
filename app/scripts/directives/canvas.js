@@ -9,7 +9,6 @@
         element.on('click', function(e) {
           if (isCanvas(e.target)) {
             scope.$apply(function() {
-              scope.clearSelectedShapes();
               scope.clearInspectedShape();
             });
           }

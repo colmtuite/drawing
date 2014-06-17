@@ -23,7 +23,6 @@
       stroke: 'rgb(236, 240, 241)',
       strokeWidth: 1,
       fill: 'rgb(236, 240, 241)',
-      isSelected: false,
 
       // These are the attributes controlled by the DnD module. Any other
       // attributes in this namespace will get smashed when DnD takes
@@ -33,6 +32,8 @@
         left: randomNumber(350),
         width: randomNumber(100, 50),
         height: randomNumber(100, 50),
+        isSelected: false,
+        isSelecting: false
       },
 
       style: function() {
@@ -46,9 +47,11 @@
         return $.extend(this.style(), this.dndData);
       },
 
-      select: function() { this.isSelected = true; },
-      deselect: function() { this.isSelected = false },
-      toggleSelected: function() { this.isSelected = !this.isSelected }
+      select: function() { this.dndData.isSelected = true; },
+      deselect: function() { this.dndData.isSelected = false },
+      toggleSelected: function() { 
+        this.dndData.isSelected = !this.dndData.isSelected
+      }
     };
   }
 

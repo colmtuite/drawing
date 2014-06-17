@@ -49,3 +49,14 @@
 .angular-dnd-resizable-handle-sw { left: -5px; }
 .angular-dnd-resizable-handle-nw { left: -5px; }
 .angular-dnd-resizable-handle-ne { right: -5px; }
+
+.angular-dnd-lasso {
+    position: absolute;
+    border: 1px solid rgba(108, 152, 197, 0.73);
+    background: rgba(108, 152, 197, 0.27);
+    box-sizing: border-box;
+}
+
+.selecting {
+  background: red;
+}
