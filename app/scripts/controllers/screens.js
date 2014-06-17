@@ -27,7 +27,11 @@ drawingApp.controller('ScreensEditController',
     $scope.clearInspectedShape = function(e) {
       delete $scope.inspectedShape;
     };
-    
+
+    $scope.clearSelectedShapes = function(e) {
+      $scope.rectangles.forEach(function(rect) { rect.deselect(); });
+    };
+
     $scope.createInteraction = function() {
       InteractionsFactory.create();
     };

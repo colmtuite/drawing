@@ -27,6 +27,7 @@
       y: randomNumber(350),
       width: randomNumber(100, 50),
       height: randomNumber(100, 50),
+      selected: false,
       style: function() {
         return {
           position: 'relative',
@@ -37,7 +38,10 @@
           height: this.height + "px",
           "border":  this.strokeWidth + 'px solid ' + this.stroke
         }
-      }
+      },
+      select: function() { this.selected = true; },
+      deselect: function() { this.selected = false },
+      toggleSelected: function() { this.selected = !this.selected }
     };
   }
 
