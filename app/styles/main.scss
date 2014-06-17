@@ -47,7 +47,7 @@ $icon-font-path: "/bower_components/bootstrap-sass-official/vendor/assets/fonts/
   }
 }
 
-.selected {
+.selected, .selecting {
   // Needs !important to overcome the inline styling.
   border-color: blue !important;
 }
