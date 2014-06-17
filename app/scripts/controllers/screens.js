@@ -13,6 +13,8 @@ drawingApp.controller('ScreensEditController',
     $scope.rectangles = RectFactory.all();
     InteractionsFactory.init($scope.rectangles);
     $scope.interactions = InteractionsFactory.all();
+    $scope.interactionActions = InteractionsFactory.actions();
+    $scope.interactionTriggers = InteractionsFactory.triggers();
 
     $scope.createRect = function() {
       RectFactory.create();
