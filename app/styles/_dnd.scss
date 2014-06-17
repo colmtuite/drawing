@@ -1,0 +1,51 @@
+.angular-dnd-resizable-handle {
+	position: absolute;
+	display: block;
+}
+
+.angular-dnd-disabled .ui-resizable-handle,
+.angular-dnd-autohide .ui-resizable-handle {
+	display: none;
+}
+
+.angular-dnd-resizable-handle-n, .angular-dnd-resizable-handle-s,
+.angular-dnd-resizable-handle-e, .angular-dnd-resizable-handle-w,
+.angular-dnd-resizable-handle-se, .angular-dnd-resizable-handle-sw,
+.angular-dnd-resizable-handle-ne, .angular-dnd-resizable-handle-nw {
+	cursor: pointer;
+}
+
+.angular-dnd-resizable-handle-n, .angular-dnd-resizable-handle-s {
+	height: 7px;
+	width: 100%;
+	left: 0;
+}
+
+.angular-dnd-resizable-handle-e, .angular-dnd-resizable-handle-w {
+	width: 7px;
+	height: 100%;
+	top: 0;
+}
+
+.angular-dnd-resizable-handle-se, .angular-dnd-resizable-handle-sw,
+.angular-dnd-resizable-handle-ne, .angular-dnd-resizable-handle-nw {
+	width: 12px;
+	height: 12px;
+}
+
+.angular-dnd-resizable-handle-se, .angular-dnd-resizable-handle-sw {
+  bottom: -5px;
+}
+
+.angular-dnd-resizable-handle-ne, .angular-dnd-resizable-handle-nw {
+  top: -5px;
+}
+
+.angular-dnd-resizable-handle-n { top: -5px; }
+.angular-dnd-resizable-handle-s { bottom: -5px; }
+.angular-dnd-resizable-handle-e { right: -5px; }
+.angular-dnd-resizable-handle-w { left: -5px; }
+.angular-dnd-resizable-handle-se { right: -5px; }
+.angular-dnd-resizable-handle-sw { left: -5px; }
+.angular-dnd-resizable-handle-nw { left: -5px; }
+.angular-dnd-resizable-handle-ne { right: -5px; }

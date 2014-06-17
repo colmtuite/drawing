@@ -8,6 +8,7 @@
         style="position: absolute;"
         ng-style="rect.style()"
         dnd-draggable="true"
+        dnd-resizable="true"
         dnd-rect="rect.dndData"
         ng-class="{'selected': rect.isSelected}"
         ng-click="rect.toggleSelected()" 
@@ -31,6 +32,16 @@
     <div>
       <label for="inspected-shape-left">Left</label>
       <input type="text" ng-model="inspectedShape.dndData.left" id="inspected-shape-left"/>
+    </div>
+
+    <div>
+      <label for="inspected-shape-height">Height</label>
+      <input type="text" ng-model="inspectedShape.dndData.height" id="inspected-shape-height"/>
+    </div>
+
+    <div>
+      <label for="inspected-shape-width">Width</label>
+      <input type="text" ng-model="inspectedShape.dndData.width" id="inspected-shape-width"/>
     </div>
 
     <div>

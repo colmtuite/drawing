@@ -4,6 +4,8 @@ $icon-font-path: "/bower_components/bootstrap-sass-official/vendor/assets/fonts/
 @import "../bower_components/bootstrap-sass-official/vendor/assets/stylesheets/bootstrap.scss";
 // endbower
 
+@import "dnd";
+
 .browsehappy {
   margin: 0.2em 0;
   background: #ccc;
@@ -38,10 +40,7 @@ $icon-font-path: "/bower_components/bootstrap-sass-official/vendor/assets/fonts/
   border-top: 1px solid #e5e5e5;
 }
 
-
 .selectable {
-  cursor: pointer;
-
   &:hover { 
     // Needs !important to overcome the inline styling.
     border-color: blue !important;
