@@ -3,8 +3,11 @@
 <div class="row">
   <div class="col-md-12">
     <div id="canvas" dr-interactive interactions="interactions">
-      <div ng-repeat="rect in rectangles" ng-style="rect.style()" 
-        id="{{rect.name}}" title="{{rect.name}}"></div>
+      <div ng-repeat="rect in rectangles" 
+        ng-style="rect.previewStyle()" 
+        style="position: absolute;"
+        id="{{rect.name}}"
+        title="{{rect.name}}"></div>
     </div>
     <a href="#/screens/{{screen.slug}}/edit">Exit Preview</a>
   </div>

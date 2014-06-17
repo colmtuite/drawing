@@ -23,25 +23,32 @@
       stroke: 'rgb(236, 240, 241)',
       strokeWidth: 1,
       fill: 'rgb(236, 240, 241)',
-      x: randomNumber(350),
-      y: randomNumber(350),
-      width: randomNumber(100, 50),
-      height: randomNumber(100, 50),
-      selected: false,
+      isSelected: false,
+
+      // These are the attributes controlled by the DnD module. Any other
+      // attributes in this namespace will get smashed when DnD takes
+      // control of the positioning.
+      dndData: {
+        top: randomNumber(350),
+        left: randomNumber(350),
+        width: randomNumber(100, 50),
+        height: randomNumber(100, 50),
+      },
+
       style: function() {
         return {
-          position: 'relative',
-          "top": this.y,
-          "left": this.x,
           "background-color": this.fill,
-          width: this.width + "px",
-          height: this.height + "px",
           "border":  this.strokeWidth + 'px solid ' + this.stroke
-        }
+        };
       },
-      select: function() { this.selected = true; },
-      deselect: function() { this.selected = false },
-      toggleSelected: function() { this.selected = !this.selected }
+
+      previewStyle: function() {
+        return $.extend(this.style(), this.dndData);
+      },
+
+      select: function() { this.isSelected = true; },
+      deselect: function() { this.isSelected = false },
+      toggleSelected: function() { this.isSelected = !this.isSelected }
     };
   }
 

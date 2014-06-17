@@ -2,10 +2,16 @@
 
 <div class="row">
   <div class="col-md-8">
-    <div id="canvas" dr-canvas>
-      <div ng-repeat="rect in rectangles" ng-style="rect.style()" 
-        ng-click="rect.toggleSelected()" ng-dblclick="inspectShape(rect)"
-        dr-draggable class="selectable" ng-class="{selected: rect.selected}"></div>
+    <div id="canvas" dr-canvas class="dnd-container">
+      <div ng-repeat="rect in rectangles"
+        class="selectable" 
+        style="position: absolute;"
+        ng-style="rect.style()"
+        dnd-draggable="true"
+        dnd-rect="rect.dndData"
+        ng-class="{'selected': rect.isSelected}"
+        ng-click="rect.toggleSelected()" 
+        ng-dblclick="inspectShape(rect)"></div>
     </div>
 
     <button ng-click="createRect()" class="btn btn-default">Create rectangle</button>
@@ -18,13 +24,13 @@
     </div>
 
     <div>
-      <label for="inspected-shape-x">X Position</label>
-      <input type="text" ng-model="inspectedShape.x" id="inspected-shape-x"/>
+      <label for="inspected-shape-top">Top</label>
+      <input type="text" ng-model="inspectedShape.dndData.top" id="inspected-shape-top"/>
     </div>
 
     <div>
-      <label for="inspected-shape-y">Y Position</label>
-      <input type="text" ng-model="inspectedShape.y" id="inspected-shape-y"/>
+      <label for="inspected-shape-left">Left</label>
+      <input type="text" ng-model="inspectedShape.dndData.left" id="inspected-shape-left"/>
     </div>
 
     <div>

@@ -1,10 +1,7 @@
 'use strict';
 
 var drawingApp = angular.module('drawingApp', [
-  'ngCookies',
-  'ngResource',
-  'ngSanitize',
-  'ngRoute'
+  'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'dnd'
 ]);
 
 drawingApp.config(function ($routeProvider) {
