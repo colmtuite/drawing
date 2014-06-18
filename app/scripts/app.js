@@ -1,8 +1,13 @@
 'use strict';
 
 var drawingApp = angular.module('drawingApp', [
-  'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'dnd'
+  'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'dnd',
+  'ui.select'
 ]);
+
+drawingApp.config(function(uiSelectConfig) {
+  uiSelectConfig.theme = 'bootstrap';
+});
 
 drawingApp.config(function ($routeProvider) {
   $routeProvider
