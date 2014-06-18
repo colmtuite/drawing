@@ -15,6 +15,7 @@ drawingApp.controller('ScreensEditController',
     $scope.interactions = InteractionsFactory.all();
     $scope.interactionActions = InteractionsFactory.actions();
     $scope.interactionTriggers = InteractionsFactory.triggers();
+    $scope.groups = [];
 
     $scope.createRect = function() {
       RectFactory.create();
@@ -34,6 +35,14 @@ drawingApp.controller('ScreensEditController',
 
     $scope.deleteInteraction = function(interaction) {
       InteractionsFactory.destroy(interaction);
+    };
+
+    $scope.createGroup = function() {
+      var elements = $filter('filter')($scope.rectangles, {isSelected: true});
+      $scope.groups.push({
+        name: 'group-1',
+        elements: elements
+      });
     };
   }]);
 

@@ -53,27 +53,28 @@
 
     <hr>
 
-    <a href="#/screens/{{screen.slug}}">Preview</a>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-12">
-    <hr>
-
     <div ng-repeat="interaction in interactions">
       <select ng-model="interaction.action" ng-options="action.name for action in interactionActions">
       </select>
+
       <select ng-model="interaction.actee" ng-options="rect.name for rect in rectangles">
       </select>
+
       when
+
       <select ng-model="interaction.trigger" ng-options="trigger.name for trigger in interactionTriggers">
       </select>
+
       <select ng-model="interaction.actor" ng-options="rect.name for rect in rectangles">
       </select>
+
       <a href="javascript:boid(0)" ng-click="deleteInteraction(interaction)">&times;</a>
     </div>
     <button ng-click="createInteraction()" class="btn btn-default">New Interaction</button>
+
+    <hr>
+
+    <a href="#/screens/{{screen.slug}}">Preview</a>
   </div>
 </div>
 

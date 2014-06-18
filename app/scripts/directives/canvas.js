@@ -1,3 +1,5 @@
+'use strict';
+
 (function(app) {
   app.directive('drCanvas', ['$compile', function($compile) {
     return {
@@ -12,6 +14,10 @@
               scope.clearInspectedShape();
             });
           }
+        });
+
+        scope.$on('keypress:71', function(onEvent, keypressEvent) {
+          scope.createGroup();
         });
       }
     };
