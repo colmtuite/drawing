@@ -57,7 +57,7 @@
       <select ng-model="interaction.action" ng-options="action.name for action in interactionActions">
       </select>
 
-      <select ng-model="interaction.actee" ng-options="rect.name for rect in rectangles">
+      <select ng-model="interaction.actee" ng-options="element.name for element in interactionElements()">
       </select>
 
       when
@@ -65,7 +65,7 @@
       <select ng-model="interaction.trigger" ng-options="trigger.name for trigger in interactionTriggers">
       </select>
 
-      <select ng-model="interaction.actor" ng-options="rect.name for rect in rectangles">
+      <select ng-model="interaction.actor" ng-options="element.name for element in interactionElements()">
       </select>
 
       <a href="javascript:boid(0)" ng-click="deleteInteraction(interaction)">&times;</a>

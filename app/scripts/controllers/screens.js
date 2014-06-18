@@ -7,15 +7,19 @@ drawingApp.controller('ScreensIndexController', ['$scope', 'ScreensFactory',
 
 drawingApp.controller('ScreensEditController', 
   ['$scope', '$routeParams', '$filter', 'RectFactory', 'ScreensFactory', 
-   'InteractionsFactory',
-  function($scope, $routeParams, $filter, RectFactory, ScreensFactory, InteractionsFactory) {
+   'InteractionsFactory', 'GroupsFactory',
+  function($scope, $routeParams, $filter, RectFactory, ScreensFactory, InteractionsFactory, GroupsFactory) {
     $scope.screen = ScreensFactory.find($routeParams.slug);
     $scope.rectangles = RectFactory.all();
     InteractionsFactory.init($scope.rectangles);
     $scope.interactions = InteractionsFactory.all();
     $scope.interactionActions = InteractionsFactory.actions();
     $scope.interactionTriggers = InteractionsFactory.triggers();
-    $scope.groups = [];
+    $scope.groups = GroupsFactory.all();
+
+    $scope.interactionElements = function() {
+      return $scope.rectangles.concat($scope.groups);
+    };
 
     $scope.createRect = function() {
       RectFactory.create();
@@ -39,19 +43,17 @@ drawingApp.controller('ScreensEditController',
 
     $scope.createGroup = function() {
       var elements = $filter('filter')($scope.rectangles, {isSelected: true});
-      $scope.groups.push({
-        name: 'group-1',
-        elements: elements
-      });
+      GroupsFactory.create({ elements: elements });
     };
   }]);
 
 drawingApp.controller('ScreensShowController', 
   ['$scope', '$routeParams', 'RectFactory', 'ScreensFactory', 
-   'InteractionsFactory',
-  function($scope, $routeParams, RectFactory, ScreensFactory, InteractionsFactory) {
+   'InteractionsFactory', 'GroupsFactory',
+  function($scope, $routeParams, RectFactory, ScreensFactory, InteractionsFactory, GroupsFactory) {
     $scope.screen = ScreensFactory.find($routeParams.slug);
     $scope.rectangles = RectFactory.all();
     InteractionsFactory.init($scope.rectangles);
     $scope.interactions = InteractionsFactory.all();
+    $scope.groups = GroupsFactory.all();
   }]);
