@@ -54,12 +54,8 @@
     <hr>
 
     <div ng-repeat="interaction in interactions">
-      <ui-select ng-model="interaction.action">
-        <ui-select-match placeholder="Choose an action">{{$select.selected.name}}</ui-select-match>
-        <ui-select-choices repeat="action in interactionActions">
-          <div>{{action.name}}</div>
-        </ui-select-choices>
-      </ui-select>
+      <select ng-model="interaction.action" ng-options="action.name for action in interactionActions">
+      </select>
 
       <select ng-model="interaction.actee" ng-options="element.name for element in interactionElements()">
       </select>
