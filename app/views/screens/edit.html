@@ -1,7 +1,7 @@
 <div ng-include src="'views/layouts/header.html'"></div>
 
 <div class="row">
-  <div class="col-md-8">
+  <div class="col-md-9">
     <div id="canvas" dr-canvas class="dnd-container" dnd-lasso-area="true">
       <div ng-repeat="rect in rectangles"
         class="selectable" 
@@ -13,14 +13,14 @@
         dnd-model-selected="rect.isSelected"
         dnd-model-selecting="rect.isSelecting"
         dnd-selectable="true"
-        ng-class="{'selected': rect.isSelected, 'selecting': rect.isSelecting}"
+        ng-class="{'selected': rect.isSelected, 'selecting': rect.isSelecting, 'highlighted': rect.isHighlighted}"
         ng-dblclick="inspectShape(rect)"></div>
     </div>
 
     <button ng-click="createRect()" class="btn btn-default">Create rectangle</button>
   </div>
 
-  <div class="col-md-4">
+  <div class="col-md-3">
     <div>
       <label for="inspected-shape-name">Name</label>
       <span id="inspected-shape-name">{{inspectedShape.name}}</span>
@@ -54,21 +54,27 @@
     <hr>
 
     <div ng-repeat="interaction in interactions">
-      <select ng-model="interaction.action" ng-options="action.name for action in interactionActions">
+      <select ng-model="interaction.action" angular-selectize
+        ng-options="action.name for action in interactionActions">
       </select>
 
-      <select ng-model="interaction.actee" ng-options="element.name for element in interactionElements()">
+      <select ng-model="interaction.actee" angular-selectize
+        angular-selectize-on-highlight="highlightElement"
+        ng-options="element.name for element in interactionElements()">
       </select>
 
       when
 
-      <select ng-model="interaction.trigger" ng-options="trigger.name for trigger in interactionTriggers">
+      <select ng-model="interaction.trigger" angular-selectize
+        ng-options="trigger.name for trigger in interactionTriggers">
       </select>
 
-      <select ng-model="interaction.actor" ng-options="element.name for element in interactionElements()">
+      <select ng-model="interaction.actor" angular-selectize
+        angular-selectize-on-highlight="highlightElement"
+        ng-options="element.name for element in interactionElements()">
       </select>
 
-      <a href="javascript:boid(0)" ng-click="deleteInteraction(interaction)">&times;</a>
+      <a href="javascript:void(0)" ng-click="deleteInteraction(interaction)">&times;</a>
     </div>
     <button ng-click="createInteraction()" class="btn btn-default">New Interaction</button>
 

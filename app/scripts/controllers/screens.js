@@ -45,6 +45,12 @@ drawingApp.controller('ScreensEditController',
       var elements = $filter('filter')($scope.rectangles, {isSelected: true});
       GroupsFactory.create({ elements: elements });
     };
+
+    $scope.highlightElement = function(index) {
+      var elements = $scope.interactionElements();
+      elements.forEach(function(el) { el.isHighlighted = false });
+      elements[index].isHighlighted = true;
+    };
   }]);
 
 drawingApp.controller('ScreensShowController', 
