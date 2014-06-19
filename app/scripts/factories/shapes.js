@@ -24,6 +24,10 @@
       strokeWidth: 1,
       fill: 'rgb(236, 240, 241)',
 
+      isSelected: false,
+      isSelecting: false,
+      isHighlighted: false,
+
       // These are the attributes controlled by the DnD module. Any other
       // attributes in this namespace will get smashed when DnD takes
       // control of the positioning.
@@ -31,10 +35,19 @@
         top: randomNumber(350),
         left: randomNumber(350),
         width: randomNumber(100, 50),
-        height: randomNumber(100, 50),
-        isSelected: false,
-        isSelecting: false
+        height: randomNumber(100, 50)
       },
+
+      top: function() { return parseInt(this.dndData.top, 10); },
+      left: function() { return parseInt(this.dndData.left, 10); },
+      bottom: function() {
+        return (parseInt(this.dndData.top, 10) + parseInt(this.dndData.height, 10));
+      },
+      right: function() {
+        return (parseInt(this.dndData.left, 10) + parseInt(this.dndData.width, 10));
+      },
+      width: function() { return parseInt(this.dndData.width, 10) },
+      height: function() { return parseInt(this.dndData.height, 10) },
 
       style: function() {
         return {

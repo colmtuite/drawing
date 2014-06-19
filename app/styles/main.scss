@@ -52,6 +52,11 @@ $icon-font-path: "/bower_components/bootstrap-sass-official/vendor/assets/fonts/
   border-color: blue !important;
 }
 
+.group-outline {
+  border: 1px dotted green;
+  position: absolute;
+}
+
 #canvas {
   height: 600px;
   width: 100%;
