@@ -11,7 +11,6 @@ drawingApp.controller('ScreensEditController',
   function($scope, $routeParams, $filter, RectFactory, ScreensFactory, InteractionsFactory, GroupsFactory) {
     $scope.screen = ScreensFactory.find($routeParams.slug);
     $scope.rectangles = RectFactory.all();
-    InteractionsFactory.init($scope.rectangles);
     $scope.interactions = InteractionsFactory.all();
     $scope.interactionActions = InteractionsFactory.actions();
     $scope.interactionTriggers = InteractionsFactory.triggers();
@@ -34,8 +33,7 @@ drawingApp.controller('ScreensEditController',
     };
 
     $scope.createInteraction = function() {
-      InteractionsFactory.create();
-    };
+      InteractionsFactory.create({ actor: $scope.inspectedShape }); };
 
     $scope.deleteInteraction = function(interaction) {
       InteractionsFactory.destroy(interaction);
@@ -46,11 +44,24 @@ drawingApp.controller('ScreensEditController',
       GroupsFactory.create({ elements: elements });
     };
 
-    $scope.highlightElement = function(index) {
+    $scope.highlightElement = function(name) {
       var elements = $scope.interactionElements();
+      // var elements = $scope.rectangles;
       elements.forEach(function(el) { el.isHighlighted = false });
-      elements[index].isHighlighted = true;
+      var shape = $filter('filter')(elements, function(el) {
+        return el.name === name;
+      }).map(function(el) {
+        el.isHighlighted = true;
+      });
+      // elements[index].isHighlighted = true;
     };
+
+    $scope.setActees = function(actees) {
+      console.log('Setting the actees', actees);
+    };
+
+    InteractionsFactory.init($scope.rectangles);
+    $scope.inspectShape($scope.rectangles[0]);
   }]);
 
 drawingApp.controller('ScreensShowController', 

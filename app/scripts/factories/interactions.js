@@ -10,7 +10,7 @@
   var randomAttributes = function(actor, actee) {
     return {
       actor: actor,
-      actee: actee,
+      actees: [actee],
       action: data.actions[0],
       trigger: data.triggers[0]
     };
@@ -37,8 +37,8 @@
       data.interactions.push(interaction);
     };
 
-    factory.create = function() {
-      data.interactions.push({});
+    factory.create = function(attrs) {
+      data.interactions.push(attrs);
     };
 
     factory.destroy = function(interaction) {
