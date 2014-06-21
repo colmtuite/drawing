@@ -69,7 +69,6 @@ angular.module('angularSelectize', [])
         var values = getValues();
         if ($.isArray(values)) {
           return $filter('filter')(scope.toWatch, function(el) {
-            console.log("testing if", el, "present in values", $.inArray(el[selectize.settings.valueField], values));
             return $.inArray(el[selectize.settings.valueField], values) !== -1;
           });
         } else {
@@ -81,11 +80,7 @@ angular.module('angularSelectize', [])
       
       selectize.on('change', (function() {
         $timeout((function() {
-          // console.log("Change detected", getValues());
           var objects = getObjects();
-          // console.log("Is values array?", $.isArray(values))
-
-          console.log("Returning objects", objects);
           ngModel.$setViewValue(objects);
           onChange(objects);
         }));

@@ -22,21 +22,12 @@ drawingApp.directive('drInteractive', ['$timeout', '$compile',
               var actorElement = element.children('#' + interaction.actor.name);
             }
 
-            console.log("Preview", interaction);
-            console.log("Actor names", names, actorElement[0]);
-
-            // Problem here is that angularSelectize sets actees to a
-            // comma-delimited string of names rather than an array of
-            // objects like I'm expecting here.
             var names = interaction.actees.map(function(shape) {
               return '#' + shape.name;
             }).join(', ');
             var acteeElements = element.children(names);
-            console.log("Actee names", names, acteeElements[0]);
-
             
             actorElement.on(interaction.trigger.name, function() {
-              console.log("Clicked");
               acteeElements[interaction.action.name]();
             });
           });
