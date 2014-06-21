@@ -24,24 +24,29 @@ drawingApp.controller('ScreensEditController',
       RectFactory.create();
     };
 
-    $scope.selectShape = function(shape) {
+    $scope.selectOnlyShape = function(shape) {
       $scope.clearSelectedShapes();
       shape.select();
-      $scope.selectedShape = shape;
+      $scope.selectedShapes.push(shape);
+      $scope.inspectedShape = shape;
     };
 
     $scope.addSelectedShape = function(shape) {
-      console.log("Adding selected shape", shape);
+      console.log("Adding selected shapes");
+      shape.select();
+      $scope.selectedShapes.push(shape);
+      delete $scope.inspectedShape;
     };
 
     $scope.clearSelectedShapes = function(e) {
-      delete $scope.selectedShape;
+      $scope.selectedShapes = [];
       $scope.rectangles.forEach(function(el) { el.deselect(); });
+      delete $scope.inspectedShape;
     };
 
     $scope.createInteraction = function() {
       InteractionsFactory.create({
-        actor: $scope.selectedShape,
+        actor: $scope.inspectedShape,
         trigger: $scope.interactionTriggers[0],
         action: $scope.interactionActions[0]
       });
@@ -81,7 +86,7 @@ drawingApp.controller('ScreensEditController',
     // on the rectangles. You can notice that the rectangle is not selected
     // correctly when the page first loads. Removing this directive will
     // fix this at the expense of making shapes not lasso selectable.
-    $scope.selectShape($scope.rectangles[0]);
+    $scope.selectOnlyShape($scope.rectangles[0]);
   }]);
 
 drawingApp.controller('ScreensShowController', 

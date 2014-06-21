@@ -23,15 +23,19 @@
     };
   }]);
 
-  app.directive('drShiftClick', ['$compile', '$parse', function($compile, $parse) {
+  app.directive('drRect', ['$compile', '$parse', function($compile, $parse) {
     return {
+      restrict: 'A',
       scope: {
-        onShiftClick: '&drShiftClick'
+        onShiftClick: '&drRectShiftClick',
+        onShiftlessClick: '&drRectShiftlessClick'
       },
       link: function(scope, element, attrs) {
         element.on('click', function(e) {
           if (e.shiftKey) {
             scope.$apply(function() { scope.onShiftClick(); });
+          } else {
+            scope.$apply(function() { scope.onShiftlessClick(); });
           }
         });
       }
