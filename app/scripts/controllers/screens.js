@@ -24,16 +24,25 @@ drawingApp.controller('ScreensEditController',
       RectFactory.create();
     };
 
-    $scope.inspectShape = function(shape) {
-      $scope.inspectedShape = shape;
+    $scope.selectShape = function(shape) {
+      $scope.clearSelectedShapes();
+      shape.select();
+      $scope.selectedShape = shape;
     };
 
-    $scope.clearInspectedShape = function(e) {
-      delete $scope.inspectedShape;
+
+    $scope.clearSelectedShapes = function(e) {
+      delete $scope.selectedShape;
+      $scope.rectangles.forEach(function(el) { el.deselect(); });
     };
 
     $scope.createInteraction = function() {
-      InteractionsFactory.create({ actor: $scope.inspectedShape }); };
+      InteractionsFactory.create({
+        actor: $scope.selectedShape,
+        trigger: $scope.interactionTriggers[0],
+        action: $scope.interactionActions[0]
+      });
+    };
 
     $scope.deleteInteraction = function(interaction) {
       InteractionsFactory.destroy(interaction);
@@ -63,8 +72,14 @@ drawingApp.controller('ScreensEditController',
       console.log('Setting the actees', actees);
     };
 
-    InteractionsFactory.init($scope.rectangles);
-    $scope.inspectShape($scope.rectangles[0]);
+    // InteractionsFactory.init($scope.rectangles);
+    // The index we're using here must match the actor in the initialized
+    // interaction. This is a termporary hack.
+    // NOTE: This is being broken by the dnd-selectable="true" directive
+    // on the rectangles. You can notice that the rectangle is not selected
+    // correctly when the page first loads. Removing this directive will
+    // fix this at the expense of making shapes not lasso selectable.
+    $scope.selectShape($scope.rectangles[0]);
   }]);
 
 drawingApp.controller('ScreensShowController', 

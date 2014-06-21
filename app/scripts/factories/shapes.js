@@ -17,8 +17,8 @@
     return name;
   };
 
-  var randomRectAttributes = function() {
-    return {
+  var randomRectAttributes = function(options) {
+    return $.extend({
       name: shapeName('rect'),
       stroke: 'rgb(236, 240, 241)',
       strokeWidth: 1,
@@ -60,12 +60,14 @@
         return $.extend(this.style(), this.dndData);
       },
 
-      select: function() { this.dndData.isSelected = true; },
-      deselect: function() { this.dndData.isSelected = false },
+      select: function() { 
+        this.isSelected = true;
+      },
+      deselect: function() { this.isSelected = false },
       toggleSelected: function() { 
-        this.dndData.isSelected = !this.dndData.isSelected
+        this.isSelected = !this.isSelected
       }
-    };
+    }, options);
   }
 
   app.factory('RectFactory', function() {

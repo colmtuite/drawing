@@ -11,7 +11,7 @@
         element.on('click', function(e) {
           if (isCanvas(e.target)) {
             scope.$apply(function() {
-              scope.clearInspectedShape();
+              scope.clearSelectedShapes();
             });
           }
         });
