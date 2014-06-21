@@ -22,4 +22,19 @@
       }
     };
   }]);
+
+  app.directive('drShiftClick', ['$compile', '$parse', function($compile, $parse) {
+    return {
+      scope: {
+        onShiftClick: '&drShiftClick'
+      },
+      link: function(scope, element, attrs) {
+        element.on('click', function(e) {
+          if (e.shiftKey) {
+            scope.$apply(function() { scope.onShiftClick(); });
+          }
+        });
+      }
+    };
+  }]);
 })(drawingApp);

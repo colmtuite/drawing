@@ -30,6 +30,9 @@ drawingApp.controller('ScreensEditController',
       $scope.selectedShape = shape;
     };
 
+    $scope.addSelectedShape = function(shape) {
+      console.log("Adding selected shape", shape);
+    };
 
     $scope.clearSelectedShapes = function(e) {
       delete $scope.selectedShape;

@@ -13,6 +13,7 @@
         dnd-model-selected="rect.isSelected"
         dnd-model-selecting="rect.isSelecting"
         ng-class="{'selected': rect.isSelected, 'selecting': rect.isSelecting, 'highlighted': rect.isHighlighted}"
+        dr-shift-click="addSelectedShape(rect)"
         ng-click="selectShape(rect)"></div>
       <div ng-repeat="group in groups" class="group-outline"
         ng-style="group.style()"></div>
