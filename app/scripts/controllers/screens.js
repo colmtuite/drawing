@@ -45,16 +45,19 @@ drawingApp.controller('ScreensEditController',
     };
 
     $scope.highlightElement = function(name) {
+      $scope.unhighlightAll();
       var elements = $scope.interactionElements();
-      // var elements = $scope.rectangles;
-      elements.forEach(function(el) { el.isHighlighted = false });
-      var shape = $filter('filter')(elements, function(el) {
+      $filter('filter')(elements, function(el) {
         return el.name === name;
       }).map(function(el) {
         el.isHighlighted = true;
       });
-      // elements[index].isHighlighted = true;
     };
+
+    $scope.unhighlightAll = function() {
+      var elements = $scope.interactionElements();
+      elements.forEach(function(el) { el.isHighlighted = false });
+    }
 
     $scope.setActees = function(actees) {
       console.log('Setting the actees', actees);

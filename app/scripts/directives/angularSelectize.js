@@ -9,9 +9,11 @@ angular.module('angularSelectize', [])
       onChange: '&angularSelectizeOnChange',
       // Pass in a function to call when the user hovers the mouse over one of
       // the selectize items.
-      onHighlightItem: '&angularSelectizeOnHighlightItem',
+      onMouseoverItem: '&angularSelectizeOnMouseoverItem',
+      onMouseoutItem: '&angularSelectizeOnMouseoutItem',
       // Same as above but for options.
-      onHighlightOption: '&angularSelectizeOnHighlightOption',
+      onMouseoverOption: '&angularSelectizeOnMouseoverOption',
+      onMouseoutOption: '&angularSelectizeOnMouseoutOption',
       // Tell selectize to track changes in a variable on the scope.
       toWatch: '=angularSelectizeWatch',
       // Allow passing in options to pass to selectize.
@@ -22,8 +24,10 @@ angular.module('angularSelectize', [])
       
       // INFO: http://stackoverflow.com/a/17570515/574190
       var onChange = scope.onChange() || angular.noop,
-          onHighlightItem = scope.onHighlightItem() || angular.noop,
-          onHighlightOption = scope.onHighlightOption() || angular.noop,
+          onMouseoverItem = scope.onMouseoverItem() || angular.noop,
+          onMouseoutItem = scope.onMouseoutItem() || angular.noop,
+          onMouseoverOption = scope.onMouseoverOption() || angular.noop,
+          onMouseoutOption = scope.onMouseoutOption() || angular.noop,
           options,
           selectize,
           select;
@@ -88,6 +92,9 @@ angular.module('angularSelectize', [])
 
       }));
 
+      // Detect hover events
+      // -------------------
+
       // Not sure why but I can't seem to add a mouseover event listenter
       // to the select any other way. I've tried
       //   - using the return value of element.selectize()
@@ -95,19 +102,37 @@ angular.module('angularSelectize', [])
       // Neigher of those work. I've tried both wrapped in a $timeout
       // too and it doesn't seem to make a difference.
       select = angular.element(element.next('.selectize-control'));
+
       select.on('mouseover', '.option', function() {
         var option = angular.element(this);
         scope.$apply(function() {
-          onHighlightOption(option.data('value'));
+          onMouseoverOption(option.data('value'));
+        });
+      });
+
+      select.on('mouseout', '.option', function() {
+        var option = angular.element(this);
+        scope.$apply(function() {
+          onMouseoutOption(option.data('value'));
         });
       });
 
       select.on('mouseover', '.item', function() {
         var option = angular.element(this);
         scope.$apply(function() {
-          onHighlightItem(option.data('value'));
+          onMouseoverItem(option.data('value'));
         });
       });
+
+      select.on('mouseout', '.item', function() {
+        var option = angular.element(this);
+        scope.$apply(function() {
+          onMouseoutItem(option.data('value'));
+        });
+      });
+
+      // Rebuild options when underlying model changes
+      // ---------------------------------------------
 
       if (scope.toWatch) {
         scope.$watchCollection("toWatch", (function(newValues) {
