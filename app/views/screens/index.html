@@ -3,7 +3,16 @@
 <ul class="screens">
   <li ng-repeat="screen in screens">
     <a ng-href="#/screens/{{screen.slug}}/edit">{{screen.name}}</a>
+    <a href="javascript:void(0)" class="delete" ng-click="destroyScreen(screen)">
+      &times;
+    </a>
   </li>
 </ul>
+
+<form ng-submit="createScreen(newScreen)">
+  <input ng-model="newScreen.name" type="text">
+  <input type="submit" value="Create">
+</form>
+
 
 <div ng-include src="'views/layouts/footer.html'"></div>

@@ -1,22 +1,33 @@
 'use strict';
 
-drawingApp.factory('ScreensFactory', ['$filter', function($filter) {
-  var factory = {};
-  var data = [{
-    name: 'Screen one',
-    slug: 'screen-one'
-  }, {
-    name: 'Screen two',
-    slug: 'screen-two'
-  }];
+(function(app) {
+  app.factory('ScreensFactory', ['$filter', '$resource', factory]);
+  
+  function factory($filter, $resource) {
+    var factory = {};
+    var ScreensService = $resource('//localhost:3000/screens/:id.json', {}, {
+      create: { method: 'POST' },
+      index: { method: 'GET' },
+      show: { method: 'GET' },
+      destroy: { method: 'DELETE' }
+    });
 
-  factory.all = function() {
-    return data;
-  };
+    factory.all = function() {
+      return ScreensService.index().$promise;
+    };
 
-  factory.find = function(slug) {
-    return $filter('filter')(data, { slug: slug }, true)[0];
-  };
+    factory.find = function(slug) {
+      return ScreensService.show({ id: slug }).$promise;
+    };
 
-  return factory;
-}]);
+    factory.create = function(attrs) {
+      return ScreensService.create({ screen: attrs }).$promise;
+    }
+
+    factory.destroy = function(screen) {
+      return ScreensService.destroy({ id: screen.id }).$promise;
+    }
+
+    return factory;
+  }
+})(drawingApp);
