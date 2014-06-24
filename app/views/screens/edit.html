@@ -61,38 +61,59 @@
 
     <hr>
 
-    <div ng-repeat="interaction in interactions | filterActorIs:inspectedShape">
-      <select ng-model="interaction.action"
-        angular-selectize
-        ng-options="action.name for action in interactionActions"
-        angular-selectize-watch="interactionActions"
-        angular-selectize-options="{labelField: 'name', valueField: 'name'}">
-      </select>
+    <div>
+      <div ng-repeat="interaction in interactions | filterActorIs:inspectedShape">
+        <select ng-model="interaction.action"
+          angular-selectize
+          ng-options="action.name for action in interactionActions"
+          angular-selectize-watch="interactionActions"
+          angular-selectize-options="{labelField: 'name', valueField: 'name'}">
+        </select>
 
-      <select ng-model="interaction.actees"
-        multiple
-        angular-selectize
-        angular-selectize-options="{labelField: 'name', valueField: 'name'}"
-        angular-selectize-on-mouseover-item="highlightElement"
-        angular-selectize-on-mouseout-item="unhighlightAll"
-        angular-selectize-on-mouseover-option="highlightElement"
-        angular-selectize-on-mouseout-option="unhighlightAll"
-        angular-selectize-watch="interactionElements()"
-        ng-options="element.name for element in interactionElements()">
-      </select>
+        <select ng-model="interaction.actees"
+          multiple
+          angular-selectize
+          angular-selectize-options="{labelField: 'name', valueField: 'name'}"
+          angular-selectize-on-mouseover-item="highlightElement"
+          angular-selectize-on-mouseout-item="unhighlightAll"
+          angular-selectize-on-mouseover-option="highlightElement"
+          angular-selectize-on-mouseout-option="unhighlightAll"
+          angular-selectize-watch="interactionElements()"
+          ng-options="element.name for element in interactionElements()">
+        </select>
 
-      on
+        on
 
-      <select ng-model="interaction.trigger" 
-        angular-selectize
-        ng-options="trigger.name for trigger in interactionTriggers"
-        angular-selectize-watch="interactionTriggers"
-        angular-selectize-options="{labelField: 'name', valueField: 'name'}">
-      </select>
+        <select ng-model="interaction.trigger" 
+          angular-selectize
+          ng-options="trigger.name for trigger in interactionTriggers"
+          angular-selectize-watch="interactionTriggers"
+          angular-selectize-options="{labelField: 'name', valueField: 'name'}">
+        </select>
 
-      <a href="javascript:void(0)" ng-click="deleteInteraction(interaction)">&times;</a>
+        <a href="javascript:void(0)" ng-click="deleteInteraction(interaction)">&times;</a>
+      </div>
+      <button ng-click="createInteraction()" class="btn btn-default">New Interaction</button>
     </div>
-    <button ng-click="createInteraction()" class="btn btn-default">New Interaction</button>
+
+    <div>
+      <div ng-repeat="interaction in stateInteractions | filterActorIs:inspectedShape">
+        Change to
+
+        <select ng-model="interaction.newState"
+          ng-options="state.name for state in inspectedShape.states">
+        </select>
+
+        on
+
+        <select ng-model="interaction.trigger"
+          ng-options="trigger.name for trigger in interactionTriggers">
+        </select>
+
+        <a href="javascript:void(0)" ng-click="deleteStateInteraction(interaction)">&times;</a>
+      </div>
+      <button ng-click="createStateInteraction()" class="btn btn-default">New state interaction</button>
+    </div>
 
   </div>
   <hr>

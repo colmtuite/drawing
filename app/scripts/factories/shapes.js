@@ -31,6 +31,8 @@
       // Styling States
       // ==============
 
+      states: [{name: 'normal' }, { name: 'hover' }],
+
       normal: {
         stroke: 'rgb(236, 240, 241)',
         strokeWidth: 1,
@@ -41,6 +43,18 @@
         stroke: 'rgb(236, 240, 241)',
         strokeWidth: 1,
         fill: 'rgb(236, 240, 0)',
+      },
+
+      style: function(state) {
+        state || (state = this.states[0].name);
+        return {
+          "background-color": this[state].fill,
+          "border":  this[state].strokeWidth + 'px solid ' + this[state].stroke
+        };
+      },
+
+      previewStyle: function(state) {
+        return $.extend(this.style(state), this.dndData);
       },
 
       // Edit States
@@ -79,18 +93,6 @@
       },
       width: function() { return parseInt(this.dndData.width, 10) },
       height: function() { return parseInt(this.dndData.height, 10) },
-
-      style: function(state) {
-        state || (state = "normal");
-        return {
-          "background-color": this[state].fill,
-          "border":  this[state].strokeWidth + 'px solid ' + this[state].stroke
-        };
-      },
-
-      previewStyle: function() {
-        return $.extend(this.style(), this.dndData);
-      },
     }, options);
   }
 

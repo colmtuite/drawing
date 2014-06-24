@@ -2,9 +2,15 @@
 
 (function(app) {
   var data = {
-    triggers: [{ name: 'click' }, { name: 'dblclick' }],
+    triggers: [
+      { name: 'click' },
+      { name: 'dblclick' },
+      { name: 'mouseover' },
+      { name: 'mouseout' }
+    ],
     actions: [{ name: 'hide' }, { name: 'show' }, { name: 'toggle' }],
-    interactions: []
+    interactions: [],
+    stateInteractions: []
   };
 
   var randomAttributes = function(actor, actee) {
@@ -27,8 +33,9 @@
       return data.actions;
     };
 
-    factory.all = function() {
-      return data.interactions;
+    factory.all = function(type) {
+      type || (type = 'interactions');
+      return data[type];
     };
 
     factory.init = function(shapes) {
@@ -39,6 +46,10 @@
 
     factory.create = function(attrs) {
       data.interactions.push(attrs);
+    };
+
+    factory.createState = function(attrs) {
+      data.stateInteractions.push(attrs);
     };
 
     factory.destroy = function(interaction) {

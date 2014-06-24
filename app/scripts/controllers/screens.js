@@ -11,10 +11,16 @@ drawingApp.controller('ScreensEditController',
   function($scope, $routeParams, $filter, RectFactory, ScreensFactory, InteractionsFactory, GroupsFactory) {
     $scope.screen = ScreensFactory.find($routeParams.slug);
     $scope.rectangles = RectFactory.all();
+    // TODO: Rename to elementInteractions to represent the fact that these are
+    // interactions between elements.
     $scope.interactions = InteractionsFactory.all();
+    // TODO: Rename to elementInteractionActions.
     $scope.interactionActions = InteractionsFactory.actions();
+    // This name is ok since these triggers are used on state and element
+    // interactions.
     $scope.interactionTriggers = InteractionsFactory.triggers();
     $scope.groups = GroupsFactory.all();
+    $scope.stateInteractions = InteractionsFactory.all('stateInteractions');
 
     $scope.interactionElements = function() {
       return $scope.rectangles.concat($scope.groups);
@@ -44,6 +50,8 @@ drawingApp.controller('ScreensEditController',
     };
 
     $scope.createInteraction = function() {
+      // Initialize the new state with some data so that the select boxes
+      // are preset with some value when the user sees them.
       InteractionsFactory.create({
         actor: $scope.inspectedShape,
         trigger: $scope.interactionTriggers[0],
@@ -53,6 +61,17 @@ drawingApp.controller('ScreensEditController',
 
     $scope.deleteInteraction = function(interaction) {
       InteractionsFactory.destroy(interaction);
+    };
+
+    $scope.createStateInteraction = function() {
+      InteractionsFactory.createState({
+        actor: $scope.inspectedShape,
+        trigger: $scope.interactionTriggers[0],
+        newState: $scope.inspectedShape.states[1]
+      });
+    };
+
+    $scope.deleteStateInteraction = function(interaction) {
     };
 
     $scope.createGroup = function() {
@@ -75,8 +94,6 @@ drawingApp.controller('ScreensEditController',
       elements.forEach(function(el) { el.isHighlighted = false });
     }
 
-    // The index we're using here must match the actor in the initialized
-    // interaction. This is a termporary hack.
     // NOTE: This is being broken by the dnd-selectable="true" directive
     // on the rectangles. You can notice that the rectangle is not selected
     // correctly when the page first loads. Removing this directive will
@@ -91,5 +108,6 @@ drawingApp.controller('ScreensShowController',
     $scope.screen = ScreensFactory.find($routeParams.slug);
     $scope.rectangles = RectFactory.all();
     $scope.interactions = InteractionsFactory.all();
+    $scope.stateInteractions = InteractionsFactory.all('stateInteractions');
     $scope.groups = GroupsFactory.all();
   }]);

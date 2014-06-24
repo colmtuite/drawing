@@ -18,7 +18,8 @@
     function($timeout, $compile) {
       return {
         scope: {
-          interactions: '='
+          interactions: '=',
+          stateInteractions: '='
         },
         link: function(scope, element, attrs) {
           // INFO: http://stackoverflow.com/a/12243086/574190
@@ -41,6 +42,15 @@
 
               actorElement.on(interaction.trigger.name, function() {
                 acteeElements[interaction.action.name]();
+              });
+            });
+
+            scope.stateInteractions.forEach(function(interaction) {
+              var actorElement = element.children(interaction.actor.elementIds());
+              var name = interaction.newState.name;
+              var newStyles = interaction.actor.previewStyle(name);
+              actorElement.on(interaction.trigger.name, function() {
+                actorElement.css(newStyles);
               });
             });
           });
