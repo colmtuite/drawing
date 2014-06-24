@@ -2,7 +2,7 @@
 
 var drawingApp = angular.module('drawingApp', [
   'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'dnd',
-  'angularSelectize'
+  'angularSelectize', 'ui.bootstrap'
 ]);
 
 drawingApp.config(function ($routeProvider) {

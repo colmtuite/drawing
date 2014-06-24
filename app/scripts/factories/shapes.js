@@ -108,6 +108,20 @@
       data.push(randomRectAttributes());
     };
 
+    factory.inspectedShape = function(rectangle) {
+      if (typeof rectangle !== "undefined") {
+        data.inspectedShape = rectangle;
+      }
+      // NOTE: It's very important that this returns a reference to data
+      // when used as both a setter and getter. Otherwise, we can't set up
+      // watchers on the data.
+      return data.inspectedShape;
+    }
+
+    factory.clearInspectedShape = function() {
+      delete data.inspectedShape;
+    }
+
     return factory;
   });
 
