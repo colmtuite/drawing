@@ -25,33 +25,38 @@
 
   <div class="col-md-3" ng-show="inspectedShape">
     <div>
-      <label for="selected-shape-name">Name</label>
-      <span id="selected-shape-name">{{selectedShape.name}}</span>
+      <label for="inspected-shape-name">Name</label>
+      <span id="inspected-shape-name">{{inspectedShape.name}}</span>
     </div>
 
     <div>
-      <label for="selected-shape-top">Top</label>
-      <input type="text" ng-model="selectedShape.dndData.top" id="selected-shape-top"/>
+      <label for="inspected-shape-top">Top</label>
+      <input type="text" ng-model="inspectedShape.dndData.top" id="inspected-shape-top"/>
     </div>
 
     <div>
-      <label for="selected-shape-left">Left</label>
-      <input type="text" ng-model="selectedShape.dndData.left" id="selected-shape-left"/>
+      <label for="inspected-shape-left">Left</label>
+      <input type="text" ng-model="inspectedShape.dndData.left" id="inspected-shape-left"/>
     </div>
 
     <div>
-      <label for="selected-shape-height">Height</label>
-      <input type="text" ng-model="selectedShape.dndData.height" id="selected-shape-height"/>
+      <label for="inspected-shape-height">Height</label>
+      <input type="text" ng-model="inspectedShape.dndData.height" id="inspected-shape-height"/>
     </div>
 
     <div>
-      <label for="selected-shape-width">Width</label>
-      <input type="text" ng-model="selectedShape.dndData.width" id="selected-shape-width"/>
+      <label for="inspected-shape-width">Width</label>
+      <input type="text" ng-model="inspectedShape.dndData.width" id="inspected-shape-width"/>
     </div>
 
     <div>
-      <label for="selected-shape-fill">Fill</label>
-      <input type="text" ng-model="selectedShape.fill" id="selected-shape-fill"/>
+      <label for="inspected-shape-normal-fill">Normal Fill</label>
+      <input type="text" ng-model="inspectedShape.normal.fill" id="inspected-shape-normal-fill"/>
+    </div>
+
+    <div>
+      <label for="inspected-shape-hover-fill">Hover Fill</label>
+      <input type="text" ng-model="inspectedShape.hover.fill" id="inspected-shape-hover-fill"/>
     </div>
 
     <hr>

@@ -28,13 +28,33 @@
         return ('#' + this.elementNames().join(', #'));
       },
 
-      stroke: 'rgb(236, 240, 241)',
-      strokeWidth: 1,
-      fill: 'rgb(236, 240, 241)',
+      // Styling States
+      // ==============
+
+      normal: {
+        stroke: 'rgb(236, 240, 241)',
+        strokeWidth: 1,
+        fill: 'rgb(236, 240, 241)',
+      },
+
+      hover: {
+        stroke: 'rgb(236, 240, 241)',
+        strokeWidth: 1,
+        fill: 'rgb(236, 240, 0)',
+      },
+
+      // Edit States
+      // ===========
 
       isSelected: false,
       isSelecting: false,
       isHighlighted: false,
+
+      select: function() { this.isSelected = true; },
+      deselect: function() { this.isSelected = false },
+      toggleSelected: function() { 
+        this.isSelected = !this.isSelected
+      },
 
       // These are the attributes controlled by the DnD module. Any other
       // attributes in this namespace will get smashed when DnD takes
@@ -45,6 +65,9 @@
         width: randomNumber(100, 50),
         height: randomNumber(100, 50)
       },
+
+      // Positioning Getters
+      // ===================
 
       top: function() { return parseInt(this.dndData.top, 10); },
       left: function() { return parseInt(this.dndData.left, 10); },
@@ -57,24 +80,17 @@
       width: function() { return parseInt(this.dndData.width, 10) },
       height: function() { return parseInt(this.dndData.height, 10) },
 
-      style: function() {
+      style: function(state) {
+        state || (state = "normal");
         return {
-          "background-color": this.fill,
-          "border":  this.strokeWidth + 'px solid ' + this.stroke
+          "background-color": this[state].fill,
+          "border":  this[state].strokeWidth + 'px solid ' + this[state].stroke
         };
       },
 
       previewStyle: function() {
         return $.extend(this.style(), this.dndData);
       },
-
-      select: function() { 
-        this.isSelected = true;
-      },
-      deselect: function() { this.isSelected = false },
-      toggleSelected: function() { 
-        this.isSelected = !this.isSelected
-      }
     }, options);
   }
 
