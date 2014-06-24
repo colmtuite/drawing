@@ -5,27 +5,32 @@
   
   function factory($filter, $resource) {
     var factory = {};
-    var ScreensService = $resource('//localhost:3000/screens/:id.json', {}, {
+    var Service = $resource('//localhost:3000/screens/:id.json', {}, {
       create: { method: 'POST' },
       index: { method: 'GET' },
       show: { method: 'GET' },
+      update: { method: 'PUT' },
       destroy: { method: 'DELETE' }
     });
 
     factory.all = function() {
-      return ScreensService.index().$promise;
+      return Service.index().$promise;
     };
 
     factory.find = function(slug) {
-      return ScreensService.show({ id: slug }).$promise;
+      return Service.show({ id: slug }).$promise;
     };
 
     factory.create = function(attrs) {
-      return ScreensService.create({ screen: attrs }).$promise;
+      return Service.create({ screen: attrs }).$promise;
+    }
+
+    factory.update = function(screen, attrs) {
+      return Service.update({ id: screen.id }, attrs).$promise;
     }
 
     factory.destroy = function(screen) {
-      return ScreensService.destroy({ id: screen.id }).$promise;
+      return Service.destroy({ id: screen.id }).$promise;
     }
 
     return factory;

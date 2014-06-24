@@ -24,6 +24,10 @@
         $scope.screens.splice(index, 1);
       });
     }
+
+    $scope.updateScreen = function(screen, name) {
+      return ScreensFactory.update(screen, { name: name });
+    }
   }
 })(drawingApp);
 

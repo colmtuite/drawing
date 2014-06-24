@@ -2,8 +2,12 @@
 
 var drawingApp = angular.module('drawingApp', [
   'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'dnd',
-  'angularSelectize', 'ui.bootstrap'
+  'angularSelectize', 'ui.bootstrap', "xeditable"
 ]);
+
+drawingApp.run(function(editableOptions) {
+  editableOptions.theme = 'bs3';
+});
 
 drawingApp.config(function ($routeProvider) {
   $routeProvider
