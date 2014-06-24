@@ -3,12 +3,18 @@
     Change to
 
     <select ng-model="interaction.newState"
+      angular-selectize
+      angular-selectize-watch="inspectedShape.states"
+      angular-selectize-options="{labelField: 'name', valueField: 'name'}"
       ng-options="state.name for state in inspectedShape.states">
     </select>
 
     on
 
     <select ng-model="interaction.trigger"
+      angular-selectize
+      angular-selectize-watch="interactionTriggers"
+      angular-selectize-options="{labelField: 'name', valueField: 'name'}"
       ng-options="trigger.name for trigger in interactionTriggers">
     </select>
 
