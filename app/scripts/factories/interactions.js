@@ -57,6 +57,11 @@
       data.interactions.splice(index, 1);   
     };
 
+    factory.destroyState = function(interaction) {
+      var index = data.stateInteractions.indexOf(interaction)
+      data.stateInteractions.splice(index, 1);   
+    };
+
     return factory;
   });
 })(drawingApp);;

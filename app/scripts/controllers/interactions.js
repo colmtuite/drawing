@@ -71,5 +71,6 @@ drawingApp.controller('StateInteractionsController',
     };
 
     $scope.deleteStateInteraction = function(interaction) {
+      InteractionsFactory.destroyState(interaction);
     };
   }]);
