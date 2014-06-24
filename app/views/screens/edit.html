@@ -2,7 +2,7 @@
 
 <div class="row">
   <div class="col-md-9">
-    <div id="canvas" dr-canvas class="dnd-container" dnd-lasso-area="true">
+    <div id="canvas" dr-canvas class="dnd-container">
       <div ng-repeat="rect in rectangles"
         class="selectable" 
         style="position: absolute;"
@@ -57,26 +57,29 @@
     <hr>
 
     <div ng-repeat="interaction in interactions | filterActorIs:inspectedShape">
-      <select ng-model="interaction.action" angular-selectize
+      <select ng-model="interaction.action"
+        angular-selectize
         ng-options="action.name for action in interactionActions"
         angular-selectize-watch="interactionActions"
         angular-selectize-options="{labelField: 'name', valueField: 'name'}">
       </select>
 
-      <select ng-model="interaction.actees" angular-selectize multiple
+      <select ng-model="interaction.actees"
+        multiple
+        angular-selectize
         angular-selectize-options="{labelField: 'name', valueField: 'name'}"
         angular-selectize-on-mouseover-item="highlightElement"
         angular-selectize-on-mouseout-item="unhighlightAll"
         angular-selectize-on-mouseover-option="highlightElement"
         angular-selectize-on-mouseout-option="unhighlightAll"
-        angular-selectize-on-change="setActees"
-        angular-selectize-watch="rectangles"
+        angular-selectize-watch="interactionElements()"
         ng-options="element.name for element in interactionElements()">
       </select>
 
       on
 
-      <select ng-model="interaction.trigger" angular-selectize
+      <select ng-model="interaction.trigger" 
+        angular-selectize
         ng-options="trigger.name for trigger in interactionTriggers"
         angular-selectize-watch="interactionTriggers"
         angular-selectize-options="{labelField: 'name', valueField: 'name'}">

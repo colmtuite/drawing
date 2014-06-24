@@ -32,7 +32,6 @@ drawingApp.controller('ScreensEditController',
     };
 
     $scope.addSelectedShape = function(shape) {
-      console.log("Adding selected shapes");
       shape.select();
       $scope.selectedShapes.push(shape);
       delete $scope.inspectedShape;
@@ -75,10 +74,6 @@ drawingApp.controller('ScreensEditController',
       var elements = $scope.interactionElements();
       elements.forEach(function(el) { el.isHighlighted = false });
     }
-
-    $scope.setActees = function(actees) {
-      console.log('Setting the actees', actees);
-    };
 
     // The index we're using here must match the actor in the initialized
     // interaction. This is a termporary hack.

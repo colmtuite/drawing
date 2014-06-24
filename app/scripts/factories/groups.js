@@ -20,6 +20,12 @@
       var defaults = {
         name: createName(),
         elements: [],
+        elementNames: function() {
+          return this.elements.map(function(shape) { return shape.name; });
+        },
+        elementIds: function() {
+          return ('#' + this.elementNames().join(', #'));
+        },
 
         top: function() {
           if (_.isEmpty(this.elements)) return 0;

@@ -15,7 +15,7 @@ angular.module('angularSelectize', [])
       onMouseoverOption: '&angularSelectizeOnMouseoverOption',
       onMouseoutOption: '&angularSelectizeOnMouseoutOption',
       // Tell selectize to track changes in a variable on the scope.
-      toWatch: '=angularSelectizeWatch',
+      toWatch: '&angularSelectizeWatch',
       // Allow passing in options to pass to selectize.
       selectizeOptions: '@angularSelectizeOptions',
       model: '=ngModel'
@@ -31,14 +31,14 @@ angular.module('angularSelectize', [])
           options,
           selectize,
           select;
-      
+
       // Remove change event bound by select directive; it causes digest errors.
       if (element[0].nodeName === 'SELECT') {
         element.off('change');
       }
-      
+
       scope.selectizeOptions = scope.selectizeOptions || '';
-      
+
       // Check if any options are pased into the diretive like this:
       // selectize="{ someOption: 'something' }".
       if (scope.selectizeOptions.indexOf(':') == -1) {
@@ -50,13 +50,13 @@ angular.module('angularSelectize', [])
         }
         options = scope.$eval('(' + scope.selectizeOptions + ')');
       }
-      
+
       // This is the default delimiter that selectize uses anyway.
       // I need access to it out here so have to redefine it.
       options.delimiter = options.delimiter || ',';
-          
+
       var selectize = element.selectize(options)[0].selectize;
-      
+
       function getValues() {
         return selectize.getValue();
       }
@@ -68,11 +68,11 @@ angular.module('angularSelectize', [])
       function getObjects() {
         var values = getValues();
         if ($.isArray(values)) {
-          return $filter('filter')(scope.toWatch, function(el) {
+          return $filter('filter')(scope.toWatch(), function(el) {
             return $.inArray(el[selectize.settings.valueField], values) !== -1;
           });
         } else {
-          return $filter('filter')(scope.toWatch, function(el) {
+          return $filter('filter')(scope.toWatch(), function(el) {
             return el[selectize.settings.valueField] === values;
           })[0];
         }        
@@ -84,7 +84,6 @@ angular.module('angularSelectize', [])
           ngModel.$setViewValue(objects);
           onChange(objects);
         }));
-
       }));
 
       // Detect hover events
@@ -129,8 +128,14 @@ angular.module('angularSelectize', [])
       // Rebuild options when underlying model changes
       // ---------------------------------------------
 
+      // = and interactionElements - regular array
+      // = and interactionElements() - infinite loop
+      // & and interactionElements() - function which returns the same array when called
+      // & and interactionElements - function which returns the same array when called
+
+
       if (scope.toWatch) {
-        scope.$watchCollection("toWatch", (function(newValues) {
+        scope.$watchCollection(scope.toWatch, (function(newValues) {
           var values = getValues();
           selectize.clearOptions();
           angular.forEach(newValues, (function(option) {

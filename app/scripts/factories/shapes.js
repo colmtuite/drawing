@@ -20,6 +20,14 @@
   var randomRectAttributes = function(options) {
     return $.extend({
       name: shapeName('rect'),
+      // This method is here for consistency with the Group object. Often we
+      // want to get the names of shapes which may be either groups or
+      // individual shapes without type checking constantly.
+      elementNames: function() { return [this.name]; },
+      elementIds: function() {
+        return ('#' + this.elementNames().join(', #'));
+      },
+
       stroke: 'rgb(236, 240, 241)',
       strokeWidth: 1,
       fill: 'rgb(236, 240, 241)',
