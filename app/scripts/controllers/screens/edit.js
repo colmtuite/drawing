@@ -1,37 +1,6 @@
 'use strict';
 
 (function(app) {
-  app.controller('ScreensIndexController', ['$scope', 'ScreensFactory', ctrl]);
-
-  function ctrl($scope, ScreensFactory) {
-    ScreensFactory.all().then(function(response) {
-      $scope.screens = response.screens;
-    });
-
-    $scope.newScreen = {};
-
-    $scope.createScreen = function(attrs) {
-      ScreensFactory.create(attrs).then(function(response) {
-        console.log("Created. Response", response.screen);
-        $scope.screens.push(response.screen);
-        $scope.newScreen = {};
-      });
-    }
-
-    $scope.destroyScreen = function(screen) {
-      ScreensFactory.destroy(screen).then(function(resp) {
-        var index = $scope.screens.indexOf(screen);
-        $scope.screens.splice(index, 1);
-      });
-    }
-
-    $scope.updateScreen = function(screen, name) {
-      return ScreensFactory.update(screen, { name: name });
-    }
-  }
-})(drawingApp);
-
-(function(app) {
   app.controller('ScreensEditController', 
     ['$scope', '$routeParams', '$filter', 'RectFactory', 'ScreensFactory', 
      'InteractionsFactory', 'GroupsFactory', ctrl]);
@@ -39,8 +8,11 @@
   function ctrl($scope, $routeParams, $filter, RectFactory, ScreensFactory, InteractionsFactory, GroupsFactory) {
     ScreensFactory.find($routeParams.slug).then(function(resp) {
       $scope.screen = resp.screen;
-      $scope.rectangles = RectFactory.all();
-      $scope.groups = GroupsFactory.all();
+      var contents = JSON.parse(resp.screen.contents);
+      $scope.rectangles = RectFactory.new(contents.rectangles);
+      console.log("Contents", contents);
+      console.log("Rects", $scope.rectangles);
+      $scope.groups = GroupsFactory.new(contents.rectangles);
 
       $scope.inspectedShape = RectFactory.inspectedShape();
       $scope.$watch(function() { return RectFactory.inspectedShape(); },
@@ -53,6 +25,7 @@
       };
 
       $scope.selectOnlyShape = function(shape) {
+        if (typeof shape === "undefined") return;
         $scope.clearSelectedShapes();
         shape.select();
         $scope.selectedShapes.push(shape);
@@ -74,7 +47,18 @@
       $scope.createGroup = function() {
         var elements = $filter('filter')($scope.rectangles, {isSelected: true});
         GroupsFactory.create({ elements: elements });
-      };
+      }
+
+      $scope.saveScreen = function() {
+        var rectangleAttrs = $scope.rectangles.map(function(rect) {
+          return rect.toJSON();
+        });
+        var attrs = $.extend($scope.screen, {
+          contents: JSON.stringify({ rectangles: rectangleAttrs })
+        });
+        console.log("Saving screen", $scope);
+        return ScreensFactory.update($scope.screen, attrs);
+      }
 
       // NOTE: This is being broken by the dnd-selectable="true" directive
       // on the rectangles. You can notice that the rectangle is not selected
@@ -85,18 +69,3 @@
   }
 })(drawingApp);
 
-(function(app) {
-  app.controller('ScreensShowController', 
-    ['$scope', '$routeParams', 'RectFactory', 'ScreensFactory', 
-     'InteractionsFactory', 'GroupsFactory', ctrl]);
-
-  function ctrl($scope, $routeParams, RectFactory, ScreensFactory, InteractionsFactory, GroupsFactory) {
-    ScreensFactory.find($routeParams.slug).then(function(resp) {
-      $scope.screen = resp.screen;
-      $scope.rectangles = RectFactory.all();
-      $scope.interactions = InteractionsFactory.all();
-      $scope.stateInteractions = InteractionsFactory.all('stateInteractions');
-      $scope.groups = GroupsFactory.all();
-    });
-  }
-})(drawingApp);

@@ -17,8 +17,8 @@
     return name;
   };
 
-  var randomRectAttributes = function(options) {
-    return $.extend({
+  var init = function(options) {
+    return angular.extend({
       name: shapeName('rect'),
       // This method is here for consistency with the Group object. Often we
       // want to get the names of shapes which may be either groups or
@@ -31,6 +31,16 @@
       // Styling States
       // ==============
 
+      // TODO: Refactor this to the following structure:
+      //
+      // states: {
+      //   normal: {
+      //     stroke: '',
+      //     etc...
+      //   },
+      //   hover: { etc... }
+      //   etc..
+      // }
       states: [{name: 'normal' }, { name: 'hover' }],
 
       normal: {
@@ -93,21 +103,35 @@
       },
       width: function() { return parseInt(this.dndData.width, 10) },
       height: function() { return parseInt(this.dndData.height, 10) },
+
+      toJSON: function() {
+        var json = _.pick(this, 'name', 'normal', 'hover', 'dndData',
+          'isSelected', 'isHighlighted', 'isSelecting');
+        return json;
+      }
     }, options);
   }
 
   app.factory('RectFactory', function() {
     var factory = {};
-    var data = [randomRectAttributes(), randomRectAttributes()];
+    var data = [];
 
     factory.all = function() {
       return data;
     };
 
-    factory.create = function() {
-      data.push(randomRectAttributes());
+    factory.new = function(attrs) {
+      var that = this;
+      [].concat(attrs || []).map(function(attr) { that.create(attr); });
+      return this.all();
+    }
+
+    factory.create = function(attrs) {
+      data.push(init(attrs));
     };
 
+    // This is here so that numerous controllers can keep track of which is
+    // the currently inspected shape.
     factory.inspectedShape = function(rectangle) {
       if (typeof rectangle !== "undefined") {
         data.inspectedShape = rectangle;

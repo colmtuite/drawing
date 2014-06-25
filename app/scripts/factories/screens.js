@@ -5,6 +5,7 @@
   
   function factory($filter, $resource) {
     var factory = {};
+
     var Service = $resource('//localhost:3000/screens/:id.json', {}, {
       create: { method: 'POST' },
       index: { method: 'GET' },
@@ -26,7 +27,11 @@
     }
 
     factory.update = function(screen, attrs) {
-      return Service.update({ id: screen.id }, attrs).$promise;
+      attrs || (attrs = screen);
+      // TODO: I'm doing this toJSON type manipulation in the model in the
+      // case of rectanges. I should be doing the same thing here.
+      attrs = _.omit(attrs, 'id', 'slug');
+      return Service.update({ id: screen.id }, { screen: attrs }).$promise;
     }
 
     factory.destroy = function(screen) {
