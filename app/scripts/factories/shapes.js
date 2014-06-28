@@ -1,25 +1,16 @@
 'use strict';
 
 (function(app) {
-  var randomNumber = function(max, min) {
-    min || (min = 1);
-    return Math.floor(Math.random() * (max - min)) + min;
-  };
-
-  var randomHex = function() {
-    return '#'+ ('000000' + (Math.random()*0xFFFFFF<<0).toString(16)).slice(-6);
-  }
-
-  var nameList = { rect: [] };
-  var shapeName = function(shapeType) {
-    var name = shapeType + "-" + (nameList[shapeType].length + 1);
-    nameList[shapeType].push(name);
-    return name;
-  };
-
   var init = function(options) {
+    options || (options = {});
+    var guid = options.guid || chance.guid(),
+        name = options.name || chance.word();
+    delete options.guid;
+    delete options.name;
+
     return angular.extend({
-      name: shapeName('rect'),
+      name: name,
+      guid: guid,
       // This method is here for consistency with the Group object. Often we
       // want to get the names of shapes which may be either groups or
       // individual shapes without type checking constantly.
@@ -84,10 +75,10 @@
       // attributes in this namespace will get smashed when DnD takes
       // control of the positioning.
       dndData: {
-        top: randomNumber(350),
-        left: randomNumber(350),
-        width: randomNumber(100, 50),
-        height: randomNumber(100, 50)
+        top: chance.natural({ max: 350 }),
+        left: chance.natural({ max: 350 }),
+        width: chance.natural({ max: 100, min: 50 }),
+        height: chance.natural({ max: 100, min: 50 })
       },
 
       // Positioning Getters

@@ -8,7 +8,7 @@
   function ctrl($scope, $routeParams, $filter, RectFactory, ScreensFactory, InteractionsFactory, GroupsFactory) {
     ScreensFactory.find($routeParams.slug).then(function(resp) {
       $scope.screen = resp.screen;
-      var contents = JSON.parse(resp.screen.contents);
+      var contents = JSON.parse(resp.screen.contents) || [];
       $scope.rectangles = RectFactory.new(contents.rectangles);
       console.log("Contents", contents);
       console.log("Rects", $scope.rectangles);

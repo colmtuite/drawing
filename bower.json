@@ -15,7 +15,8 @@
     "angular-dnd-module": "0.1.5",
     "selectize": "~0.10.1",
     "angular-bootstrap": "~0.11.0",
-    "angular-xeditable": "~0.1.8"
+    "angular-xeditable": "~0.1.8",
+    "chance": "~0.5.6"
   },
   "devDependencies": {
     "angular-mocks": "1.2.15",
