@@ -19,6 +19,14 @@
         scope.$on('keypress:71', function(onEvent, keypressEvent) {
           scope.createGroup();
         });
+
+        scope.$on('keypress:8', function(onEvent, keypressEvent) {
+          if (keypressEvent.shiftKey === true) {
+            scope.$apply(function() {
+              scope.destroySelectedShapes();
+            });
+          }
+        });
       }
     };
   }]);
@@ -31,6 +39,9 @@
         onShiftlessClick: '&drRectShiftlessClick'
       },
       link: function(scope, element, attrs) {
+        // NOTE: If there is three rectagnles on the page, this event will
+        // be captured three times. Any functions called in here will be
+        // called multiple times.
         element.on('click', function(e) {
           if (e.shiftKey) {
             scope.$apply(function() { scope.onShiftClick(); });

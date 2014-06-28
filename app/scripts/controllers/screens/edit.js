@@ -44,9 +44,15 @@
         RectFactory.clearInspectedShape();
       };
 
+      $scope.destroySelectedShapes = function() {
+        RectFactory.selected().forEach(function(el) {
+          RectFactory.destroy(el);
+        });
+        $scope.clearSelectedShapes();
+      }
+
       $scope.createGroup = function() {
-        var elements = $filter('filter')($scope.rectangles, {isSelected: true});
-        GroupsFactory.create({ elements: elements });
+        GroupsFactory.create({ elements: RectFactory.selected() });
       }
 
       $scope.saveScreen = function() {

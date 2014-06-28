@@ -7,7 +7,7 @@ drawingApp.directive('keypressEvents', [
     return {
       restrict: 'A',
       link: function() {
-        $document.bind('keypress', function(e) {
+        $document.bind('keydown', function(e) {
           $rootScope.$broadcast('keypress', e);
           $rootScope.$broadcast('keypress:' + e.which, e);
         });

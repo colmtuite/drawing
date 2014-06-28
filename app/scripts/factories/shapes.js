@@ -112,13 +112,15 @@
     }, options);
   }
 
-  app.factory('RectFactory', function() {
+  app.factory('RectFactory', ['$filter', factory]);
+
+  function factory($filter) {
     var factory = {};
-    var data = [];
+    var data = { rects: [] };
 
     factory.all = function() {
-      return data;
-    };
+      return data.rects;
+    }
 
     factory.new = function(attrs) {
       var that = this;
@@ -127,8 +129,18 @@
     }
 
     factory.create = function(attrs) {
-      data.push(init(attrs));
-    };
+      data.rects.push(init(attrs));
+    }
+
+    factory.destroy = function(shape) {
+      this.clearInspectedShape();
+      data.rects.splice(data.rects.indexOf(shape), 1);
+      return shape;
+    }
+
+    factory.selected = function() {
+      return $filter('filter')(data.rects, {isSelected: true});
+    }
 
     // This is here so that numerous controllers can keep track of which is
     // the currently inspected shape.
@@ -147,6 +159,6 @@
     }
 
     return factory;
-  });
+  }
 
 })(drawingApp);
