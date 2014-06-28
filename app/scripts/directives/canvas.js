@@ -17,7 +17,9 @@
         });
 
         scope.$on('keypress:71', function(onEvent, keypressEvent) {
-          scope.createGroup();
+          scope.$apply(function() {
+            scope.createGroup();
+          });
         });
 
         scope.$on('keypress:8', function(onEvent, keypressEvent) {

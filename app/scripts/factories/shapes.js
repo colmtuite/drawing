@@ -97,7 +97,7 @@
 
       toJSON: function() {
         var json = _.pick(this, 'name', 'normal', 'hover', 'dndData',
-          'isSelected', 'isHighlighted', 'isSelecting');
+          'isSelected', 'isHighlighted', 'isSelecting', 'guid');
         return json;
       }
     }, options);
@@ -113,7 +113,11 @@
       return data.rects;
     }
 
-    factory.new = function(attrs) {
+    factory.findByGuid = function(guid) {
+      return $filter('filter')(this.all(), { guid: guid })[0];
+    }
+
+    factory.parse = function(attrs) {
       var that = this;
       [].concat(attrs || []).map(function(attr) { that.create(attr); });
       return this.all();
@@ -130,7 +134,7 @@
     }
 
     factory.selected = function() {
-      return $filter('filter')(data.rects, {isSelected: true});
+      return $filter('filter')(this.all(), {isSelected: true});
     }
 
     // This is here so that numerous controllers can keep track of which is
@@ -147,6 +151,10 @@
 
     factory.clearInspectedShape = function() {
       delete data.inspectedShape;
+    }
+
+    factory.toJSON = function() {
+      return data.rects.map(function(rect) { return rect.toJSON(); });
     }
 
     return factory;

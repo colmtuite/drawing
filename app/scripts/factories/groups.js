@@ -1,16 +1,14 @@
 'use strict';
 
 (function(app) {
-  var nameList = { group: [] };
-  var createName = function() {
-    var name = "group-" + (nameList['group'].length + 1);
-    nameList['group'].push(name);
-    return name;
-  };
 
   var init = function(attrs) {
+    attrs || (attrs = {});
+    var name = attrs.name || chance.word();
+    delete attrs.name;
+
     var defaults = {
-      name: createName(),
+      name: name,
       elements: [],
       elementNames: function() {
         return this.elements.map(function(shape) { return shape.name; });
@@ -56,12 +54,23 @@
           height: this.height() + 'px',
           width: this.width() + 'px'
         };
-      }
+      },
+
+      toJSON: function() {
+        return {
+          elements: this.elements.map(function(el) {
+            console.log("Mapping group element", el, el.guid);
+            return el.guid;
+          })
+        };
+      },
     };
     return angular.extend(defaults, attrs);
   }
 
-  app.factory('GroupsFactory', function() {
+  app.factory('GroupsFactory', ['RectFactory', factory]);
+      
+  function factory(RectFactory) {
     var factory = {};
     var data = [];
 
@@ -69,9 +78,20 @@
       return data;
     };
 
-    factory.new = function(attrs) {
+    factory.parse = function(attrs) {
       var that = this;
-      [].concat(attrs || []).map(function(attr) { that.create(attr); });
+      [].concat(attrs || []).map(function(attr) {
+        // On the server, groups only store the guids of the elements
+        // they contain. Thus, when we parse them, we have to lookup the guids
+        // and set references to the actual objects on the client.
+        if (typeof attr.elements !== "undefined") {
+          attr.elements = attr.elements.map(function(guid) {
+            return RectFactory.findByGuid(guid);
+          });
+        }
+
+        that.create(attr);
+      });
       return this.all();
     }
 
@@ -79,6 +99,10 @@
       data.push(init(attrs));
     };
 
+    factory.toJSON = function() {
+      return data.map(function(group) { return group.toJSON(); });
+    }
+
     return factory;
-  });
+  }
 })(drawingApp);

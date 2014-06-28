@@ -9,10 +9,9 @@
     ScreensFactory.find($routeParams.slug).then(function(resp) {
       $scope.screen = resp.screen;
       var contents = JSON.parse(resp.screen.contents) || [];
-      $scope.rectangles = RectFactory.new(contents.rectangles);
       console.log("Contents", contents);
-      console.log("Rects", $scope.rectangles);
-      $scope.groups = GroupsFactory.new(contents.rectangles);
+      $scope.rectangles = RectFactory.parse(contents.rectangles);
+      $scope.groups = GroupsFactory.parse(contents.groups);
 
       $scope.inspectedShape = RectFactory.inspectedShape();
       $scope.$watch(function() { return RectFactory.inspectedShape(); },
@@ -56,11 +55,11 @@
       }
 
       $scope.saveScreen = function() {
-        var rectangleAttrs = $scope.rectangles.map(function(rect) {
-          return rect.toJSON();
-        });
         var attrs = $.extend($scope.screen, {
-          contents: JSON.stringify({ rectangles: rectangleAttrs })
+          contents: JSON.stringify({
+            rectangles: RectFactory.toJSON(),
+            groups: GroupsFactory.toJSON()
+          })
         });
         console.log("Saving screen", $scope);
         return ScreensFactory.update($scope.screen, attrs);
