@@ -1,8 +1,8 @@
 'use strict';
 
 (function(app) {
-  function Rectangle(data) {
-    angular.extend(this, data);
+  function Rectangle(futureData) {
+    this.$$resource = futureData;
   }
 
   Rectangle.$factory = [
@@ -16,6 +16,10 @@
     }];
 
   app.factory('Rectangle', Rectangle.$factory);
+
+  Rectangle.prototype.$destroy = function() {
+    this.$$resource.$remove();
+  };
 
   Rectangle.prototype.style = function(state) {
     state || (state = this.states[0].name);

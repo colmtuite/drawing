@@ -2,10 +2,12 @@
 
 (function(app) {
   app.controller('ScreensEditController', 
-    ['$scope', '$routeParams', '$filter', 'RectangleCollection', 'Screen', ctrl]);
+    ['$scope', '$routeParams', '$filter', 'ScreenCollection', 'RectangleCollection', 'Screen', ctrl]);
 
-  function ctrl($scope, $routeParams, $filter, RectangleCollection, Screen) {
-    $scope.screen = Screen.$find($routeParams.id);
+  function ctrl($scope, $routeParams, $filter, ScreenCollection, RectangleCollection, Screen) {
+    var screens = new ScreenCollection();
+    $scope.screen = screens.$find($routeParams.id);
+    $scope.rectangles = $scope.screen.rectangles.$all();
 
     $scope.inspectedShape = RectangleCollection.inspectedShape();
     $scope.$watch(function() { return RectangleCollection.inspectedShape(); },
@@ -36,11 +38,13 @@
     $scope.addSelectedShape = function(shape) {
       shape.select();
       $scope.selectedShapes.push(shape);
-      Rectangle.clearInspectedShape();
+      RectangleCollection.clearInspectedShape();
     };
 
     $scope.destroySelectedShapes = function(shape) {
-      $scope.screen.rectangles.$destroy($scope.selectedShapes);
+      $scope.selectedShapes.forEach(function(shape) {
+        shape.$destroy();
+      });
       RectangleCollection.clearInspectedShape();
     };
 
@@ -53,16 +57,10 @@
 //        GroupsFactory.create({ elements: RectFactory.selected() });
 //      }
 //
-//      $scope.saveScreen = function() {
-//        var attrs = $.extend($scope.screen, {
-//          contents: JSON.stringify({
-//            rectangles: RectFactory.toJSON(),
-//            groups: GroupsFactory.toJSON()
-//          })
-//        });
-//        console.log("Saving screen", $scope);
-//        return ScreensFactory.update($scope.screen, attrs);
-//      }
+     $scope.saveScreen = function() {
+       console.log("Saving screen", $scope);
+       $scope.screen.$save();
+     }
 //
 //      // NOTE: This is being broken by the dnd-selectable="true" directive
 //      // on the rectangles. You can notice that the rectangle is not selected

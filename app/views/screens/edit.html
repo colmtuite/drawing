@@ -3,7 +3,7 @@
 <div class="row">
   <div class="col-md-9">
     <div id="canvas" dr-canvas class="dnd-container">
-      <div ng-repeat="(uid, rect) in screen.rectangles.collection"
+      <div ng-repeat="(uid, rect) in rectangles"
         class="selectable" 
         style="position: absolute;"
         ng-style="rect.style()"

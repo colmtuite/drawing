@@ -1,24 +1,17 @@
 'use strict';
 
 (function(app) {
-  app.controller('ScreensIndexController', ['$scope', 'Screen', ctrl]);
+  app.controller('ScreensIndexController', ['$scope', 'ScreenCollection', ctrl]);
 
-  function ctrl($scope, Screen) {
-    $scope.screens = Screen.$all();
+  function ctrl($scope, ScreenCollection) {
+    var screens = new ScreenCollection();
+    $scope.screens = screens.$all();
 
     $scope.newScreen = {};
 
     $scope.createScreen = function(attrs) {
-      Screen.$create(attrs);
+      screens.$create(attrs);
       $scope.newScreen = {};
-    };
-
-    $scope.destroyScreen = function(uid) {
-      Screen.$destroy(uid);
-    };
-
-    $scope.updateScreen = function(uid, name) {
-      Screen.$update(uid, { name: name });
     };
   }
 })(drawingApp);
