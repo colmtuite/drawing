@@ -1,43 +1,105 @@
 'use strict';
 
-(function(app) {
-  app.factory('ScreensFactory', ['$filter', '$resource', factory]);
-  
-  function factory($filter, $resource) {
-    var factory = {};
+(function (app) {
+  function Screen(futureData) {
+    console.log("Instanciating screen", futureData);
 
-    var Service = $resource('//localhost:3000/screens/:id.json', {}, {
-      create: { method: 'POST' },
-      index: { method: 'GET' },
-      show: { method: 'GET' },
-      update: { method: 'PUT' },
-      destroy: { method: 'DELETE' }
+    if (!futureData.$id) {
+      angular.extend(this, futureData);
+      return;
+    }
+
+    this.$unwrap(futureData);
+  }
+
+  Screen.$factory = [
+    '$timeout',
+    '$firebase',
+    'FBURL',
+    'Rectangle',
+    function($timeout, $firebase, FBURL, Rectangle) {
+      angular.extend(Screen, {
+        $$resource: $firebase(new Firebase(FBURL + 'screens')),
+        $timeout: $timeout,
+        $Rectangle: Rectangle
+      });
+
+      return Screen;
+    }];
+
+  app.factory('Screen', Screen.$factory);
+
+  Screen.$all = function() {
+    var futureData = this.$$resource;
+    return Screen.$unwrapCollection(futureData);
+  };
+
+  Screen.$find = function(uid) {
+    return new Screen(this.$$resource.$child(uid));
+  };
+
+  Screen.$create = function(attrs) {
+    var screen = new Screen(this.$$resource.$add(attrs));
+    angular.extend(screen, attrs);
+    return screen;
+  };
+
+  Screen.$destroy = function(uid) {
+    this.$$resource.$remove(uid);
+  };
+
+  Screen.$update = function(uid, changes) {
+    this.$$resource.$child(uid).$update(changes);
+  };
+
+  Screen.prototype.$createRectangle = function(rectangle) {
+    // this.rectangles.$create(rectangle);
+    this.$$resource.$child('rectangles').$add(rectangle);
+  };
+
+  Screen.prototype.$destroyRectangle = function(rectangles) {
+    var that = this;
+
+    angular.forEach(([].concat(rectangles) || []), function(rectangle) {
+      angular.forEach(that.rectangles, function(item, uid) {
+        if (item === rectangle) {
+          that.$$resource.$child('rectangles').$remove(uid);
+        }
+      });
+    });
+  };
+
+  Screen.$unwrapCollection = function(futureData) {
+    var collection = {};
+
+    futureData.$on('child_added', function(data) {
+      collection[data.snapshot.name] = new Screen(data.snapshot.value);
     });
 
-    factory.all = function() {
-      return Service.index().$promise;
-    };
+    futureData.$on('child_removed', function(data) {
+      delete collection[data.snapshot.name];
+    });
 
-    factory.find = function(slug) {
-      return Service.show({ id: slug }).$promise;
-    };
+    futureData.$on('child_changed', function(ref) {
+      angular.extend(collection[ref.snapshot.name], ref.snapshot.value);
+    });
 
-    factory.create = function(attrs) {
-      return Service.create({ screen: attrs }).$promise;
-    }
+    return collection;
+  };
 
-    factory.update = function(screen, attrs) {
-      attrs || (attrs = screen);
-      // TODO: I'm doing this toJSON type manipulation in the model in the
-      // case of rectanges. I should be doing the same thing here.
-      attrs = _.omit(attrs, 'id', 'slug');
-      return Service.update({ id: screen.id }, { screen: attrs }).$promise;
-    }
+  Screen.prototype.$unwrap = function(futureData) {
+    var that = this;
+    this.$$resource = futureData;
 
-    factory.destroy = function(screen) {
-      return Service.destroy({ id: screen.id }).$promise;
-    }
+    futureData.$on('value', function(data) {
+      var attrs = data.snapshot.value;
 
-    return factory;
-  }
-})(drawingApp);
+      var rectangles = Screen.$Rectangle.$unwrapCollection(attrs.rectangles);
+      // rectangles.$$resource = that.$$resource.$child('rectangles');
+      attrs.rectangles = rectangles;
+
+      angular.extend(that, attrs);
+    });
+  };
+  
+}(drawingApp));

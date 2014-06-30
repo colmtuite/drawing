@@ -1,37 +1,111 @@
 'use strict';
 
 (function(app) {
-  var init = function(options) {
+  function Rectangle(data) {
+    angular.extend(this, data);
+  }
+
+  Rectangle.$factory = [
+    '$filter',
+    function($filter) {
+      angular.extend(Rectangle, {
+        $filter: $filter
+      });
+
+      return Rectangle;
+    }];
+
+  app.factory('Rectangle', Rectangle.$factory);
+
+  Rectangle.prototype.style = function(state) {
+    state || (state = this.states[0].name);
+    return {
+      "background-color": this[state].fill,
+      "border":  this[state].strokeWidth + 'px solid ' + this[state].stroke
+    };
+  };
+
+  Rectangle.prototype.previewStyle = function(state) {
+    return $.extend(this.style(state), this.dndData);
+  };
+  
+  // This method is here for consistency with the Group object. Often we
+  // want to get the names of shapes which may be either groups or
+  // individual shapes without type checking constantly.
+  Rectangle.prototype.elementNames = function() {
+    return [this.name];
+  };
+
+  Rectangle.prototype.elementIds = function() {
+    return ('#' + this.elementNames().join(', #'));
+  };
+
+
+  Rectangle.selected = function() {
+    return $filter('filter')(this.all(), {isSelected: true});
+  };
+
+  Rectangle.prototype.select = function() {
+    this.isSelected = true; 
+  };
+  
+  Rectangle.prototype.deselect = function() {
+    this.isSelected = false; 
+  };
+
+  Rectangle.prototype.toggleSelected = function() {
+    this.isSelected = !this.isSelected
+  };
+
+  // Positioning Getters
+  // ===================
+
+  Rectangle.prototype.top = function() {
+    return parseInt(this.dndData.top, 10);
+  };
+
+  Rectangle.prototype.left = function() { 
+    return parseInt(this.dndData.left, 10);
+  };
+
+  Rectangle.prototype.bottom = function() {
+    return (parseInt(this.dndData.top, 10) + parseInt(this.dndData.height, 10));
+  };
+
+  Rectangle.prototype.right = function() {
+    return (parseInt(this.dndData.left, 10) + parseInt(this.dndData.width, 10));
+  };
+
+  Rectangle.prototype.width = function() {
+    return parseInt(this.dndData.width, 10)
+  };
+
+  Rectangle.prototype.height = function() {
+    return parseInt(this.dndData.height, 10)
+  };
+
+  Rectangle.$unwrapCollection = function(data) {
+    var collection = {};
+
+    _.reduce(data, function(c, data, uid) {
+      c[uid] = new Rectangle(data);
+      return c;
+    }, collection);
+
+    return collection;
+  };
+
+  Rectangle.$new = function(options) {
     options || (options = {});
     var guid = options.guid || chance.guid(),
         name = options.name || chance.word();
     delete options.guid;
     delete options.name;
 
-    return angular.extend({
+    return new Rectangle(angular.extend({
       name: name,
       guid: guid,
-      // This method is here for consistency with the Group object. Often we
-      // want to get the names of shapes which may be either groups or
-      // individual shapes without type checking constantly.
-      elementNames: function() { return [this.name]; },
-      elementIds: function() {
-        return ('#' + this.elementNames().join(', #'));
-      },
 
-      // Styling States
-      // ==============
-
-      // TODO: Refactor this to the following structure:
-      //
-      // states: {
-      //   normal: {
-      //     stroke: '',
-      //     etc...
-      //   },
-      //   hover: { etc... }
-      //   etc..
-      // }
       states: [{name: 'normal' }, { name: 'hover' }],
 
       normal: {
@@ -46,30 +120,9 @@
         fill: 'rgb(236, 240, 0)',
       },
 
-      style: function(state) {
-        state || (state = this.states[0].name);
-        return {
-          "background-color": this[state].fill,
-          "border":  this[state].strokeWidth + 'px solid ' + this[state].stroke
-        };
-      },
-
-      previewStyle: function(state) {
-        return $.extend(this.style(state), this.dndData);
-      },
-
-      // Edit States
-      // ===========
-
       isSelected: false,
       isSelecting: false,
       isHighlighted: false,
-
-      select: function() { this.isSelected = true; },
-      deselect: function() { this.isSelected = false },
-      toggleSelected: function() { 
-        this.isSelected = !this.isSelected
-      },
 
       // These are the attributes controlled by the DnD module. Any other
       // attributes in this namespace will get smashed when DnD takes
@@ -80,84 +133,23 @@
         width: chance.natural({ max: 100, min: 50 }),
         height: chance.natural({ max: 100, min: 50 })
       },
+    }, options));
+  };
 
-      // Positioning Getters
-      // ===================
-
-      top: function() { return parseInt(this.dndData.top, 10); },
-      left: function() { return parseInt(this.dndData.left, 10); },
-      bottom: function() {
-        return (parseInt(this.dndData.top, 10) + parseInt(this.dndData.height, 10));
-      },
-      right: function() {
-        return (parseInt(this.dndData.left, 10) + parseInt(this.dndData.width, 10));
-      },
-      width: function() { return parseInt(this.dndData.width, 10) },
-      height: function() { return parseInt(this.dndData.height, 10) },
-
-      toJSON: function() {
-        var json = _.pick(this, 'name', 'normal', 'hover', 'dndData',
-          'isSelected', 'isHighlighted', 'isSelecting', 'guid');
-        return json;
-      }
-    }, options);
-  }
-
-  app.factory('RectFactory', ['$filter', factory]);
-
-  function factory($filter) {
-    var factory = {};
-    var data = { rects: [] };
-
-    factory.all = function() {
-      return data.rects;
+  // This is here so that numerous controllers can keep track of which is
+  // the currently inspected shape.
+  Rectangle.inspectedShape = function(rectangle) {
+    if (typeof rectangle !== "undefined") {
+      this._inspectedShape = rectangle;
     }
+    // NOTE: It's very important that this returns a reference to data
+    // when used as both a setter and getter. Otherwise, we can't set up
+    // watchers on the data.
+    return this._inspectedShape;
+  };
 
-    factory.findByGuid = function(guid) {
-      return $filter('filter')(this.all(), { guid: guid })[0];
-    }
-
-    factory.parse = function(attrs) {
-      var that = this;
-      [].concat(attrs || []).map(function(attr) { that.create(attr); });
-      return this.all();
-    }
-
-    factory.create = function(attrs) {
-      data.rects.push(init(attrs));
-    }
-
-    factory.destroy = function(shape) {
-      this.clearInspectedShape();
-      data.rects.splice(data.rects.indexOf(shape), 1);
-      return shape;
-    }
-
-    factory.selected = function() {
-      return $filter('filter')(this.all(), {isSelected: true});
-    }
-
-    // This is here so that numerous controllers can keep track of which is
-    // the currently inspected shape.
-    factory.inspectedShape = function(rectangle) {
-      if (typeof rectangle !== "undefined") {
-        data.inspectedShape = rectangle;
-      }
-      // NOTE: It's very important that this returns a reference to data
-      // when used as both a setter and getter. Otherwise, we can't set up
-      // watchers on the data.
-      return data.inspectedShape;
-    }
-
-    factory.clearInspectedShape = function() {
-      delete data.inspectedShape;
-    }
-
-    factory.toJSON = function() {
-      return data.rects.map(function(rect) { return rect.toJSON(); });
-    }
-
-    return factory;
-  }
+  Rectangle.clearInspectedShape = function() {
+    delete this._inspectedShape;
+  };
 
 })(drawingApp);

@@ -3,7 +3,7 @@
 <div class="row">
   <div class="col-md-9">
     <div id="canvas" dr-canvas class="dnd-container">
-      <div ng-repeat="rect in rectangles"
+      <div ng-repeat="(uid, rect) in screen.rectangles"
         class="selectable" 
         style="position: absolute;"
         ng-style="rect.style()"
@@ -20,7 +20,8 @@
         ng-style="group.style()"></div>
     </div>
 
-    <button ng-click="createRect()" class="btn btn-default">Create rectangle</button>
+    <button ng-click="createRectangle()" 
+      class="btn btn-default">Create rectangle</button>
     <button ng-click="saveScreen()" class="btn btn-primary">Save</button>
   </div>
 

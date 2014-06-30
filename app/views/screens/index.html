@@ -1,19 +1,19 @@
 <div ng-include src="'views/layouts/header.html'"></div>
 
 <ul class="screens">
-  <li ng-repeat="screen in screens">
-    <a ng-href="#/screens/{{screen.slug}}/edit" 
+  <li ng-repeat="(uid, screen) in screens">
+    <a ng-href="#/screens/{{uid}}/edit" 
       editable-text="screen.name"
       e-placeholder="Screen name"
       buttons="no"
       e-form="screenNameForm"
-      onbeforesave="updateScreen(screen, $data)"
+      onbeforesave="updateScreen(uid, $data)"
       e-required>{{screen.name}}</a>
     | 
     <a href="javascript:void(0)"
       ng-click="screenNameForm.$show()" 
       ng-hide="screenNameForm.$visible">edit</a>
-    <a href="javascript:void(0)" class="delete" ng-click="destroyScreen(screen)">
+    <a href="javascript:void(0)" class="delete" ng-click="destroyScreen(uid)">
       &times;
     </a>
   </li>

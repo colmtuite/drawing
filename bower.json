@@ -16,7 +16,9 @@
     "selectize": "~0.10.1",
     "angular-bootstrap": "~0.11.0",
     "angular-xeditable": "~0.1.8",
-    "chance": "~0.5.6"
+    "chance": "~0.5.6",
+    "firebase": "~1.0.17",
+    "angularfire": "~0.7.1"
   },
   "devDependencies": {
     "angular-mocks": "1.2.15",

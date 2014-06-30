@@ -1,5 +1,5 @@
 <div ng-controller="ElementInteractionsController">
-  <div ng-repeat="interaction in interactions | filterActorIs:inspectedShape">
+  <div ng-repeat="interaction in interactions">
     <select ng-model="interaction.action"
       angular-selectize
       ng-options="action.name for action in interactionActions"

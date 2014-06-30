@@ -1,5 +1,5 @@
 <div ng-controller="StateInteractionsController">
-  <div ng-repeat="interaction in stateInteractions | filterActorIs:inspectedShape">
+  <div ng-repeat="interaction in stateInteractions">
     Change to
 
     <select ng-model="interaction.newState"

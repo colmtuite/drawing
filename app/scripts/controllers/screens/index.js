@@ -1,32 +1,24 @@
 'use strict';
 
 (function(app) {
-  app.controller('ScreensIndexController', ['$scope', 'ScreensFactory', ctrl]);
+  app.controller('ScreensIndexController', ['$scope', 'Screen', ctrl]);
 
-  function ctrl($scope, ScreensFactory) {
-    ScreensFactory.all().then(function(response) {
-      $scope.screens = response.screens;
-    });
+  function ctrl($scope, Screen) {
+    $scope.screens = Screen.$all();
 
     $scope.newScreen = {};
 
     $scope.createScreen = function(attrs) {
-      ScreensFactory.create(attrs).then(function(response) {
-        console.log("Created. Response", response.screen);
-        $scope.screens.push(response.screen);
-        $scope.newScreen = {};
-      });
-    }
+      Screen.$create(attrs);
+      $scope.newScreen = {};
+    };
 
-    $scope.destroyScreen = function(screen) {
-      ScreensFactory.destroy(screen).then(function(resp) {
-        var index = $scope.screens.indexOf(screen);
-        $scope.screens.splice(index, 1);
-      });
-    }
+    $scope.destroyScreen = function(uid) {
+      Screen.$destroy(uid);
+    };
 
-    $scope.updateScreen = function(screen, name) {
-      return ScreensFactory.update(screen, { name: name });
-    }
+    $scope.updateScreen = function(uid, name) {
+      Screen.$update(uid, { name: name });
+    };
   }
 })(drawingApp);
