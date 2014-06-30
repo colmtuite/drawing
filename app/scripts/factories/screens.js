@@ -17,11 +17,13 @@
     '$firebase',
     'FBURL',
     'Rectangle',
-    function($timeout, $firebase, FBURL, Rectangle) {
+    'RectangleCollection',
+    function($timeout, $firebase, FBURL, Rectangle, RectangleCollection) {
       angular.extend(Screen, {
         $$resource: $firebase(new Firebase(FBURL + 'screens')),
         $timeout: $timeout,
-        $Rectangle: Rectangle
+        $Rectangle: Rectangle,
+        $RectangleCollection: RectangleCollection
       });
 
       return Screen;
@@ -52,23 +54,6 @@
     this.$$resource.$child(uid).$update(changes);
   };
 
-  Screen.prototype.$createRectangle = function(rectangle) {
-    // this.rectangles.$create(rectangle);
-    this.$$resource.$child('rectangles').$add(rectangle);
-  };
-
-  Screen.prototype.$destroyRectangle = function(rectangles) {
-    var that = this;
-
-    angular.forEach(([].concat(rectangles) || []), function(rectangle) {
-      angular.forEach(that.rectangles, function(item, uid) {
-        if (item === rectangle) {
-          that.$$resource.$child('rectangles').$remove(uid);
-        }
-      });
-    });
-  };
-
   Screen.$unwrapCollection = function(futureData) {
     var collection = {};
 
@@ -91,14 +76,11 @@
     var that = this;
     this.$$resource = futureData;
 
-    futureData.$on('value', function(data) {
-      var attrs = data.snapshot.value;
+    futureData.$on('loaded', function(data) {
+      var rectangles = new Screen.$RectangleCollection(that.$$resource.$child('rectangles'));
+      data.rectangles = rectangles;
 
-      var rectangles = Screen.$Rectangle.$unwrapCollection(attrs.rectangles);
-      // rectangles.$$resource = that.$$resource.$child('rectangles');
-      attrs.rectangles = rectangles;
-
-      angular.extend(that, attrs);
+      angular.extend(that, data);
     });
   };
   

@@ -2,21 +2,16 @@
 
 (function(app) {
   app.controller('ScreensEditController', 
-    ['$scope', '$routeParams', '$filter', 'Rectangle', 'Screen', ctrl]);
+    ['$scope', '$routeParams', '$filter', 'RectangleCollection', 'Screen', ctrl]);
 
-  function ctrl($scope, $routeParams, $filter, Rectangle, Screen) {
+  function ctrl($scope, $routeParams, $filter, RectangleCollection, Screen) {
     $scope.screen = Screen.$find($routeParams.id);
 
-    $scope.inspectedShape = Rectangle.inspectedShape();
-    $scope.$watch(function() { return Rectangle.inspectedShape(); },
+    $scope.inspectedShape = RectangleCollection.inspectedShape();
+    $scope.$watch(function() { return RectangleCollection.inspectedShape(); },
       function(newVal, oldVal) {
         $scope.inspectedShape = newVal;
     });
-
-    $scope.createRectangle = function() {
-      var rect = Rectangle.$new();
-      $scope.screen.$createRectangle(rect);
-    };
 
     // IDEA: Perhaps this should be done by calling "rect.select()" in the
     // view then having a watcher here in the controller to do the rest
@@ -26,16 +21,16 @@
       $scope.clearSelectedShapes();
       shape.select();
       $scope.selectedShapes.push(shape);
-      Rectangle.inspectedShape(shape);
+      RectangleCollection.inspectedShape(shape);
     };
 
     $scope.clearSelectedShapes = function() {
       $scope.selectedShapes = [];
       // TODO: Move this into the model.
-      angular.forEach($scope.screen.rectangles, function(rect, key) {
+      angular.forEach($scope.screen.rectangles.collection, function(rect, key) {
         rect.deselect();
       });
-      Rectangle.clearInspectedShape();
+      RectangleCollection.clearInspectedShape();
     };
 
     $scope.addSelectedShape = function(shape) {
@@ -45,25 +40,14 @@
     };
 
     $scope.destroySelectedShapes = function(shape) {
-      $scope.screen.$destroyRectangle($scope.selectedShapes);
-      Rectangle.clearInspectedShape();
+      $scope.screen.rectangles.$destroy($scope.selectedShapes);
+      RectangleCollection.clearInspectedShape();
     };
 
+    // $scope.selectOnlyShape($scope.rectangles.collection[0]);
 
-//    ScreensFactory.find($routeParams.slug).then(function(resp) {
-//      $scope.screen = resp.screen;
-//      var contents = JSON.parse(resp.screen.contents) || [];
-//      console.log("Contents", contents);
-//      $scope.rectangles = RectFactory.parse(contents.rectangles);
 //      $scope.groups = GroupsFactory.parse(contents.groups);
 //
-//
-//      $scope.destroySelectedShapes = function() {
-//        RectFactory.selected().forEach(function(el) {
-//          RectFactory.destroy(el);
-//        });
-//        $scope.clearSelectedShapes();
-//      }
 //
 //      $scope.createGroup = function() {
 //        GroupsFactory.create({ elements: RectFactory.selected() });

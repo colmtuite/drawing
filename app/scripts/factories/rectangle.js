@@ -40,7 +40,6 @@
     return ('#' + this.elementNames().join(', #'));
   };
 
-
   Rectangle.selected = function() {
     return $filter('filter')(this.all(), {isSelected: true});
   };
@@ -84,17 +83,6 @@
     return parseInt(this.dndData.height, 10)
   };
 
-  Rectangle.$unwrapCollection = function(data) {
-    var collection = {};
-
-    _.reduce(data, function(c, data, uid) {
-      c[uid] = new Rectangle(data);
-      return c;
-    }, collection);
-
-    return collection;
-  };
-
   Rectangle.$new = function(options) {
     options || (options = {});
     var guid = options.guid || chance.guid(),
@@ -134,22 +122,6 @@
         height: chance.natural({ max: 100, min: 50 })
       },
     }, options));
-  };
-
-  // This is here so that numerous controllers can keep track of which is
-  // the currently inspected shape.
-  Rectangle.inspectedShape = function(rectangle) {
-    if (typeof rectangle !== "undefined") {
-      this._inspectedShape = rectangle;
-    }
-    // NOTE: It's very important that this returns a reference to data
-    // when used as both a setter and getter. Otherwise, we can't set up
-    // watchers on the data.
-    return this._inspectedShape;
-  };
-
-  Rectangle.clearInspectedShape = function() {
-    delete this._inspectedShape;
   };
 
 })(drawingApp);
