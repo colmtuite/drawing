@@ -23,9 +23,11 @@
     return this.$unwrapCollection();
   };
 
-  RectangleCollection.prototype.$create = function(attrs) {
-    var rect = RectangleCollection.$Rectangle.$new(attrs);
-    this.$$resource.$add(rect);
+  RectangleCollection.prototype.$create = function(options) {
+    var attrs = RectangleCollection.$Rectangle.initialAttributes(options);
+    var ref = this.$$resource.$add(attrs)
+    var rectangle = new RectangleCollection.$Rectangle(ref);
+    return rectangle;
   };
 
   RectangleCollection.prototype.deselectAll = function() {
@@ -42,7 +44,6 @@
       var uid = data.snapshot.name, value = data.snapshot.value;
       var ref = that.$$resource.$child(uid);
       var rectangle = new RectangleCollection.$Rectangle(ref);
-      angular.extend(rectangle, value);
       that.collection[uid] = rectangle;
     });
 

@@ -2,12 +2,11 @@
 
 (function(app) {
   function Rectangle(futureData) {
-    if (!futureData.$id) {
-      angular.extend(this, futureData);
-      return;
+    this.states = [];
+    if (!futureData.then) {
+      this.$$resource = futureData;
+      this.$unwrap();
     }
-
-    this.$$resource = futureData;
   }
 
   Rectangle.$factory = [
@@ -26,12 +25,18 @@
     this.$$resource.$remove();
   };
 
+  Rectangle.prototype.$save = function() {
+    this.$$resource.$update(this);
+  };
+
   Rectangle.prototype.style = function(state) {
-    state || (state = this.states[0].name);
-    return {
-      "background-color": this[state].fill,
-      "border":  this[state].strokeWidth + 'px solid ' + this[state].stroke
-    };
+    state || (state = this.states[0] && this.states[0].name);
+    if (state) {
+      return {
+        "background-color": this[state].fill,
+        "border":  this[state].strokeWidth + 'px solid ' + this[state].stroke
+      };
+    }
   };
 
   Rectangle.prototype.previewStyle = function(state) {
@@ -92,14 +97,21 @@
     return parseInt(this.dndData.height, 10)
   };
 
-  Rectangle.$new = function(options) {
+  Rectangle.prototype.$unwrap = function() {
+    var that = this;
+    this.$$resource.$on('loaded', function(data) {
+      angular.extend(that, data);
+    });
+  };
+  
+  Rectangle.initialAttributes = function(options) {
     options || (options = {});
     var guid = options.guid || chance.guid(),
         name = options.name || chance.word();
     delete options.guid;
     delete options.name;
 
-    return new Rectangle(angular.extend({
+    return angular.extend({
       name: name,
       guid: guid,
 
@@ -130,7 +142,7 @@
         width: chance.natural({ max: 100, min: 50 }),
         height: chance.natural({ max: 100, min: 50 })
       },
-    }, options));
+    }, options)
   };
 
 })(drawingApp);

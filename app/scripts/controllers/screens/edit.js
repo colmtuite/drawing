@@ -54,11 +54,6 @@
 //        GroupsFactory.create({ elements: RectFactory.selected() });
 //      }
 //
-     $scope.saveScreen = function() {
-       console.log("Saving screen", $scope);
-       $scope.screen.$save();
-     }
-//
 //      // NOTE: This is being broken by the dnd-selectable="true" directive
 //      // on the rectangles. You can notice that the rectangle is not selected
 //      // correctly when the page first loads. Removing this directive will

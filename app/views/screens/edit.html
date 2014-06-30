@@ -8,6 +8,8 @@
         style="position: absolute;"
         ng-style="rect.style()"
         dnd-draggable="true"
+        dnd-on-dragend="rect.$save()"
+        dnd-on-resizeend="rect.$save()"
         dnd-resizable="true"
         dnd-rect="rect.dndData"
         dnd-model-selected="rect.isSelected"
@@ -33,32 +35,38 @@
 
     <div>
       <label for="inspected-shape-top">Top</label>
-      <input type="text" ng-model="inspectedShape.dndData.top" id="inspected-shape-top"/>
+      <input type="text" ng-model="inspectedShape.dndData.top"
+        id="inspected-shape-top">
     </div>
 
     <div>
       <label for="inspected-shape-left">Left</label>
-      <input type="text" ng-model="inspectedShape.dndData.left" id="inspected-shape-left"/>
+      <input type="text" ng-model="inspectedShape.dndData.left" 
+        id="inspected-shape-left"/>
     </div>
 
     <div>
       <label for="inspected-shape-height">Height</label>
-      <input type="text" ng-model="inspectedShape.dndData.height" id="inspected-shape-height"/>
+      <input type="text" ng-model="inspectedShape.dndData.height" 
+        id="inspected-shape-height"/>
     </div>
 
     <div>
       <label for="inspected-shape-width">Width</label>
-      <input type="text" ng-model="inspectedShape.dndData.width" id="inspected-shape-width"/>
+      <input type="text" ng-model="inspectedShape.dndData.width"
+        id="inspected-shape-width"/>
     </div>
 
     <div>
       <label for="inspected-shape-normal-fill">Normal Fill</label>
-      <input type="text" ng-model="inspectedShape.normal.fill" id="inspected-shape-normal-fill"/>
+      <input type="text" ng-model="inspectedShape.normal.fill"
+        id="inspected-shape-normal-fill" ng-blur="inspectedShape.$save()">
     </div>
 
     <div>
       <label for="inspected-shape-hover-fill">Hover Fill</label>
-      <input type="text" ng-model="inspectedShape.hover.fill" id="inspected-shape-hover-fill"/>
+      <input type="text" ng-model="inspectedShape.hover.fill"
+      id="inspected-shape-hover-fill" ng-blur="inspectedShape.$save()">
     </div>
 
     <hr>

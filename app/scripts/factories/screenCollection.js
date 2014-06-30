@@ -35,7 +35,6 @@
   ScreenCollection.prototype.$create = function(attrs) {
     var ref = ScreenCollection.$$resource.$add(attrs)
     var screen = new ScreenCollection.$Screen(ref);
-    angular.extend(screen, attrs);
     return screen;
   };
 
