@@ -32,10 +32,6 @@
     this.$$resource.$update(attrs);
   };
 
-  Screen.prototype.$save = function() {
-    this.$$resource.$save();
-  };
-
   Screen.prototype.$unwrap = function(futureData) {
     var that = this;
     this.$$resource = futureData;
