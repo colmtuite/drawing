@@ -2,15 +2,15 @@
 
 (function(app) {
   app.controller('ScreensEditController', 
-    ['$scope', '$routeParams', '$filter', 'ScreenCollection', 'RectangleCollection', 'Screen', ctrl]);
+    ['$scope', '$routeParams', '$filter', 'ScreenCollection', 'InspectedRectangle', 'Screen', ctrl]);
 
-  function ctrl($scope, $routeParams, $filter, ScreenCollection, RectangleCollection, Screen) {
+  function ctrl($scope, $routeParams, $filter, ScreenCollection, InspectedRectangle, Screen) {
     var screens = new ScreenCollection();
     $scope.screen = screens.$find($routeParams.id);
     $scope.rectangles = $scope.screen.rectangles.$all();
 
-    $scope.inspectedShape = RectangleCollection.inspectedShape();
-    $scope.$watch(function() { return RectangleCollection.inspectedShape(); },
+    $scope.inspectedShape = InspectedRectangle.inspected();
+    $scope.$watch(function() { return InspectedRectangle.inspected(); },
       function(newVal, oldVal) {
         $scope.inspectedShape = newVal;
     });
@@ -23,29 +23,26 @@
       $scope.clearSelectedShapes();
       shape.select();
       $scope.selectedShapes.push(shape);
-      RectangleCollection.inspectedShape(shape);
+      InspectedRectangle.inspected(shape);
     };
 
     $scope.clearSelectedShapes = function() {
       $scope.selectedShapes = [];
-      // TODO: Move this into the model.
-      angular.forEach($scope.screen.rectangles.collection, function(rect, key) {
-        rect.deselect();
-      });
-      RectangleCollection.clearInspectedShape();
+      $scope.screen.rectangles.deselectAll();
+      InspectedRectangle.clear();
     };
 
     $scope.addSelectedShape = function(shape) {
       shape.select();
       $scope.selectedShapes.push(shape);
-      RectangleCollection.clearInspectedShape();
+      InspectedRectangle.clear();
     };
 
-    $scope.destroySelectedShapes = function(shape) {
+    $scope.destroySelectedShapes = function() {
       $scope.selectedShapes.forEach(function(shape) {
         shape.$destroy();
       });
-      RectangleCollection.clearInspectedShape();
+      InspectedRectangle.clear();
     };
 
     // $scope.selectOnlyShape($scope.rectangles.collection[0]);

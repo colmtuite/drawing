@@ -2,7 +2,6 @@
 
 (function (app) {
   function Screen(futureData) {
-    console.log("Instanciating screen", futureData);
     if (!futureData.$id) {
       angular.extend(this, futureData);
       return;

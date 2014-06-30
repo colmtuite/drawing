@@ -2,6 +2,11 @@
 
 (function(app) {
   function Rectangle(futureData) {
+    if (!futureData.$id) {
+      angular.extend(this, futureData);
+      return;
+    }
+
     this.$$resource = futureData;
   }
 
