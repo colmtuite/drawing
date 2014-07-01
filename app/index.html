@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
   </head>
-  <body ng-app="drawingApp" keypress-events>
+  <body ng-app="drawingApp" keypress-events ng-controller="ApplicationController">
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -70,12 +70,16 @@
         <script src="mixins/underscore/deep.js"></script>
         <script src="mixins/underscore/pluckDeep.js"></script>
         <script src="scripts/app.js"></script>
-        <script src="scripts/controllers/main.js"></script>
+        <script src="scripts/controllers/application.js"></script>
         <script src="scripts/controllers/screens/edit.js"></script>
         <script src="scripts/controllers/screens/index.js"></script>
         <script src="scripts/controllers/screens/show.js"></script>
         <script src="scripts/controllers/interactions.js"></script>
-        <script src="scripts/controllers/shapes.js"></script>
+        <script src="scripts/controllers/registrations.js"></script>
+        <script src="scripts/controllers/sessions.js"></script>
+        <script src="scripts/factories/currentUser.js"></script>
+        <script src="scripts/factories/user.js"></script>
+        <script src="scripts/factories/userCollection.js"></script>
         <script src="scripts/factories/interactions.js"></script>
         <script src="scripts/factories/rectangle.js"></script>
         <script src="scripts/factories/rectangleCollection.js"></script>

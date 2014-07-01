@@ -1,8 +1,8 @@
 <div ng-include src="'views/layouts/header.html'"></div>
 
 <ul class="screens">
-  <li ng-repeat="(uid, screen) in screens">
-    <a ng-href="#/screens/{{uid}}/edit" 
+  <li ng-repeat="screen in screens">
+    <a ng-href="#/screens/{{screen.uid}}/edit" 
       editable-text="screen.name"
       e-placeholder="Screen name"
       buttons="no"

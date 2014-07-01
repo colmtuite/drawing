@@ -1,17 +1,24 @@
 'use strict';
 
 (function(app) {
-  app.controller('ScreensIndexController', ['$scope', 'ScreenCollection', ctrl]);
+  app.controller('ScreensIndexController', [
+    '$scope',
+    'ScreenCollection',
+    ctrl
+  ]);
 
   function ctrl($scope, ScreenCollection) {
-    var screens = new ScreenCollection();
-    $scope.screens = screens.$all();
+    var screens = $scope.currentUser.ownedScreens;
+    $scope.screens = screens.collection;
 
     $scope.newScreen = {};
 
     $scope.createScreen = function(attrs) {
-      screens.$create(attrs);
-      $scope.newScreen = {};
+      angular.extend(attrs, { ownerId: $scope.currentUser.uid })
+      screens.$create(attrs, function(screen) {
+        $scope.currentUser.$addOwnedScreenId(screen.uid);
+        $scope.newScreen = {};
+      });
     };
   }
 })(drawingApp);

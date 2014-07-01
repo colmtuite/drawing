@@ -15,8 +15,15 @@ drawingApp.run(function(editableOptions) {
 drawingApp.config(function ($routeProvider) {
   $routeProvider
     .when('/', {
-      templateUrl: 'views/index.html',
-      controller: 'IndexController'
+      templateUrl: 'views/index.html'
+    })
+    .when('/registrations/new', {
+      templateUrl: 'views/registrations/new.html',
+      controller: 'RegistrationsNewController'
+    })
+    .when('/sessions/new', {
+      templateUrl: 'views/sessions/new.html',
+      controller: 'SessionsNewController'
     })
     .when('/screens', {
       templateUrl: 'views/screens/index.html',

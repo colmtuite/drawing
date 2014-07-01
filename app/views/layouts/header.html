@@ -1,7 +1,17 @@
 <div class="header">
   <ul class="nav nav-pills pull-right">
-    <li class="active"><a ng-href="#/screens">Screens</a></li>
-    <li><a ng-href="#">About</a></li>
+    <li ng-hide="isLoggedIn">
+      <a ng-href="#/sessions/new">Log in</a>
+    </li>
+    <li ng-hide="isLoggedIn">
+      <a ng-href="#/registrations/new">Sign up</a>
+    </li>
+    <li ng-show="isLoggedIn">
+      <a ng-href="#/screens">Screens</a>
+    </li>
+    <li ng-show="isLoggedIn">
+      <a href="javascript:void(0);" ng-click="logout()">Logout</a>
+    </li>
     <li><a ng-href="#">Contact</a></li>
   </ul>
   <h3 class="text-muted">drawing</h3>

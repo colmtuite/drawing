@@ -1,3 +1,5 @@
+'use strict';
+
 drawingApp.filter('filterActorIs', function() {
   return function(input, selected) {
     var out = [];
