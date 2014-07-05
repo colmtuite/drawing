@@ -23,12 +23,19 @@
   app.factory('ScreenCollection', ScreenCollection.$factory);
 
   angular.extend(ScreenCollection.prototype, {
+    fetch: function() {
+      this.collection.forEach(function(model) {
+        model.fetch();
+      });
+      return this;
+    },
+
     reset: function(ids) {
       var that = this;
 
       this.empty();
       _.map(([].concat(ids) || []), function(id) {
-        that.add({ '$id': id }).fetch();
+        that.add({ '$id': id });
       });
     },
 
@@ -45,25 +52,7 @@
       return model;
     },
 
-    // This method is named to mimic the AngularFire API.
-    asArray: function() {
-      return this.collection;
-    },
-
-    resource: function() {
-      // Don't need an $id for collections like this.
-      var ref;
-
-      // Only create the resource once. It won't change since the $id won't.
-      if (!this._resource) {
-        ref = new Firebase(ScreenCollection.FBURL + 'screens');
-        this._resource = ScreenCollection.$firebase(ref);
-      }
-
-      return this._resource;
-    },
-
-  // TODO: Optimistially add the model to the collection.
+    // TODO: Optimistially add the model to the collection.
     create: function(attrs, success) {
       success || (success = angular.noop());
       var that = this;
@@ -74,7 +63,30 @@
           var model = that.add(attrs);
           success(model);
         });
-    }
+    },
+
+    get: function(id) {
+      return _.find(this.collection, { '$id': id });
+    },
+
+    // This method is named to mimic the AngularFire API.
+    asArray: function() {
+      return this.collection;
+    },
+
+    resource: function(path) {
+      var ref;
+
+      if (path) {
+        ref = new Firebase(ScreenCollection.FBURL + 'screens/' + path);
+        return ScreenCollection.$firebase(ref);
+      } else if (!this._resource) {
+        ref = new Firebase(ScreenCollection.FBURL + 'screens');
+        this._resource = ScreenCollection.$firebase(ref);
+      }
+
+      return this._resource;
+    },
   });
 
 

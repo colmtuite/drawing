@@ -9,7 +9,7 @@
 
   function ctrl($scope, ScreenCollection) {
     var screens = $scope.currentUser.user.ownedScreens;
-    $scope.screens = screens.asArray();
+    $scope.screens = screens.fetch().asArray();
 
     $scope.newScreen = {};
 

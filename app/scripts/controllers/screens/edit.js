@@ -2,48 +2,54 @@
 
 (function(app) {
   app.controller('ScreensEditController', 
-    ['$scope', '$routeParams', '$filter', 'ScreenCollection', 'InspectedRectangle', 'Screen', ctrl]);
+    ['$scope', '$routeParams', '$filter', 'ScreenCollection', 'InspectedRectangle', 'Screen', 'Rectangle', ctrl]);
 
-  function ctrl($scope, $routeParams, $filter, ScreenCollection, InspectedRectangle, Screen) {
-    var screens = new ScreenCollection();
-    $scope.screen = screens.$find($routeParams.id);
-    $scope.rectangles = $scope.screen.rectangles.$all();
+  function ctrl($scope, $routeParams, $filter, ScreenCollection, InspectedRectangle, Screen, Rectangle) {
+    $scope.screen = new Screen({ '$id': $routeParams.id });
+    $scope.screen.fetch();
 
-    $scope.inspectedShape = InspectedRectangle.inspected();
-    $scope.$watch(function() { return InspectedRectangle.inspected(); },
-      function(newVal, oldVal) {
-        $scope.inspectedShape = newVal;
-    });
+    $scope.rectangles = $scope.screen.rectangles.asArray();
 
-    // IDEA: Perhaps this should be done by calling "rect.select()" in the
-    // view then having a watcher here in the controller to do the rest
-    // of this stuff when the "isSelected" value of a shape changes?
-    $scope.selectOnlyShape = function(shape) {
-      if (typeof shape === "undefined") return;
-      $scope.clearSelectedShapes();
-      shape.select();
-      $scope.selectedShapes.push(shape);
-      InspectedRectangle.inspected(shape);
+    $scope.createRectangle = function() {
+      var attrs = Rectangle.initialAttributes();
+      $scope.screen.rectangles.create(attrs);
     };
 
-    $scope.clearSelectedShapes = function() {
-      $scope.selectedShapes = [];
-      $scope.screen.rectangles.deselectAll();
-      InspectedRectangle.clear();
-    };
+    // $scope.inspectedShape = InspectedRectangle.inspected();
+    // $scope.$watch(function() { return InspectedRectangle.inspected(); },
+    //   function(newVal, oldVal) {
+    //     $scope.inspectedShape = newVal;
+    // });
 
-    $scope.addSelectedShape = function(shape) {
-      shape.select();
-      $scope.selectedShapes.push(shape);
-      InspectedRectangle.clear();
-    };
+    // // IDEA: Perhaps this should be done by calling "rect.select()" in the
+    // // view then having a watcher here in the controller to do the rest
+    // // of this stuff when the "isSelected" value of a shape changes?
+    // $scope.selectOnlyShape = function(shape) {
+    //   if (typeof shape === "undefined") return;
+    //   $scope.clearSelectedShapes();
+    //   shape.select();
+    //   $scope.selectedShapes.push(shape);
+    //   InspectedRectangle.inspected(shape);
+    // };
 
-    $scope.destroySelectedShapes = function() {
-      $scope.selectedShapes.forEach(function(shape) {
-        shape.$destroy();
-      });
-      InspectedRectangle.clear();
-    };
+    // $scope.clearSelectedShapes = function() {
+    //   $scope.selectedShapes = [];
+    //   $scope.screen.rectangles.deselectAll();
+    //   InspectedRectangle.clear();
+    // };
+
+    // $scope.addSelectedShape = function(shape) {
+    //   shape.select();
+    //   $scope.selectedShapes.push(shape);
+    //   InspectedRectangle.clear();
+    // };
+
+    // $scope.destroySelectedShapes = function() {
+    //   $scope.selectedShapes.forEach(function(shape) {
+    //     shape.$destroy();
+    //   });
+    //   InspectedRectangle.clear();
+    // };
 
     // $scope.selectOnlyShape($scope.rectangles.collection[0]);
 

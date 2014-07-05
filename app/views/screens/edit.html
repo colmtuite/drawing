@@ -8,8 +8,8 @@
         style="position: absolute;"
         ng-style="rect.style()"
         dnd-draggable="true"
-        dnd-on-dragend="rect.$save()"
-        dnd-on-resizeend="rect.$save()"
+        dnd-on-dragend="rect.save()"
+        dnd-on-resizeend="rect.save()"
         dnd-resizable="true"
         dnd-rect="rect.dndData"
         dnd-model-selected="rect.isSelected"
@@ -22,7 +22,7 @@
         ng-style="group.style()"></div>
     </div>
 
-    <button ng-click="screen.rectangles.$create()" 
+    <button ng-click="createRectangle()" 
       class="btn btn-default">Create rectangle</button>
   </div>
 

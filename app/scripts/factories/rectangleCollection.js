@@ -1,17 +1,15 @@
 'use strict';
 
 (function (app) {
-  // This is a nested resource so we pass the future data into it and
-  // assign it.
-  function RectangleCollection(futureData) {
-    this.$$resource = futureData;
+  function RectangleCollection() {
+    this.collection = [];
   }
 
   RectangleCollection.$factory = [
     'Rectangle',
     function(Rectangle) {
       angular.extend(RectangleCollection, {
-        $Rectangle: Rectangle
+        $model: Rectangle
       });
 
       return RectangleCollection;
@@ -19,44 +17,48 @@
 
   app.factory('RectangleCollection', RectangleCollection.$factory);
 
-  RectangleCollection.prototype.$all = function() {
-    return this.$unwrapCollection();
+  angular.extend(RectangleCollection.prototype, {
+    asArray: function() {
+      return this.collection;
+    },
+
+    reset: function(data) {
+      console.log("Resetting rectangles", data);
+    },
+
+    // TODO: Optimistially add the model to the collection.
+    create: function(attrs, success) {
+      success || (success = angular.noop());
+      var that = this;
+      // Be sure to return the promise so we can chain more actions onto it.
+      return this.resource().asArray()
+        .add(attrs).then(function(data) {
+          angular.extend(attrs, { '$id': data.name() });
+          var model = that.add(attrs);
+          success(model);
+        });
+    },
+
+    add: function(model) {
+      model = RectangleCollection._initializeModel(model);
+      this.collection.push(model);
+      return model;
+    },
+
+  });
+
+  RectangleCollection._initializeModel = function(args) {
+    // We may be already dealing with a Rectangle instance. If we are, we need
+    // go no further.
+    if (args.constructor.name === "Rectangle") return args;
+    return new this.$model(args);
   };
 
-  RectangleCollection.prototype.$create = function(options) {
-    var attrs = RectangleCollection.$Rectangle.initialAttributes(options);
-    var ref = this.$$resource.$add(attrs)
-    var rectangle = new RectangleCollection.$Rectangle(ref);
-    return rectangle;
-  };
-
-  RectangleCollection.prototype.deselectAll = function() {
-    angular.forEach(this.collection, function(item, key) {
-      item.deselect();
-    });
-  };
-
-  RectangleCollection.prototype.$unwrapCollection = function() {
-    this.collection = {};
-    var that = this;
-
-    this.$$resource.$on('child_added', function(data) {
-      var uid = data.snapshot.name, value = data.snapshot.value;
-      var ref = that.$$resource.$child(uid);
-      var rectangle = new RectangleCollection.$Rectangle(ref);
-      that.collection[uid] = rectangle;
-    });
-
-    this.$$resource.$on('child_removed', function(data) {
-      delete that.collection[data.snapshot.name];
-    });
-
-    this.$$resource.$on('child_changed', function(ref) {
-      angular.extend(that.collection[ref.snapshot.name], ref.snapshot.value);
-    });
-
-    return this.collection;
-  };
+  // RectangleCollection.prototype.deselectAll = function() {
+  //   angular.forEach(this.collection, function(item, key) {
+  //     item.deselect();
+  //   });
+  // };
 
   RectangleCollection.prototype._keyOfValue = function(value) {
     return _.chain(this.collection).map(function(item, key) {

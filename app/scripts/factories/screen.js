@@ -68,7 +68,7 @@
         // Loading the screen will also load all it's nested data. That means
         // that all rectangle data is available at this point. We need to
         // shove it into the collection.
-        // that.rectangles.$reset(data.rectangeles);
+        that.rectangles.reset(futureData.$data.rectangeles);
         // Now we need to delete it before we overwrite the collection we just
         // populated.
         delete futureData.$data.rectangles;

@@ -46,9 +46,14 @@
       var that = this;
 
       futureData.loaded().then(function() {
+        // TODO: Emit a loaded event.
         console.log("Unwrapped the user", futureData);
         angular.extend(that, futureData.$data);
-        that._fetchAssociatedObjects();
+        // TODO: Doing this in here is a bad idea because it means that I'm
+        // loading and attaching all of the user's screen objects everytime
+        // I load a user object. I should be doing it in the ScreensIndexController
+        // instead.
+        that._setupAssociatedObjects();
       });
     },
 
@@ -70,7 +75,7 @@
       return this._resource;
     },
 
-    _fetchAssociatedObjects: function() {
+    _setupAssociatedObjects: function() {
       // User's have a has_many relationship with screens. We need to load
       // the user's screens here so that we can show them to him.
       console.log("Resetting with", this.ownedScreenIds);
