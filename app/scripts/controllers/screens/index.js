@@ -15,9 +15,16 @@
 
     $scope.createScreen = function(attrs) {
       angular.extend(attrs, { ownerId: $scope.currentUser.uid })
-      screens.$create(attrs, function(screen) {
-        $scope.currentUser.$addOwnedScreenId(screen.uid);
+      screens.create(attrs, function(screen) {
+        $scope.currentUser.addOwnedScreenId(screen.uid);
         $scope.newScreen = {};
+      });
+    };
+
+    $scope.destroyScreen = function(screen) {
+      screen.destroy(function() {
+        $scope.currentUser.removeOwnedScreenId(screen.uid);
+        screens.remove(screen);
       });
     };
   }

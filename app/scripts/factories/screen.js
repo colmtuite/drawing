@@ -10,7 +10,7 @@
 
     if (!futureData.$id) {
       angular.extend(this, futureData);
-      this.$load();
+      this.load();
     }
   }
 
@@ -30,21 +30,22 @@
 
   app.factory('Screen', Screen.$factory);
 
-  Screen.prototype.$destroy = function() {
-    Screen.$firebase(this.path()).$remove();
+  Screen.prototype.destroy = function(success) {
+    success || (success = angular.noop);
+    Screen.$firebase(this.path()).remove().then(success);
   };
 
-  Screen.prototype.$update = function(attrs) {
-    Screen.$firebase(this.path()).$update(attrs);
+  Screen.prototype.update = function(attrs) {
+    Screen.$firebase(this.path()).update(attrs);
   };
 
   Screen.prototype.setUid = function(uid) {
     this.uid = uid;
     // The uid has changed so we want to reload everything.
-    this.$load();
+    this.load();
   };
 
-  Screen.prototype.$load = function() {
+  Screen.prototype.load = function() {
     var path = this.path();
     if (!path) return;
     return this.$unwrap(Screen.$firebase(path));
@@ -62,21 +63,21 @@
   };
 
   Screen.prototype.$unwrap = function(futureData) {
-    var that = this;
+    var that = this,
+        data = futureData.asObject();
 
-    futureData
-      .$on('loaded', function(data) {
-        console.log("Loaded the screen data", data);
-        // Loading the screen will also load all it's nested data. That means
-        // that all rectangle data is available at this point. We need to
-        // shove it into the collection.
-        // that.rectangles.$reset(data.rectangeles);
-        // Now we need to delete it before we overwrite the collection we just
-        // populated.
-        delete data.rectangles;
-        angular.extend(that, data);
-        that._fetchAssociatedObjects();
-      });
+    data.loaded().then(function() {
+      console.log("Loaded the screen data", data);
+      // Loading the screen will also load all it's nested data. That means
+      // that all rectangle data is available at this point. We need to
+      // shove it into the collection.
+      // that.rectangles.$reset(data.rectangeles);
+      // Now we need to delete it before we overwrite the collection we just
+      // populated.
+      delete data.rectangles;
+      angular.extend(that, data.$data);
+      that._fetchAssociatedObjects();
+    });
   };
 
   Screen.prototype._fetchAssociatedObjects = function() {

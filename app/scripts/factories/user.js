@@ -26,23 +26,34 @@
   User.prototype.setUid = function(uid) {
     this.uid = uid;
     // The uid has changed so we want to reload everything.
-    this.$load();
+    this.load();
   };
 
-  User.prototype.$load = function() {
+  User.prototype.load = function() {
     var path = this.path();
     if (!path) return;
     return this.$unwrap(User.$firebase(path));
   };
 
-  User.prototype.$update = function(attrs) {
+  User.prototype.update = function(attrs) {
     User.$firebase(this.path()).$update(attrs);
   };
 
-  User.prototype.$addOwnedScreenId = function(id) {
-    var data = {};
-    data[id] = true;
-    User.$firebase(this.path()).$child('ownedScreenIds').$update(data);
+  User.prototype.addOwnedScreenId = function(id, success) {
+    success || (success = angular.noop);
+    var subPath = this.path().child('ownedScreenIds');
+    var ownedScreens = User.$firebase(subPath).asObject();
+    ownedScreens.$data[id] = true;
+    ownedScreens.save().then(success);
+  };
+
+  User.prototype.removeOwnedScreenId = function(id, success) {
+    success || (success = angular.noop);
+    var subPath = this.path().child('ownedScreenIds');
+    var ownedScreens = User.$firebase(subPath).asObject();
+    delete ownedScreens.$data[id];
+    console.log("Saving", ownedScreens.$data);
+    ownedScreens.save().then(success);
   };
 
   User.prototype.path = function() {
@@ -58,8 +69,10 @@
 
   User.prototype.$unwrap = function(futureData) {
     var that = this;
-    futureData.$on('loaded', function(data) {
-      angular.extend(that, data);
+    var data = futureData.asObject();
+
+    data.loaded().then(function() {
+      angular.extend(that, data.$data);
       that._fetchAssociatedObjects();
     });
   };

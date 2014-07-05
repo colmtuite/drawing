@@ -14,8 +14,6 @@
       angular.extend(ScreenCollection, {
         $$path: path,
         $firebase: $firebase,
-        // This is a base level collection so it needs a direct resource
-        // reference.
         $$resource: $firebase(path),
         $model: Screen,
       });
@@ -46,15 +44,17 @@
   };
 
   // TODO: Optimistially add the model to the collection.
-  ScreenCollection.prototype.$create = function(attrs, success) {
+  ScreenCollection.prototype.create = function(attrs, success) {
     success || (success = angular.noop());
     var that = this;
     // Be sure to return the promise so we can chain more actions onto it.
-    return ScreenCollection.$$resource.$add(attrs).then(function(data) {
-      var model = that.add(attrs);
-      model.setUid(data.name());
-      success(model);
-    });
+    return ScreenCollection.$$resource.asArray()
+      .add(attrs).then(function(data) {
+        console.log("Added a screen", data, attrs, data.name());
+        var model = that.add(attrs);
+        model.setUid(data.name());
+        success(model);
+      });
   };
 
   ScreenCollection._initializeModel = function(args) {
@@ -69,6 +69,18 @@
     this.collection.push(model);
     return model;
   };
+
+  // Remove a screen from the internal collection.
+  ScreenCollection.prototype.remove = function(model) {
+    var index = this.collection.indexOf(model);
+    this.collection.splice(index, 1);
+    return model;
+  };
+
+  ScreenCollection.prototype.path = function() {
+    return ScreenCollection.$$path;
+  };
+  
 
   // This pattern is only useful if we want to change the client whenever
   // ANY screen is added, removed or destroyed on the server. This usually
