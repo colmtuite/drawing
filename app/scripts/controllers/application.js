@@ -13,7 +13,7 @@
     // Even though we're not logged in a this point, it's handy to have an
     // object so that we don't get exceptions when we call methods on it
     // further down the line.
-    $scope.currentUser = new User();
+    $scope.currentUser = new CurrentUser();
 
     $scope.logout = function() {
       $scope.isLoggedIn = false;
@@ -21,8 +21,12 @@
     };
 
     $scope.$on('$firebaseSimpleLogin:login', function(e, user) {
-      angular.extend($scope.currentUser, user);
-      $scope.currentUser.setUid(user.id);
+      console.log("login encountered", user);
+      angular.extend($scope.currentUser.user, angular.extend(user, {
+        '$id': user.id
+      }));
+      // Fetch the user's data record.
+      $scope.currentUser.user.fetch();
       $scope.isLoggedIn = true;
     });
   }

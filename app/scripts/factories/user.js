@@ -23,64 +23,62 @@
 
   app.factory('User', User.$factory);
 
-  User.prototype.setUid = function(uid) {
-    this.uid = uid;
-    // The uid has changed so we want to reload everything.
-    this.load();
-  };
+  angular.extend(User.prototype, {
+    fetch: function() {
+      return this._unwrap(this.resource().asObject());
+    },
 
-  User.prototype.load = function() {
-    var path = this.path();
-    if (!path) return;
-    return this.$unwrap(User.$firebase(path));
-  };
+    addOwnedScreenId: function(id, success) {
+      success || (success = angular.noop);
+      var ownedScreens = this.resource('ownedScreenIds').asObject();
+      ownedScreens.$data[id] = true;
+      ownedScreens.save().then(success);
+    },
+
+    removeOwnedScreenId: function(id, success) {
+      success || (success = angular.noop);
+      var ownedScreens = this.resource('ownedScreenIds').asObject();
+      delete ownedScreens.$data[id];
+      ownedScreens.save().then(success);
+    },
+
+    _unwrap: function(futureData) {
+      var that = this;
+
+      futureData.loaded().then(function() {
+        console.log("Unwrapped the user", futureData);
+        angular.extend(that, futureData.$data);
+        that._fetchAssociatedObjects();
+      });
+    },
+
+    // TODO: Instead of this, trigger an event whenever the $id changes and
+    // update the path that way. Can also update the _resource at the same time.
+    resource: function(path) {
+      if (!this.$id) return;
+      var ref;
+
+      if (path) {
+        ref = new Firebase(User.FBURL + 'users/' + this.$id + '/' + path);
+        return User.$firebase(ref);
+      // Only create the resource once. It won't change since the $id won't.
+      } else if (!this._resource) {
+        ref = new Firebase(User.FBURL + 'users/' + this.$id);
+        this._resource = User.$firebase(ref);
+      }
+
+      return this._resource;
+    },
+
+    _fetchAssociatedObjects: function() {
+      // User's have a has_many relationship with screens. We need to load
+      // the user's screens here so that we can show them to him.
+      console.log("Resetting with", this.ownedScreenIds);
+      this.ownedScreens.reset(_.keys(this.ownedScreenIds));
+    }
+  });
 
   User.prototype.update = function(attrs) {
     User.$firebase(this.path()).$update(attrs);
-  };
-
-  User.prototype.addOwnedScreenId = function(id, success) {
-    success || (success = angular.noop);
-    var subPath = this.path().child('ownedScreenIds');
-    var ownedScreens = User.$firebase(subPath).asObject();
-    ownedScreens.$data[id] = true;
-    ownedScreens.save().then(success);
-  };
-
-  User.prototype.removeOwnedScreenId = function(id, success) {
-    success || (success = angular.noop);
-    var subPath = this.path().child('ownedScreenIds');
-    var ownedScreens = User.$firebase(subPath).asObject();
-    delete ownedScreens.$data[id];
-    console.log("Saving", ownedScreens.$data);
-    ownedScreens.save().then(success);
-  };
-
-  User.prototype.path = function() {
-    if (!this.uid) return;
-
-    // Only create the path once. It won't change since the uid won't.
-    if (!this.$$path) {
-      this.$$path = new Firebase(User.FBURL + 'users/' + this.uid);
-    }
-
-    return this.$$path;
-  };
-
-  User.prototype.$unwrap = function(futureData) {
-    var that = this;
-    var data = futureData.asObject();
-
-    data.loaded().then(function() {
-      angular.extend(that, data.$data);
-      that._fetchAssociatedObjects();
-    });
-  };
-
-  User.prototype._fetchAssociatedObjects = function() {
-    // User's have a has_many relationship with screens. We need to load
-    // the user's screens here so that we can show them to him.
-    console.log("Resetting with", this.ownedScreenIds);
-    this.ownedScreens.$reset(_.keys(this.ownedScreenIds));
   };
 })(drawingApp);

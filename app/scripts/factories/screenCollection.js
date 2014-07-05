@@ -10,11 +10,10 @@
     'FBURL',
     'Screen',
     function($firebase, FBURL, Screen) {
-      var path = new Firebase(FBURL + 'screens');
       angular.extend(ScreenCollection, {
-        $$path: path,
+        FBURL: FBURL,
         $firebase: $firebase,
-        $$resource: $firebase(path),
+        resource: $firebase(new Firebase(FBURL + 'screens')),
         $model: Screen,
       });
 
@@ -23,51 +22,67 @@
 
   app.factory('ScreenCollection', ScreenCollection.$factory);
 
-  // If we just set this.collection to a new array literal then any bindings
-  // which angular has attached will be lost. Instead, we have empty it.
-  ScreenCollection.prototype.empty = function() {
-    this.collection.length = 0;
-  };
+  angular.extend(ScreenCollection.prototype, {
+    reset: function(ids) {
+      var that = this;
 
-  ScreenCollection.prototype.$reset = function(uids) {
-    this.empty();
+      this.empty();
+      _.map(([].concat(ids) || []), function(id) {
+        that.add({ '$id': id }).fetch();
+      });
+    },
 
-    var that = this;
-    _.map(([].concat(uids) || []), function(uid) {
-      that.add({ uid: uid });
-    });
-  }
+    // If we just set this.collection to a new array literal then any bindings
+    // which angular has attached will be lost. Instead, we have empty it.
+    empty: function() {
+      this.collection.length = 0;
+    },
 
-  ScreenCollection.prototype.$find = function(uid) {
-    var ref = ScreenCollection.$$resource.$child(uid)
-    return new ScreenCollection.$Screen(ref);
-  };
+    // Add a screen to the internal collection.
+    add: function(model) {
+      model = ScreenCollection._initializeModel(model);
+      this.collection.push(model);
+      return model;
+    },
+
+    // This method is named to mimic the AngularFire API.
+    asArray: function() {
+      return this.collection;
+    },
+
+    resource: function() {
+      // Don't need an $id for collections like this.
+      var ref;
+
+      // Only create the resource once. It won't change since the $id won't.
+      if (!this._resource) {
+        ref = new Firebase(ScreenCollection.FBURL + 'screens');
+        this._resource = ScreenCollection.$firebase(ref);
+      }
+
+      return this._resource;
+    },
 
   // TODO: Optimistially add the model to the collection.
-  ScreenCollection.prototype.create = function(attrs, success) {
-    success || (success = angular.noop());
-    var that = this;
-    // Be sure to return the promise so we can chain more actions onto it.
-    return ScreenCollection.$$resource.asArray()
-      .add(attrs).then(function(data) {
-        console.log("Added a screen", data, attrs, data.name());
-        var model = that.add(attrs);
-        model.setUid(data.name());
-        success(model);
-      });
-  };
+    create: function(attrs, success) {
+      success || (success = angular.noop());
+      var that = this;
+      // Be sure to return the promise so we can chain more actions onto it.
+      return this.resource().asArray()
+        .add(attrs).then(function(data) {
+          angular.extend(attrs, { '$id': data.name() });
+          var model = that.add(attrs);
+          success(model);
+        });
+    }
+  });
+
 
   ScreenCollection._initializeModel = function(args) {
+    // We may be already dealing with a Screen instance. If we are, we need
+    // go no further.
+    if (args.constructor.name === "Screen") return args;
     return new this.$model(args);
-  };
-
-  // Add a screen to the internal collection.
-  ScreenCollection.prototype.add = function(model) {
-    if (model.constructor.name !== "Screen") {
-      model = ScreenCollection._initializeModel(model);
-    }
-    this.collection.push(model);
-    return model;
   };
 
   // Remove a screen from the internal collection.
@@ -77,34 +92,4 @@
     return model;
   };
 
-  ScreenCollection.prototype.path = function() {
-    return ScreenCollection.$$path;
-  };
-  
-
-  // This pattern is only useful if we want to change the client whenever
-  // ANY screen is added, removed or destroyed on the server. This usually
-  // is not what we want. Imagine we have two users, if we bind to all events
-  // then a screen created by user 1 will show up in user two's collection.
-  //
-  // TODO: Or will it!? Perhaps the security settings will prevent an event
-  // being triggered for user 2. I should test this.
-  // ScreenCollection.prototype.$unwrapCollection = function(futureData) {
-  //   var that = this;
-
-  //   futureData.$on('child_added', function(data) {
-  //     var uid = data.snapshot.name, value = data.snapshot.value;
-  //     that.add(uid, value);
-  //   });
-
-  //   futureData.$on('child_removed', function(data) {
-  //     delete that.collection[data.snapshot.name];
-  //   });
-
-  //   futureData.$on('child_changed', function(ref) {
-  //     angular.extend(that.collection[ref.snapshot.name], ref.snapshot.value);
-  //   });
-
-  //   return this.collection;
-  // };
 })(drawingApp);

@@ -1,7 +1,9 @@
 'user strict';
 
 (function (app) {
-  function CurrentUser(futureData) {}
+  function CurrentUser(futureData) {
+    this.user = new CurrentUser.$User();
+  }
 
   CurrentUser.$factory = [
     '$firebaseSimpleLogin',
@@ -22,24 +24,24 @@
 
   app.factory('CurrentUser', CurrentUser.$factory);
 
-  CurrentUser.$login = function(email, password) {
-    return this.$$auth.$login('password', {
-      email: email, password: password
-    });
-  };
+  // CurrentUser.$login = function(email, password) {
+  //   return this.$$auth.$login('password', {
+  //     email: email, password: password
+  //   });
+  // };
 
-  CurrentUser.$authenticate = function() {
-    return new this.$User(this.$$auth.$getCurrentUser());
-  };
+  // CurrentUser.$authenticate = function() {
+  //   return new this.$User(this.$$auth.$getCurrentUser());
+  // };
 
-  CurrentUser.$create = function(email, password) {
-    return this.$$auth.$createUser(email, password).then(function(user) {
-      CurrentUser.$UserCollection.$create(user);
-    });
-  };
+  // CurrentUser.$create = function(email, password) {
+  //   return this.$$auth.$createUser(email, password).then(function(user) {
+  //     CurrentUser.$UserCollection.$create(user);
+  //   });
+  // };
 
-  CurrentUser.$logout = function() {
-    this.$$auth.$logout();
-  };
+  // CurrentUser.$logout = function() {
+  //   this.$$auth.$logout();
+  // };
   
 }(drawingApp));

@@ -8,23 +8,26 @@
   ]);
 
   function ctrl($scope, ScreenCollection) {
-    var screens = $scope.currentUser.ownedScreens;
-    $scope.screens = screens.collection;
+    var screens = $scope.currentUser.user.ownedScreens;
+    $scope.screens = screens.asArray();
 
     $scope.newScreen = {};
 
     $scope.createScreen = function(attrs) {
-      angular.extend(attrs, { ownerId: $scope.currentUser.uid })
+      console.log("The current user", $scope.currentUser);
+      angular.extend(attrs, { ownerId: $scope.currentUser.user.$id })
       screens.create(attrs, function(screen) {
-        $scope.currentUser.addOwnedScreenId(screen.uid);
+        console.log("Adding the id", screen);
+        $scope.currentUser.user.addOwnedScreenId(screen.$id);
         $scope.newScreen = {};
       });
     };
 
     $scope.destroyScreen = function(screen) {
       screen.destroy(function() {
-        $scope.currentUser.removeOwnedScreenId(screen.uid);
-        screens.remove(screen);
+        $scope.currentUser.user.removeOwnedScreenId(screen.$id, function() {
+          screens.remove(screen);
+        });
       });
     };
   }
