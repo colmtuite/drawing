@@ -7,9 +7,13 @@
 
   RectangleCollection.$factory = [
     'Rectangle',
-    function(Rectangle) {
+    'FBURL',
+    '$firebase',
+    function(Rectangle, FBURL, $firebase) {
       angular.extend(RectangleCollection, {
-        $model: Rectangle
+        $model: Rectangle,
+        FBURL: FBURL,
+        $firebase: $firebase
       });
 
       return RectangleCollection;
@@ -22,13 +26,19 @@
       return this.collection;
     },
 
-    reset: function(data) {
-      console.log("Resetting rectangles", data);
+    reset: function(models) {
+      console.log("resetting rectangles", models);
+      var that = this;
+      // The _.compact prevents us from iterating over an array full
+      // of undefined values.
+      _.map(_.compact(([].concat(models) || [])), function(model) {
+        that.add(model);
+      });
     },
 
     // TODO: Optimistially add the model to the collection.
     create: function(attrs, success) {
-      success || (success = angular.noop());
+      success || (success = angular.noop);
       var that = this;
       // Be sure to return the promise so we can chain more actions onto it.
       return this.resource().asArray()
@@ -41,10 +51,28 @@
 
     add: function(model) {
       model = RectangleCollection._initializeModel(model);
+      angular.extend(model, { '$screenId': this.$screenId });
       this.collection.push(model);
       return model;
     },
 
+    resource: function(path) {
+      var ref,
+          // TODO: This is getting a bit rediculous here. I think I need to
+          // start passing in something like "parentPath" rather than the
+          // screen id.
+          basePath = RectangleCollection.FBURL + 'screens/' + this.$screenId + '/rectangles';
+
+      if (path) {
+        ref = new Firebase(basePath + '/' + path);
+        return RectangleCollection.$firebase(ref);
+      } else if (!this._resource) {
+        ref = new Firebase(basePath);
+        this._resource = RectangleCollection.$firebase(ref);
+      }
+
+      return this._resource;
+    },
   });
 
   RectangleCollection._initializeModel = function(args) {

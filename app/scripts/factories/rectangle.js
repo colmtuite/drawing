@@ -1,19 +1,21 @@
 'use strict';
 
 (function(app) {
-  function Rectangle(futureData) {
+  function Rectangle(data) {
+    console.log("Initializing rectangle", data);
     this.states = [];
-    if (!futureData.then) {
-      this.$$resource = futureData;
-      this.$unwrap();
-    }
+    angular.extend(this, data);
   }
 
   Rectangle.$factory = [
     '$filter',
-    function($filter) {
+    'FBURL',
+    '$firebase',
+    function($filter, FBURL, $firebase) {
       angular.extend(Rectangle, {
-        $filter: $filter
+        $filter: $filter,
+        FBURL: FBURL,
+        $firebase: $firebase
       });
 
       return Rectangle;
@@ -21,87 +23,103 @@
 
   app.factory('Rectangle', Rectangle.$factory);
 
-  Rectangle.prototype.$destroy = function() {
-    this.$$resource.$remove();
-  };
+  angular.extend(Rectangle.prototype, EventEmitter.prototype, {
+    destroy: function() {
+      this.resource().remove();
+    },
 
-  Rectangle.prototype.$save = function() {
-    this.$$resource.$update(this);
-  };
+    save: function() {
+      console.log("Saving rectangle", this.resource().asObject());
+      this.resource().set(this.$id, this);
+    },
 
-  Rectangle.prototype.style = function(state) {
-    state || (state = this.states[0] && this.states[0].name);
-    if (state) {
-      return {
-        "background-color": this[state].fill,
-        "border":  this[state].strokeWidth + 'px solid ' + this[state].stroke
-      };
-    }
-  };
+    style: function(state) {
+      state || (state = this.states[0] && this.states[0].name);
+      if (state) {
+        return {
+          "background-color": this[state].fill,
+          "border":  this[state].strokeWidth + 'px solid ' + this[state].stroke
+        };
+      }
+    },
 
-  Rectangle.prototype.previewStyle = function(state) {
-    return $.extend(this.style(state), this.dndData);
-  };
-  
-  // This method is here for consistency with the Group object. Often we
-  // want to get the names of shapes which may be either groups or
-  // individual shapes without type checking constantly.
-  Rectangle.prototype.elementNames = function() {
-    return [this.name];
-  };
+    previewStyle: function(state) {
+      return $.extend(this.style(state), this.dndData);
+    },
+    
+    // This method is here for consistency with the Group object. Often we
+    // want to get the names of shapes which may be either groups or
+    // individual shapes without type checking constantly.
+    elementNames: function() {
+      return [this.name];
+    },
 
-  Rectangle.prototype.elementIds = function() {
-    return ('#' + this.elementNames().join(', #'));
-  };
+    elementIds: function() {
+      return ('#' + this.elementNames().join(', #'));
+    },
+
+    select: function() {
+      this.isSelected = true; 
+    },
+    
+    deselect: function() {
+      this.isSelected = false; 
+    },
+
+    toggleSelected: function() {
+      this.isSelected = !this.isSelected
+    },
+
+    // Positioning Getters
+    // ===================
+
+    top: function() {
+      return parseInt(this.dndData.top, 10);
+    },
+
+    left: function() { 
+      return parseInt(this.dndData.left, 10);
+    },
+
+    bottom: function() {
+      return (parseInt(this.dndData.top, 10) + parseInt(this.dndData.height, 10));
+    },
+
+    right: function() {
+      return (parseInt(this.dndData.left, 10) + parseInt(this.dndData.width, 10));
+    },
+
+    width: function() {
+      return parseInt(this.dndData.width, 10)
+    },
+
+    height: function() {
+      return parseInt(this.dndData.height, 10)
+    },
+
+    // TODO: Instead of this, trigger an event whenever the $id changes and
+    // update the path that way. Can also update the _resource at the same time.
+    resource: function(path) {
+      if (!this.$id) return;
+      var ref,
+          basePath = Rectangle.FBURL + 'screens/' + this.$screenId + '/rectangles' + this.$id;
+
+      if (path) {
+        ref = new Firebase(basePath + '/' + path);
+        return Rectangle.$firebase(ref);
+      // Only create the resource once. It won't change since the $id won't.
+      } else if (!this._resource) {
+        console.log("Calculating rectangle path", basePath);
+        ref = new Firebase(basePath);
+        this._resource = Rectangle.$firebase(ref);
+      }
+
+      return this._resource;
+    },
+  });
 
   Rectangle.selected = function() {
     return $filter('filter')(this.all(), {isSelected: true});
-  };
-
-  Rectangle.prototype.select = function() {
-    this.isSelected = true; 
-  };
-  
-  Rectangle.prototype.deselect = function() {
-    this.isSelected = false; 
-  };
-
-  Rectangle.prototype.toggleSelected = function() {
-    this.isSelected = !this.isSelected
-  };
-
-  // Positioning Getters
-  // ===================
-
-  Rectangle.prototype.top = function() {
-    return parseInt(this.dndData.top, 10);
-  };
-
-  Rectangle.prototype.left = function() { 
-    return parseInt(this.dndData.left, 10);
-  };
-
-  Rectangle.prototype.bottom = function() {
-    return (parseInt(this.dndData.top, 10) + parseInt(this.dndData.height, 10));
-  };
-
-  Rectangle.prototype.right = function() {
-    return (parseInt(this.dndData.left, 10) + parseInt(this.dndData.width, 10));
-  };
-
-  Rectangle.prototype.width = function() {
-    return parseInt(this.dndData.width, 10)
-  };
-
-  Rectangle.prototype.height = function() {
-    return parseInt(this.dndData.height, 10)
-  };
-
-  Rectangle.prototype.$unwrap = function() {
-    var that = this;
-    this.$$resource.$on('loaded', function(data) {
-      angular.extend(that, data);
-    });
   };
   
   Rectangle.initialAttributes = function(options) {

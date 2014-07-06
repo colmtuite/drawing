@@ -22,7 +22,7 @@
 
   app.factory('ScreenCollection', ScreenCollection.$factory);
 
-  angular.extend(ScreenCollection.prototype, {
+  angular.extend(ScreenCollection.prototype, EventEmitter.prototype, {
     fetch: function() {
       this.collection.forEach(function(model) {
         model.fetch();
@@ -37,6 +37,7 @@
       _.map(([].concat(ids) || []), function(id) {
         that.add({ '$id': id });
       });
+      this.trigger('reset');
     },
 
     // If we just set this.collection to a new array literal then any bindings
@@ -54,7 +55,7 @@
 
     // TODO: Optimistially add the model to the collection.
     create: function(attrs, success) {
-      success || (success = angular.noop());
+      success || (success = angular.noop);
       var that = this;
       // Be sure to return the promise so we can chain more actions onto it.
       return this.resource().asArray()
@@ -75,13 +76,14 @@
     },
 
     resource: function(path) {
-      var ref;
+      var ref,
+          basePath = ScreenCollection.FBURL + 'screens';
 
       if (path) {
-        ref = new Firebase(ScreenCollection.FBURL + 'screens/' + path);
+        ref = new Firebase(basePath + '/' + path);
         return ScreenCollection.$firebase(ref);
       } else if (!this._resource) {
-        ref = new Firebase(ScreenCollection.FBURL + 'screens');
+        ref = new Firebase(basePath);
         this._resource = ScreenCollection.$firebase(ref);
       }
 

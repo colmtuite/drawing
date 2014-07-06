@@ -10,7 +10,7 @@
 
   function ctrl($scope, CurrentUser, $location) {
     $scope.login = function(email, password) {
-      CurrentUser.$login(email, password)
+      CurrentUser.login(email, password)
         .then(function(user) {
           $location.path('/screens');
         })

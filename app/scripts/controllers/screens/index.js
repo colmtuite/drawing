@@ -9,7 +9,11 @@
 
   function ctrl($scope, ScreenCollection) {
     var screens = $scope.currentUser.user.ownedScreens;
-    $scope.screens = screens.fetch().asArray();
+
+    // Can't fetch unti we have downloaded the screen ids in the user data.
+    $scope.currentUser.user.on('loaded', function(e) {
+      $scope.screens = screens.fetch().asArray();
+    });
 
     $scope.newScreen = {};
 
