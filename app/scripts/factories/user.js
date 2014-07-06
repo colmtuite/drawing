@@ -9,12 +9,10 @@
 
   User.$factory = [
     'ScreenCollection',
-    '$firebase',
     'FBURL',
-    function(ScreenCollection, $firebase, FBURL) {
+    function(ScreenCollection, FBURL) {
       angular.extend(User, {
         $ScreenCollection: ScreenCollection,
-        $firebase: $firebase,
         FBURL: FBURL
       });
 
@@ -26,35 +24,41 @@
   angular.extend(User.prototype, EventEmitter.prototype, {
     fetch: function() {
       // NOTE: Calling #asObject() is what triggers the actual download.
-      var futureData = this.resource().asObject();
+      var futureData = this.resource();
       return this._unwrap(futureData);
     },
 
     addOwnedScreenId: function(id, success) {
       success || (success = angular.noop);
-      var ownedScreens = this.resource('ownedScreenIds').asObject();
-      ownedScreens.$data[id] = true;
-      ownedScreens.save().then(success);
+      var ownedScreens = this.resource('ownedScreenIds');
+      var data = {};
+      data[id] = true;
+      ownedScreens.update(data);
+      success();
     },
 
     removeOwnedScreenId: function(id, success) {
       success || (success = angular.noop);
-      var ownedScreens = this.resource('ownedScreenIds').asObject();
-      delete ownedScreens.$data[id];
-      ownedScreens.save().then(success);
+      var ownedScreens = this.resource('ownedScreenIds');
+      var data = {};
+      data[id] = null;
+      ownedScreens.update(data);
+      success();
     },
 
     _unwrap: function(futureData) {
       var that = this;
-      _.extend(this, futureData);
 
-      this.loaded().then(function() {
-        // NOTE: angular.extend will ignore $-prefixed atributes.
-        // angular.extend(that, futureData.$data);
-        that._setupAssociatedObjects();
-        // Make sure to only do this after all data has been assigned.
-        that.trigger('loaded');
-      });
+      futureData.once('value', function(snap) {
+        console.log("user value", snap.val());
+        angular.extend(this, snap.val());
+        this._setupAssociatedObjects();
+        this.trigger('value');
+      }, this);
+
+      futureData.on('child_changed', function(snap) {
+        angular.extend(this, snap.val());
+      }, this);
     },
 
     // TODO: Instead of this, trigger an event whenever the $id changes and
@@ -65,12 +69,10 @@
           basePath = User.FBURL + 'users/' + this.$id
 
       if (path) {
-        ref = new Firebase(basePath + '/' + path);
-        return User.$firebase(ref);
+        return new Firebase(basePath + '/' + path);
       // Only create the resource once. It won't change since the $id won't.
       } else if (!this._resource) {
-        ref = new Firebase(basePath);
-        this._resource = User.$firebase(ref);
+        this._resource = new Firebase(basePath);
       }
 
       return this._resource;
@@ -79,11 +81,7 @@
     _setupAssociatedObjects: function() {
       // User's have a has_many relationship with screens. We need to store
       // the user's screen ids here so that we can fetch them later.
-      this.ownedScreens.reset(_.keys(this.$data.ownedScreenIds));
+      this.ownedScreens.reset(_.keys(this.ownedScreenIds));
     }
   });
-
-  User.prototype.update = function(attrs) {
-    User.$firebase(this.path()).$update(attrs);
-  };
 })(drawingApp);

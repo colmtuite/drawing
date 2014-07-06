@@ -6,14 +6,11 @@
   }
 
   ScreenCollection.$factory = [
-    '$firebase',
     'FBURL',
     'Screen',
-    function($firebase, FBURL, Screen) {
+    function(FBURL, Screen) {
       angular.extend(ScreenCollection, {
         FBURL: FBURL,
-        $firebase: $firebase,
-        resource: $firebase(new Firebase(FBURL + 'screens')),
         $model: Screen,
       });
 
@@ -24,15 +21,12 @@
 
   angular.extend(ScreenCollection.prototype, EventEmitter.prototype, {
     fetch: function() {
-      this.collection.forEach(function(model) {
-        model.fetch();
-      });
+      this.collection.forEach(function(model) { model.fetch(); });
       return this;
     },
 
     reset: function(ids) {
       var that = this;
-
       this.empty();
       _.map(([].concat(ids) || []), function(id) {
         that.add({ '$id': id });
@@ -53,17 +47,21 @@
       return model;
     },
 
+    // Remove a screen from the internal collection.
+    remove: function(model) {
+      var index = this.collection.indexOf(model);
+      this.collection.splice(index, 1);
+      return model;
+    },
+
     // TODO: Optimistially add the model to the collection.
     create: function(attrs, success) {
       success || (success = angular.noop);
       var that = this;
-      // Be sure to return the promise so we can chain more actions onto it.
-      return this.resource().asArray()
-        .add(attrs).then(function(data) {
-          angular.extend(attrs, { '$id': data.name() });
-          var model = that.add(attrs);
-          success(model);
-        });
+      var newModel = this.resource().push(attrs);
+      angular.extend(attrs, { '$id': newModel.name() });
+      var model = that.add(attrs);
+      success(attrs);
     },
 
     get: function(id) {
@@ -80,11 +78,9 @@
           basePath = ScreenCollection.FBURL + 'screens';
 
       if (path) {
-        ref = new Firebase(basePath + '/' + path);
-        return ScreenCollection.$firebase(ref);
+        return new Firebase(basePath + '/' + path);
       } else if (!this._resource) {
-        ref = new Firebase(basePath);
-        this._resource = ScreenCollection.$firebase(ref);
+        this._resource = new Firebase(basePath);
       }
 
       return this._resource;
@@ -97,13 +93,6 @@
     // go no further.
     if (args.constructor.name === "Screen") return args;
     return new this.$model(args);
-  };
-
-  // Remove a screen from the internal collection.
-  ScreenCollection.prototype.remove = function(model) {
-    var index = this.collection.indexOf(model);
-    this.collection.splice(index, 1);
-    return model;
   };
 
 })(drawingApp);

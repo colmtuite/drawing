@@ -14,7 +14,7 @@
     // TODO: The user isn't reloaded every time we reach this page. This 
     // event only triggers when we refresh the page and reload the user.
     // Thus, this event is npt suitable for this purpose.
-    $scope.currentUser.user.on('loaded', function(e) {
+    $scope.currentUser.user.on('value', function(e) {
       $scope.screens = screens.fetch().asArray();
     });
 

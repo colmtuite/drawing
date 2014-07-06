@@ -16,13 +16,13 @@ var firebaseObjToArray = function(obj) {
   }
 
   Screen.$factory = [
+    '$timeout',
     'RectangleCollection',
-    '$firebase',
     'FBURL',
-    function(RectangleCollection, $firebase, FBURL) {
+    function($timeout, RectangleCollection, FBURL) {
       angular.extend(Screen, {
+        $timeout: $timeout,
         $RectangleCollection: RectangleCollection,
-        $firebase: $firebase,
         FBURL: FBURL
       });
 
@@ -33,13 +33,14 @@ var firebaseObjToArray = function(obj) {
 
   angular.extend(Screen.prototype, EventEmitter.prototype, {
     fetch: function() {
-      var futureData = this.resource().asObject();
+      var futureData = this.resource();
       return this._unwrap(futureData);
     },
 
     destroy: function(success) {
       success || (success = angular.noop);
-      this.resource().remove().then(success);
+      this.resource().remove();
+      success();
       return this;
     },
 
@@ -56,41 +57,39 @@ var firebaseObjToArray = function(obj) {
           basePath = Screen.FBURL + 'screens/' + this.$id;
 
       if (path) {
-        ref = new Firebase(basePath + '/' + path);
-        return Screen.$firebase(ref);
+        return new Firebase(basePath + '/' + path);
       // Only create the resource once. It won't change since the $id won't.
       } else if (!this._resource) {
-        ref = new Firebase(basePath);
-        this._resource = Screen.$firebase(ref);
+        this._resource = new Firebase(basePath);
       }
 
       return this._resource;
     },
 
-    loaded: function() {
-      return this.futureData.loaded();
-    },
-
     _unwrap: function(futureData) {
       var that = this;
-      _.extend(this, futureData);
 
-      this.loaded().then(function() {
-        console.log("Screen futuredata loaded", that);
-        // Loading the screen will also load all it's nested data. That means
-        // that all rectangle data is available at this point. We need to
-        // shove it into the collection.
-        // angular.extend(that.rectangles, { '$screenId': futureData.$id });
-        // that.rectangles.reset(firebaseObjToArray(futureData.$data.rectangles));
-        // Now we need to delete it before we overwrite the collection we just
-        // populated.
-        // TODO: I think I'm going to have to start storing $data rather
-        // than it's internals. Might help to keep things in sync with the
-        // server.
-        // _.extend(that, futureData.$data);
+      futureData.on('value', function(snap) {
+        // console.log("Screen futuredata loaded", that, snap.val());
+        Screen.$timeout(function() {
+          angular.extend(that, snap.val());
+        });
         that._fetchAssociatedObjects();
-        that.trigger('loaded');
+        that.trigger('value');
       });
+
+      // this.loaded().then(function() {
+      //   // Loading the screen will also load all it's nested data. That means
+      //   // that all rectangle data is available at this point. We need to
+      //   // shove it into the collection.
+      //   // angular.extend(that.rectangles, { '$screenId': futureData.$id });
+      //   // that.rectangles.reset(firebaseObjToArray(futureData.$data.rectangles));
+      //   // Now we need to delete it before we overwrite the collection we just
+      //   // populated.
+      //   // TODO: I think I'm going to have to start storing $data rather
+      //   // than it's internals. Might help to keep things in sync with the
+      //   // server.
+      // });
     },
 
     _fetchAssociatedObjects: function() {
