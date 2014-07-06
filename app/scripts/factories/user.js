@@ -26,7 +26,8 @@
   angular.extend(User.prototype, EventEmitter.prototype, {
     fetch: function() {
       // NOTE: Calling #asObject() is what triggers the actual download.
-      return this._unwrap(this.resource().asObject());
+      var futureData = this.resource().asObject();
+      return this._unwrap(futureData);
     },
 
     addOwnedScreenId: function(id, success) {
@@ -45,15 +46,11 @@
 
     _unwrap: function(futureData) {
       var that = this;
-      console.log("Unwrapping user", futureData);
+      _.extend(this, futureData);
 
-      futureData.loaded().then(function() {
-        console.log("Unwrapped the user", futureData);
-        angular.extend(that, futureData.$data);
-        // TODO: Doing this in here is a bad idea because it means that I'm
-        // loading and attaching all of the user's screen objects everytime
-        // I load a user object. I should be doing it in the ScreensIndexController
-        // instead.
+      this.loaded().then(function() {
+        // NOTE: angular.extend will ignore $-prefixed atributes.
+        // angular.extend(that, futureData.$data);
         that._setupAssociatedObjects();
         // Make sure to only do this after all data has been assigned.
         that.trigger('loaded');
@@ -80,10 +77,9 @@
     },
 
     _setupAssociatedObjects: function() {
-      // User's have a has_many relationship with screens. We need to load
-      // the user's screens here so that we can show them to him.
-      console.log("Resetting with", this.ownedScreenIds);
-      this.ownedScreens.reset(_.keys(this.ownedScreenIds));
+      // User's have a has_many relationship with screens. We need to store
+      // the user's screen ids here so that we can fetch them later.
+      this.ownedScreens.reset(_.keys(this.$data.ownedScreenIds));
     }
   });
 

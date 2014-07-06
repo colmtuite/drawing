@@ -21,7 +21,6 @@
     };
 
     $scope.$on('$firebaseSimpleLogin:login', function(e, user) {
-      console.log("login encountered", user);
       angular.extend($scope.currentUser.user, angular.extend(user, {
         '$id': user.id
       }));

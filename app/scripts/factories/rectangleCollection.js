@@ -27,7 +27,6 @@
     },
 
     reset: function(models) {
-      console.log("resetting rectangles", models);
       var that = this;
       // The _.compact prevents us from iterating over an array full
       // of undefined values.

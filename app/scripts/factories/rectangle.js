@@ -2,7 +2,6 @@
 
 (function(app) {
   function Rectangle(data) {
-    console.log("Initializing rectangle", data);
     this.states = [];
     angular.extend(this, data);
   }
@@ -29,7 +28,6 @@
     },
 
     save: function() {
-      console.log("Saving rectangle", this.resource().asObject());
       this.resource().set(this.$id, this);
     },
 

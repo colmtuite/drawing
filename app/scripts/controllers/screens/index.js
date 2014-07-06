@@ -11,6 +11,9 @@
     var screens = $scope.currentUser.user.ownedScreens;
 
     // Can't fetch unti we have downloaded the screen ids in the user data.
+    // TODO: The user isn't reloaded every time we reach this page. This 
+    // event only triggers when we refresh the page and reload the user.
+    // Thus, this event is npt suitable for this purpose.
     $scope.currentUser.user.on('loaded', function(e) {
       $scope.screens = screens.fetch().asArray();
     });
@@ -18,10 +21,8 @@
     $scope.newScreen = {};
 
     $scope.createScreen = function(attrs) {
-      console.log("The current user", $scope.currentUser);
       angular.extend(attrs, { ownerId: $scope.currentUser.user.$id })
       screens.create(attrs, function(screen) {
-        console.log("Adding the id", screen);
         $scope.currentUser.user.addOwnedScreenId(screen.$id);
         $scope.newScreen = {};
       });

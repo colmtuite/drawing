@@ -2,7 +2,7 @@
 
 (function (app) {
   function CurrentUser(futureData) {
-    this.user = new CurrentUser.$User();
+    this.user = new CurrentUser.$model();
   }
 
   CurrentUser.$factory = [
@@ -16,7 +16,7 @@
         _resource: $fsl(new Firebase(FBURL)),
         $UserCollection: UserCollection,
         $ScreenCollection: ScreenCollection,
-        $User: User
+        $model: User
       });
 
       return CurrentUser;

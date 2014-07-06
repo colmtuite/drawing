@@ -8,7 +8,7 @@
       buttons="no"
       e-form="screenNameForm"
       onbeforesave="screen.update({ name: $data })"
-      e-required>{{screen.name}}</a>
+      e-required>{{screen.$data.name}}</a>
     | 
     <a href="javascript:void(0)"
       ng-click="screenNameForm.$show()" 
