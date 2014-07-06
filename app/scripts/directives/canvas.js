@@ -17,9 +17,11 @@
         });
 
         scope.$on('keypress:71', function(onEvent, keypressEvent) {
-          scope.$apply(function() {
-            scope.createGroup();
-          });
+          if (keypressEvent.shiftKey === true) {
+            scope.$apply(function() {
+              scope.createGroup();
+            });
+          }
         });
 
         scope.$on('keypress:8', function(onEvent, keypressEvent) {

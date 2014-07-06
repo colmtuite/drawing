@@ -12,26 +12,39 @@ var firebaseObjToArray = function(obj) {
     // Instanciate this even before the data is loaded so that we can call
     // methods on it in the controller without having to wait.
     this.rectangles = new Screen.$RectangleCollection();
-    angular.extend(this, futureData);
+    // console.log("Initializing a screen", futureData, futureData.on);
+
+    if (futureData.on) {
+      // We're dealing with a firebase reference.
+      this._resource = futureData;
+      this._unwrap(futureData);
+    } else {
+      // We're dealing with literal attributes. In this case, the $id should
+      // be among them and we can use it to the the resource via #url.
+      angular.extend(this, futureData);
+    }
   }
 
   Screen.$factory = [
     '$timeout',
     'RectangleCollection',
-    'FBURL',
-    function($timeout, RectangleCollection, FBURL) {
+    'Model',
+    function($timeout, RectangleCollection, Model) {
       angular.extend(Screen, {
         $timeout: $timeout,
         $RectangleCollection: RectangleCollection,
-        FBURL: FBURL
       });
+
+      angular.extend(Screen.prototype, Model.prototype);
 
       return Screen;
     }];
 
   app.factory('Screen', Screen.$factory);
 
-  angular.extend(Screen.prototype, EventEmitter.prototype, {
+  angular.extend(Screen.prototype, {
+    url: function() { return 'screens/' + this.$id; },
+
     fetch: function() {
       var futureData = this.resource();
       return this._unwrap(futureData);
@@ -49,52 +62,54 @@ var firebaseObjToArray = function(obj) {
       this.resource().update(attrs).then(success);
     },
 
-    // TODO: Instead of this, trigger an event whenever the $id changes and
-    // update the path that way. Can also update the _resource at the same time.
-    resource: function(path) {
-      if (!this.$id) return;
-      var ref,
-          basePath = Screen.FBURL + 'screens/' + this.$id;
-
-      if (path) {
-        return new Firebase(basePath + '/' + path);
-      // Only create the resource once. It won't change since the $id won't.
-      } else if (!this._resource) {
-        this._resource = new Firebase(basePath);
-      }
-
-      return this._resource;
-    },
-
     _unwrap: function(futureData) {
       var that = this;
 
-      futureData.on('value', function(snap) {
-        // console.log("Screen futuredata loaded", that, snap.val());
+      futureData.once('value', function(snap) {
+        // console.log("Loaded screen", snap.name(), snap.val());
+        // // console.log("Screen futuredata loaded", that, snap.val());
+        // Loading the screen will also load all it's nested data. That means
+        // that all rectangle data is available at this point. We need to
+        // shove it into the collection.
+        this.rectangles.reset(this.resource().child('rectangles'));
+        this.$id = snap.name();
+
         Screen.$timeout(function() {
-          angular.extend(that, snap.val());
+          // Now we need to delete it before we overwrite the collection we just
+          // populated.
+          angular.extend(that, _.omit(snap.val(), 'rectangles'));
         });
-        that._fetchAssociatedObjects();
-        that.trigger('value');
-      });
 
-      // this.loaded().then(function() {
-      //   // Loading the screen will also load all it's nested data. That means
-      //   // that all rectangle data is available at this point. We need to
-      //   // shove it into the collection.
-      //   // angular.extend(that.rectangles, { '$screenId': futureData.$id });
-      //   // that.rectangles.reset(firebaseObjToArray(futureData.$data.rectangles));
-      //   // Now we need to delete it before we overwrite the collection we just
-      //   // populated.
-      //   // TODO: I think I'm going to have to start storing $data rather
-      //   // than it's internals. Might help to keep things in sync with the
-      //   // server.
-      // });
+        // this._setupAssociatedObjects();
+      }, this);
+
+      futureData.on('child_changed', function(newSnap, prevSibling) {
+        console.log("Screen child changed", newSnap.name(), newSnap.val());
+
+        // We only want to deal with direct attributes of the screen here.
+        // The rectangles collection etc. can setup their own listeners
+        // and use them to respond to updates.
+        if (!newSnap.hasChildren()) {
+          Screen.$timeout(function() {
+            that[newSnap.name()] = newSnap.val();
+          });
+        }
+
+        // If the new snap has the key of rectangles then one of the children
+        // other than the rectangles must have changed.
+        // if (newSnap.val().rectangles) {
+        //   angular.extend(that, _.omit(snap.val(), 'rectangles'));
+        // } else {
+        //   Screen.$timeout(function() {
+        //     that.rectangles.reset(firebaseObjToArray(newSnap.val()));
+        //   });
+        // }
+      }, this);
     },
 
-    _fetchAssociatedObjects: function() {
-      // Screens don't have a Has_many relationship with any other objects
-      // so there is nothing to do here.
-    },
+    // _setupAssociatedObjects: function() {
+    //   // Screens don't have a Has_many relationship with any other objects
+    //   // so there is nothing to do here.
+    // },
   });
 }(drawingApp));

@@ -3,32 +3,66 @@
 (function(app) {
   function Rectangle(data) {
     this.states = [];
+    // console.log("Initializing rectangle", data);
     angular.extend(this, data);
+    this._unwrap(data);
   }
 
   Rectangle.$factory = [
+    '$timeout', 
     '$filter',
-    'FBURL',
-    '$firebase',
-    function($filter, FBURL, $firebase) {
+    'Model',
+    function($timeout, $filter, Model) {
       angular.extend(Rectangle, {
+        $timeout: $timeout,
         $filter: $filter,
-        FBURL: FBURL,
-        $firebase: $firebase
       });
+
+      angular.extend(Rectangle.prototype, Model.prototype);
 
       return Rectangle;
     }];
 
   app.factory('Rectangle', Rectangle.$factory);
 
-  angular.extend(Rectangle.prototype, EventEmitter.prototype, {
+  angular.extend(Rectangle.prototype, {
+    url: function() {
+      return 'screens/' + this.$screenId + '/rectangles/' + this.$id;
+    },
+
     destroy: function() {
-      this.resource().remove();
+      var that = this;
+      Rectangle.$timeout(function() {
+        that.resource().remove();
+      });
     },
 
     save: function() {
-      this.resource().set(this.$id, this);
+      // console.log("Saving", this.basePathString());
+      // console.log("Saving", this.resource().toString());
+      this.resource().set({ guid: 'hello' }, function(error) {
+        // console.log("Save colpleted", error);
+      });
+    },
+
+    toJSON: function() {
+      // Firebase appears to be very choosy about the keys of the JSON
+      // you send to the server. Might be worth having a look at the AngularFire
+      // toJSON implementation to try and get a better way to pick out keys
+      // which are going to cause trouble.
+      return _.pick(this, 'dndData', 'name', 'guid', 'normal', 'hover', 'isSelected', 'isSelecting', 'isHighlighted');
+    },
+
+    _unwrap: function(data) {
+      this.resource().on('value', function(snap) {
+        // console.log("Rect value change", snap.val());
+      }, this);
+
+      this.resource().on('child_changed', function(newSnap, prevSibling) {
+        // console.log("Rect child changed", newSnap.name(), newSnap.val());
+
+        angular.extend(this[newSnap.name()], newSnap.val());
+      }, this);
     },
 
     style: function(state) {
@@ -93,26 +127,6 @@
 
     height: function() {
       return parseInt(this.dndData.height, 10)
-    },
-
-    // TODO: Instead of this, trigger an event whenever the $id changes and
-    // update the path that way. Can also update the _resource at the same time.
-    resource: function(path) {
-      if (!this.$id) return;
-      var ref,
-          basePath = Rectangle.FBURL + 'screens/' + this.$screenId + '/rectangles' + this.$id;
-
-      if (path) {
-        ref = new Firebase(basePath + '/' + path);
-        return Rectangle.$firebase(ref);
-      // Only create the resource once. It won't change since the $id won't.
-      } else if (!this._resource) {
-        console.log("Calculating rectangle path", basePath);
-        ref = new Firebase(basePath);
-        this._resource = Rectangle.$firebase(ref);
-      }
-
-      return this._resource;
     },
   });
 

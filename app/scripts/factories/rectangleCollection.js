@@ -7,14 +7,13 @@
 
   RectangleCollection.$factory = [
     'Rectangle',
-    'FBURL',
-    '$firebase',
-    function(Rectangle, FBURL, $firebase) {
+    'Collection',
+    function(Rectangle, Collection) {
       angular.extend(RectangleCollection, {
-        $model: Rectangle,
-        FBURL: FBURL,
-        $firebase: $firebase
+        $model: Rectangle
       });
+
+      angular.extend(RectangleCollection.prototype, Collection.prototype);
 
       return RectangleCollection;
     }];
@@ -22,17 +21,21 @@
   app.factory('RectangleCollection', RectangleCollection.$factory);
 
   angular.extend(RectangleCollection.prototype, {
-    asArray: function() {
-      return this.collection;
+    url: function() {
+      return 'screens/' + this.$screenId + '/rectangles';
     },
 
     reset: function(models) {
       var that = this;
+      // console.log("Resetting rectangles", models);
+      this.empty();
+      this._unwrap();
+
       // The _.compact prevents us from iterating over an array full
       // of undefined values.
-      _.map(_.compact(([].concat(models) || [])), function(model) {
-        that.add(model);
-      });
+      // _.map(_.compact(([].concat(models) || [])), function(model) {
+      //   that.add(model);
+      // });
     },
 
     // TODO: Optimistially add the model to the collection.
@@ -40,52 +43,46 @@
       success || (success = angular.noop);
       var that = this;
       // Be sure to return the promise so we can chain more actions onto it.
-      return this.resource().asArray()
-        .add(attrs).then(function(data) {
-          angular.extend(attrs, { '$id': data.name() });
-          var model = that.add(attrs);
-          success(model);
-        });
+      var newModel = this.resource().push(attrs)
+      angular.extend(attrs, { '$id': newModel.name() });
+      var model = that.add(attrs);
+      success(model);
     },
 
     add: function(model) {
       model = RectangleCollection._initializeModel(model);
       angular.extend(model, { '$screenId': this.$screenId });
+      // console.log("Adding", model);
       this.collection.push(model);
       return model;
     },
 
-    resource: function(path) {
-      var ref,
-          // TODO: This is getting a bit rediculous here. I think I need to
-          // start passing in something like "parentPath" rather than the
-          // screen id.
-          basePath = RectangleCollection.FBURL + 'screens/' + this.$screenId + '/rectangles';
+    deselectAll: function() {
+      angular.forEach(this.collection, function(item) {
+        item.deselect();
+      });
+    },
 
-      if (path) {
-        ref = new Firebase(basePath + '/' + path);
-        return RectangleCollection.$firebase(ref);
-      } else if (!this._resource) {
-        ref = new Firebase(basePath);
-        this._resource = RectangleCollection.$firebase(ref);
-      }
+    _unwrap: function() {
+      // console.log("Unwrapping rects", this.$screenId);
 
-      return this._resource;
+      this.resource().on('child_added', function(snap, prevSiblingName) {
+        // console.log("Child added to rect collection", snap.name(), prevSiblingName, snap.val());
+        this.add(angular.extend(snap.val(), { '$id': snap.name() }));
+      }, this);
+
+      this.resource().on('child_removed', function(snap) {
+        // console.log("Child added to rect collection", snap.name(), prevSiblingName, snap.val());
+        this.remove(snap.name());
+      }, this);
     },
   });
 
   RectangleCollection._initializeModel = function(args) {
-    // We may be already dealing with a Rectangle instance. If we are, we need
-    // go no further.
     if (args.constructor.name === "Rectangle") return args;
     return new this.$model(args);
   };
 
-  // RectangleCollection.prototype.deselectAll = function() {
-  //   angular.forEach(this.collection, function(item, key) {
-  //     item.deselect();
-  //   });
-  // };
 
   RectangleCollection.prototype._keyOfValue = function(value) {
     return _.chain(this.collection).map(function(item, key) {
