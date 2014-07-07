@@ -5,5 +5,6 @@ describe('Homepage', function() {
 
   it('should have a heading', function() {
     expect(element(by.css('h1')).getText()).toEqual('Homepage');
+    element(bt
   });
 });

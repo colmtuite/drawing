@@ -10,13 +10,11 @@
 
   function ctrl($scope, CurrentUser, $location) {
     $scope.login = function(email, password) {
-      CurrentUser.login(email, password)
-        .then(function(user) {
-          $location.path('/screens');
-        })
-        .catch(function(error) {
-          console.error(error);
-        });
+      $scope.currentUser.on('login', function() {
+        $location.path('/screens');
+      });
+
+      $scope.currentUser.login(email, password);
     };
   }
 }(drawingApp));

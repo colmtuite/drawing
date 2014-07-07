@@ -5,10 +5,11 @@
     '$scope',
     'CurrentUser',
     'FBURL',
+    '$location',
     ctrl
   ]);
 
-  function ctrl($scope, CurrentUser, FBURL) {
+  function ctrl($scope, CurrentUser, FBURL, $location) {
     $scope.isLoggedIn = false;
     // Even though we're not logged in a this point, it's handy to have an
     // object so that we don't get exceptions when we call methods on it
@@ -19,9 +20,13 @@
       $scope.isLoggedIn = true;
 
       $scope.logout = function() {
-        $scope.isLoggedIn = false;
         $scope.currentUser.logout();
       };
+    });
+
+    $scope.currentUser.on('logout', function() {
+      $scope.isLoggedIn = false;
+      $location.path('/');
     });
 
     $scope.currentUser.authenticate();

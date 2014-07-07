@@ -24,7 +24,7 @@
     authenticate: function() {
       var that = this;
 
-      new FirebaseSimpleLogin(this._resource, function(error, userData) {
+      this.auth = new FirebaseSimpleLogin(this._resource, function(error, userData) {
         if (error) {
           console.warn("error logging in the user", error);
         } else if (userData) {
@@ -44,15 +44,17 @@
     },
 
     logout: function() {
-      this._resource.logout();
+      this.auth.logout();
+      this.trigger('logout');
     },
-  });
 
-  CurrentUser.login = function(email, password) {
-    return this._resource.login('password', {
-      email: email, password: password
-    });
-  };
+    login: function(email, password, success) {
+      success || (success = angular.noop);
+      return this.auth.login('password', {
+        email: email, password: password
+      });
+    }
+  });
 
   // CurrentUser.$create = function(email, password) {
   //   return this.$$auth.$createUser(email, password).then(function(user) {
