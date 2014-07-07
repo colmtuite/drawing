@@ -27,21 +27,25 @@
       return 'users/' + this.$id;
     },
 
-    fetch: function() {
-      return this._unwrap(this.resource());
-    },
-
-    _unwrap: function(futureData) {
+    // TODO: I'm pretty sure there is no need to pass this in. I can just call
+    // whatever I want on this._resource once it is set.
+    _unwrap: function() {
       var that = this;
+      // There is no need for me to wait until the 'value' event to pass
+      // in this reference. I can pass it in as soon user._resource is set.
+      // It will then resolve when it is good and ready.
+      // Keep in mind that I've already fetched the user's data from Firebase
+      // so this #child operation doesn't incur any extra downloading cost.
+      this.ownedScreens.reset(this._resource.child('ownedScreenIds'));
 
-      futureData.once('value', function(snap) {
+      this._resource.once('value', function(snap) {
         this.$id = snap.name();
         angular.extend(this, snap.val());
         // this._setupAssociatedObjects();
-        this.ownedScreens.reset(futureData.child('ownedScreenIds'));
+        this.trigger('load');
       }, this);
 
-      futureData.on('child_changed', function(newSnap) {
+      this._resource.on('child_changed', function(newSnap) {
         if (!newSnap.hasChildren()) {
           console.log("user child changed", newSnap.name(), newSnap.val());
           Screen.$timeout(function() {

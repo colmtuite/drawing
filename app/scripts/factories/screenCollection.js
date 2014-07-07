@@ -3,7 +3,6 @@
 (function (app) {
   function ScreenCollection() {
     this.collection = [];
-    this.foreignKeyCollection = [];
   }
 
   ScreenCollection.$factory = [
@@ -51,8 +50,11 @@
       return this;
     },
 
-    reset: function(futureData) {
-      this._unwrap(futureData);
+    reset: function(keyReference) {
+      this.empty();
+      this.keyReference = keyReference;
+      // this.trigger('reset');
+      // this._unwrap(keyReference);
     },
 
     // Add a screen to the internal collection.
@@ -66,13 +68,48 @@
       return model;
     },
 
+    // Choices and tradeoffs.
+    //
+    //   1. Initially add on value then add from the create method for future
+    //      created screens.
+    //      Invalid because server changes never reflected on page.
+    //   2. Initially add on child_added then add from the create method for
+    //      future created screens.
+    //      Slightly worried about it being slow UI when creating new screens
+    //      but it doesn't appear to be so that's ok.
+    //   3. Initially add on value then add future created screens from the
+    //      'child_added' event.
+    //      Can only happen if we change #add to reject the duplicate calls it
+    //      encounters when using this method.
+    //
+    // One other semi related issue is the fact that fetching the user
+    // automatically causes all screen data to download. This happens because
+    // we reset his owned screens collection when we unwrap the user. Doing
+    // so will unwrap the screens collection which automatically unwraps each
+    // screen in the collection.
+    //
+    // Ways to fix:
+    //
+    //   1. Separate the idea of resetting and unwrapping. Load the user and
+    //      update the reference in his ownedScreens collection but don't
+    //      attach any listeners until told to do so by the controller. That
+    //      way we can selectively decide to fetch the screen data or not in
+    //      the controller. I have to wait for the user to load before I can
+    //      fetch the screens though because I need the keys in place.
+    //   2. Leave things as they are (all screens loaded on all pages) but
+    //      separate the screens into two separate JSON structures. One tree
+    //      holds screen metadata like it's name, the other holds the actual
+    //      heavy screen data. Let the metadata load on every page and the
+    //      heavy data only load on pages where it is needed.
+    //
+    // I suspect I will have a better idea what to do after I deal with routing
+    // and moving between pages so I will hold off on a decision until then.
+
     // TODO: Optimistially add the model to the collection.
     create: function(attrs, success) {
       success || (success = angular.noop);
       var newModel = this.resource().push(attrs);
-      // angular.extend(attrs, { '$id': newModel.name() });
       this.addForeignKey(newModel.name());
-      var model = this.add(newModel);
       success(attrs);
     },
 
@@ -84,21 +121,21 @@
     },
 
     addForeignKey: function(key) {
-      var data = {};
-      data[key] = true;
-      this.keyResource.update(data);
+      this.setForeignKey(key, true);
     },
 
     removeForeignKey: function(key) {
-      var data = {};
-      data[key] = null;
-      this.keyResource.update(data);
+      this.setForeignKey(key, null);
     },
 
-    _unwrap: function(futureData) {
-      this.keyResource = futureData;
+    setForeignKey: function(key, value) {
+      var data = {};
+      data[key] = value;
+      this.keyReference.update(data);
+    },
 
-      futureData.once('value', function(snap) {
+    _unwrap: function() {
+      this.keyReference.once('value', function(snap) {
         console.log("Owned screen ids value", snap.name(), snap.val());
         var that = this;
         snap.forEach(function(subSnap) {
@@ -115,37 +152,36 @@
           // I have to do convoluted string concatenation in order to end
           // back with the resource (this is what I've been doing up to this
           // point).
-          that.add(that.resource().child(subSnap.name()));
+          // that.add(that.resource().child(subSnap.name()));
         });
+      }, this);
 
-        // I have to listen to this and add models on fire because of the
-        // scenario where another user of the app adds this user to a screen
-        // to collabourate. In that instance, the screen has to show up in
-        // the user's page.
-        futureData.on('child_added', function(snap) {
-          console.log("Owned screen ids child added", snap.name(), snap.val());
-          var model = this.add(this.resource().child(snap.name()));
-          // Not sure I can do this in here. Might end up loading every screen
-          // even when we don't need them. Will leave it here for the moment.
-          //
-          // I need it so that the data for a model get's fetched when we
-          // create a new screen. Without it, the name of the added screen
-          // never shows up on the page.
-          //
-          // However, it's silly to do things like this anyway. I have the
-          // attributes locally anyway so I should be optimistically adding
-          // them to the collection instead of waiting for this event to fire.
-          //
-          // Ideally I should do the initial fetch out in the controller and
-          // come up with some way to skip the duplicate #add.
-          // model.fetch();
-        }, this);
+      // I have to listen to this and add models on fire because of the
+      // scenario where another user of the app adds this user to a screen
+      // to collabourate. In that instance, the screen has to show up in
+      // the user's page.
+      this.keyReference.on('child_added', function(snap) {
+        console.log("Owned screen ids child added", snap.name(), snap.val());
+        this.add(this.resource().child(snap.name()));
+        // Not sure I can do this in here. Might end up loading every screen
+        // even when we don't need them. Will leave it here for the moment.
+        //
+        // I need it so that the data for a model get's fetched when we
+        // create a new screen. Without it, the name of the added screen
+        // never shows up on the page.
+        //
+        // However, it's silly to do things like this anyway. I have the
+        // attributes locally anyway so I should be optimistically adding
+        // them to the collection instead of waiting for this event to fire.
+        //
+        // Ideally I should do the initial fetch out in the controller and
+        // come up with some way to skip the duplicate #add.
+        // model.fetch();
+      }, this);
 
-        futureData.on('child_removed', function(snap) {
-          // console.log("Owned screen ids child added", snap.name(), snap.val());
-          this.remove(snap.name());
-        }, this);
-
+      this.keyReference.on('child_removed', function(snap) {
+        // console.log("Owned screen ids child added", snap.name(), snap.val());
+        this.remove(snap.name());
       }, this);
 
     },

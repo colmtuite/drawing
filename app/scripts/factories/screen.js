@@ -17,7 +17,7 @@ var firebaseObjToArray = function(obj) {
     if (futureData.on) {
       // We're dealing with a firebase reference.
       this._resource = futureData;
-      this._unwrap(futureData);
+      this._unwrap();
     } else {
       // We're dealing with literal attributes. In this case, the $id should
       // be among them and we can use it to the the resource via #url.
@@ -45,11 +45,6 @@ var firebaseObjToArray = function(obj) {
   angular.extend(Screen.prototype, {
     url: function() { return 'screens/' + this.$id; },
 
-    fetch: function() {
-      var futureData = this.resource();
-      return this._unwrap(futureData);
-    },
-
     destroy: function(success) {
       success || (success = angular.noop);
       this.resource().remove();
@@ -62,34 +57,28 @@ var firebaseObjToArray = function(obj) {
       this.resource().update(attrs).then(success);
     },
 
-    _unwrap: function(futureData) {
+    _unwrap: function() {
       var that = this;
+      // Loading the screen will also load all it's nested data. That means
+      // that all rectangle data is available at this point.
+      this.rectangles.reset(this.resource().child('rectangles'));
 
-      futureData.once('value', function(snap) {
+      this._resource.once('value', function(snap) {
         // console.log("Loaded screen", snap.name(), snap.val());
-        // // console.log("Screen futuredata loaded", that, snap.val());
-        // Loading the screen will also load all it's nested data. That means
-        // that all rectangle data is available at this point. We need to
-        // shove it into the collection.
-        this.rectangles.reset(this.resource().child('rectangles'));
         this.$id = snap.name();
 
-        Screen.$timeout(function() {
-          // Now we need to delete it before we overwrite the collection we just
-          // populated.
-          angular.extend(that, _.omit(snap.val(), 'rectangles'));
-        });
+        // Delete rectangles data so it doesn't overwrite the collection.
+        angular.extend(this, _.omit(snap.val(), 'rectangles'));
 
         // this._setupAssociatedObjects();
       }, this);
 
-      futureData.on('child_changed', function(newSnap, prevSibling) {
-        console.log("Screen child changed", newSnap.name(), newSnap.val());
-
+      this._resource.on('child_changed', function(newSnap, prevSibling) {
         // We only want to deal with direct attributes of the screen here.
         // The rectangles collection etc. can setup their own listeners
         // and use them to respond to updates.
         if (!newSnap.hasChildren()) {
+          console.log("Screen child changed", newSnap.name(), newSnap.val());
           Screen.$timeout(function() {
             that[newSnap.name()] = newSnap.val();
           });

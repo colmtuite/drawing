@@ -41,6 +41,10 @@
 
       return this._resource;
     },
+
+    fetch: function() {
+      return this._unwrap(this.resource());
+    },
   });
 
 }(drawingApp));

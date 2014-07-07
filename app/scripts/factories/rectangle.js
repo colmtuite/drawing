@@ -1,11 +1,16 @@
 'use strict';
 
 (function(app) {
-  function Rectangle(data) {
+  function Rectangle(futureData) {
     this.states = [];
-    // console.log("Initializing rectangle", data);
-    angular.extend(this, data);
-    this._unwrap(data);
+    console.log("Initializing rectangle", futureData);
+
+    if (futureData.on) {
+      this._resource = futureData;
+      this._unwrap();
+    } else {
+      angular.extend(this, futureData);
+    }
   }
 
   Rectangle.$factory = [
@@ -31,18 +36,17 @@
     },
 
     destroy: function() {
-      var that = this;
-      Rectangle.$timeout(function() {
-        that.resource().remove();
-      });
+      // Removing a rectangle doesn't appear to remove the item from the
+      // UI on another user's screen. I've tried wrapping this line in a
+      // $timeout but that doesn't appear to fix the issue. I'll have to
+      // investigate what is going wrong. I suspect it's because I'm not
+      // listenting to the 'value' event of the rectangle and using that
+      // to remove it from the UI.
+      this.resource().remove();
     },
 
     save: function() {
-      // console.log("Saving", this.basePathString());
-      // console.log("Saving", this.resource().toString());
-      this.resource().set({ guid: 'hello' }, function(error) {
-        // console.log("Save colpleted", error);
-      });
+      this.resource().update(this.toJSON());
     },
 
     toJSON: function() {
@@ -53,16 +57,46 @@
       return _.pick(this, 'dndData', 'name', 'guid', 'normal', 'hover', 'isSelected', 'isSelecting', 'isHighlighted');
     },
 
-    _unwrap: function(data) {
-      this.resource().on('value', function(snap) {
+    _unwrap: function() {
+      this.resource().once('value', function(snap) {
         // console.log("Rect value change", snap.val());
+        this.$id = snap.name();
+        angular.extend(this, snap.val());
       }, this);
 
-      this.resource().on('child_changed', function(newSnap, prevSibling) {
-        // console.log("Rect child changed", newSnap.name(), newSnap.val());
-
-        angular.extend(this[newSnap.name()], newSnap.val());
+      this.resource().on('value', function(snap) {
+        console.log("Rectangle value", snap.name(), snap.val());
+        var that = this;
+        Rectangle.$timeout(function() {
+          if (snap.val() === null) {
+            // The rectangle has been deleted. 
+            // TODO: http://stackoverflow.com/q/14250642/574190
+          } else {
+            angular.extend(that[newSnap.name()], newSnap.val());
+          }
+        });
       }, this);
+
+      // this.resource().on('child_changed', function(newSnap, prevSibling) {
+      //   console.log("Rect child changed", newSnap.name(), newSnap.val());
+      //   var that = this;
+      //   // Only applying changes if they have no children is not sophisticated
+      //   // enough in this instance because rectangle data contains some nested
+      //   // structures like states which, when changed, we want to update the
+      //   // whole rectangle. For example, "fill" is nested under "normal" so
+      //   // when ""fill" is changed the snapshot sent looks like this:
+      //   //
+      //   //   snap.name() -> normal
+      //   //   snap.val() -> { fill: '...', stroke: '...', strokeWidth: 2 }
+      //   //   snap.hasChildren() -> true
+      //   //
+      //   // The difference between Rectangle and Screen in this instance is
+      //   // that Rectanlge has no children which are proper models in this
+      //   // system. Thus, I can skip the hasChildren test.
+      //   Rectangle.$timeout(function() {
+      //     angular.extend(that[newSnap.name()], newSnap.val());
+      //   });
+      // }, this);
     },
 
     style: function(state) {

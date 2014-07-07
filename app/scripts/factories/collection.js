@@ -1,6 +1,8 @@
 'use strict';
 
 (function (app) {
+  // NOTE: The constructor doesn't get run for interited classes. I'll have
+  // to build some way of calling super I think.
   function Collection() {}
 
   Collection.$factory = [

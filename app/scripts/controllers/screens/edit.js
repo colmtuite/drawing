@@ -5,6 +5,21 @@
     ['$scope', '$routeParams', '$filter', 'ScreenCollection', 'InspectedRectangle', 'Screen', 'Rectangle', ctrl]);
 
   function ctrl($scope, $routeParams, $filter, ScreenCollection, InspectedRectangle, Screen, Rectangle) {
+    // This is one of the instances where I can't pass in the reference to
+    // Firebase and must pass in the ID instead (well, technically I could
+    // construct the reference out here with "new Firebase()" but I would
+    // rather do that in the model layer). This exemplifies why I do need
+    // to retain the ability to infer a  resource from an $id.
+    //
+    // So far however, I don;t see a reason to be able to lazily calc the
+    // reference like I'm doing at the moment with #resource. There should
+    // be a method where you pass in an $id and get back a reference. I can
+    // then call it in the initializer as needed (like here) or directly
+    // (like I need to do with user in the ApplicationController).
+    //
+    // Another problem is that there's some sort of race condition going on
+    // here. Sometimes I refresh the page and don't get any screen data
+    // appearing.
     $scope.screen = new Screen({ '$id': $routeParams.id });
     $scope.screen.fetch();
 

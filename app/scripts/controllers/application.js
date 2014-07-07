@@ -25,9 +25,11 @@
       angular.extend($scope.currentUser.user, user);
       // We have to do this manually in this instance because we're using
       // the User model outside of a collection.
+      // All of the user's data is loaded as soon as I construct this Firebase
+      // path.
       $scope.currentUser.user._resource = new Firebase(FBURL + 'users/' + user.id);
       // Fetch the user's data record.
-      $scope.currentUser.user.fetch();
+      $scope.currentUser.user._unwrap();
       $scope.isLoggedIn = true;
     });
   }

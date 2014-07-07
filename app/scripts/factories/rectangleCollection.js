@@ -25,10 +25,9 @@
       return 'screens/' + this.$screenId + '/rectangles';
     },
 
-    reset: function(models) {
-      var that = this;
-      // console.log("Resetting rectangles", models);
+    reset: function(reference) {
       this.empty();
+      this._resource = reference;
       this._unwrap();
 
       // The _.compact prevents us from iterating over an array full
@@ -44,15 +43,13 @@
       var that = this;
       // Be sure to return the promise so we can chain more actions onto it.
       var newModel = this.resource().push(attrs)
-      angular.extend(attrs, { '$id': newModel.name() });
-      var model = that.add(attrs);
-      success(model);
+      // angular.extend(attrs, { '$id': newModel.name() });
+      // var model = that.add(attrs);
+      // success(model);
     },
 
     add: function(model) {
       model = RectangleCollection._initializeModel(model);
-      angular.extend(model, { '$screenId': this.$screenId });
-      // console.log("Adding", model);
       this.collection.push(model);
       return model;
     },
@@ -66,13 +63,11 @@
     _unwrap: function() {
       // console.log("Unwrapping rects", this.$screenId);
 
-      this.resource().on('child_added', function(snap, prevSiblingName) {
-        // console.log("Child added to rect collection", snap.name(), prevSiblingName, snap.val());
-        this.add(angular.extend(snap.val(), { '$id': snap.name() }));
+      this.resource().on('child_added', function(newSnap, prevSiblingName) {
+        this.add(this.resource().child(newSnap.name()));
       }, this);
 
       this.resource().on('child_removed', function(snap) {
-        // console.log("Child added to rect collection", snap.name(), prevSiblingName, snap.val());
         this.remove(snap.name());
       }, this);
     },

@@ -1,6 +1,12 @@
 <div ng-include src="'views/layouts/header.html'"></div>
 
 <div class="row">
+  <div class="col-md-12">
+    <h2>{{screen.name}}</h2>
+  </div>
+</div>
+
+<div class="row">
   <div class="col-md-9">
     <div id="canvas" dr-canvas class="dnd-container">
       <div ng-repeat="(uid, rect) in rectangles"
