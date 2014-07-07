@@ -6,10 +6,12 @@
   }
 
   RectangleCollection.$factory = [
+    '$timeout',
     'Rectangle',
     'Collection',
-    function(Rectangle, Collection) {
+    function($timeout, Rectangle, Collection) {
       angular.extend(RectangleCollection, {
+        $timeout: $timeout,
         $model: Rectangle
       });
 
@@ -61,14 +63,19 @@
     },
 
     _unwrap: function() {
-      // console.log("Unwrapping rects", this.$screenId);
+      var that = this;
 
       this.resource().on('child_added', function(newSnap, prevSiblingName) {
-        this.add(this.resource().child(newSnap.name()));
+        RectangleCollection.$timeout(function() {
+          that.add(that.resource().child(newSnap.name()));
+        });
       }, this);
 
       this.resource().on('child_removed', function(snap) {
-        this.remove(snap.name());
+        // console.log("Rect removed", snap.name(), snap.val());
+        RectangleCollection.$timeout(function() {
+          that.remove(snap.name());
+        });
       }, this);
     },
   });

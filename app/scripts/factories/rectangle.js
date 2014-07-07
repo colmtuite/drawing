@@ -58,45 +58,35 @@
     },
 
     _unwrap: function() {
+      var that = this;
+
       this.resource().once('value', function(snap) {
         // console.log("Rect value change", snap.val());
-        this.$id = snap.name();
-        angular.extend(this, snap.val());
-      }, this);
-
-      this.resource().on('value', function(snap) {
-        console.log("Rectangle value", snap.name(), snap.val());
-        var that = this;
         Rectangle.$timeout(function() {
-          if (snap.val() === null) {
-            // The rectangle has been deleted. 
-            // TODO: http://stackoverflow.com/q/14250642/574190
-          } else {
-            angular.extend(that[newSnap.name()], newSnap.val());
-          }
+          that.$id = snap.name();
+          angular.extend(that, snap.val());
         });
       }, this);
 
-      // this.resource().on('child_changed', function(newSnap, prevSibling) {
-      //   console.log("Rect child changed", newSnap.name(), newSnap.val());
-      //   var that = this;
-      //   // Only applying changes if they have no children is not sophisticated
-      //   // enough in this instance because rectangle data contains some nested
-      //   // structures like states which, when changed, we want to update the
-      //   // whole rectangle. For example, "fill" is nested under "normal" so
-      //   // when ""fill" is changed the snapshot sent looks like this:
-      //   //
-      //   //   snap.name() -> normal
-      //   //   snap.val() -> { fill: '...', stroke: '...', strokeWidth: 2 }
-      //   //   snap.hasChildren() -> true
-      //   //
-      //   // The difference between Rectangle and Screen in this instance is
-      //   // that Rectanlge has no children which are proper models in this
-      //   // system. Thus, I can skip the hasChildren test.
-      //   Rectangle.$timeout(function() {
-      //     angular.extend(that[newSnap.name()], newSnap.val());
-      //   });
-      // }, this);
+      this.resource().on('child_changed', function(newSnap, prevSibling) {
+        console.log("Rect child changed", newSnap.name(), newSnap.val());
+        // Only applying changes if they have no children is not sophisticated
+        // enough in this instance because rectangle data contains some nested
+        // structures like states which, when changed, we want to update the
+        // whole rectangle. For example, "fill" is nested under "normal" so
+        // when ""fill" is changed the snapshot sent looks like this:
+        //
+        //   snap.name() -> normal
+        //   snap.val() -> { fill: '...', stroke: '...', strokeWidth: 2 }
+        //   snap.hasChildren() -> true
+        //
+        // The difference between Rectangle and Screen in this instance is
+        // that Rectanlge has no children which are proper models in this
+        // system. Thus, I can skip the hasChildren test.
+        Rectangle.$timeout(function() {
+          angular.extend(that[newSnap.name()], newSnap.val());
+        });
+      }, this);
     },
 
     style: function(state) {

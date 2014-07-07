@@ -1,10 +1,22 @@
 'use strict';
 
 (function (app) {
-  function User() {
+  function User(futureData) {
     // Assign this out here so that we can call methods on it before we have
     // actually fetched the data.
     this.ownedScreens = new User.$ScreenCollection();
+
+    if (!futureData) return;
+
+    if (futureData.on) {
+      // We're dealing with a firebase reference.
+      this._resource = futureData;
+      this._unwrap();
+    } else {
+      // We're dealing with literal attributes. In this case, the $id should
+      // be among them and we can use it to the the resource via #url.
+      angular.extend(this, futureData);
+    }
   }
 
   User.$factory = [

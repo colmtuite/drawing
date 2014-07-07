@@ -6,10 +6,12 @@
   }
 
   ScreenCollection.$factory = [
+    '$timeout',
     'Collection',
     'Screen',
-    function(Collection, Screen) {
+    function($timeout, Collection, Screen) {
       angular.extend(ScreenCollection, {
+        $timeout: $timeout,
         $model: Screen
       });
 
@@ -135,9 +137,10 @@
     },
 
     _unwrap: function() {
+      var that = this;
+
       this.keyReference.once('value', function(snap) {
         console.log("Owned screen ids value", snap.name(), snap.val());
-        var that = this;
         snap.forEach(function(subSnap) {
           // I have two choices here. I can either pass the $id of the screen
           // or I can pass a reference to the screen. Either way, I end up
@@ -161,8 +164,10 @@
       // to collabourate. In that instance, the screen has to show up in
       // the user's page.
       this.keyReference.on('child_added', function(snap) {
-        console.log("Owned screen ids child added", snap.name(), snap.val());
-        this.add(this.resource().child(snap.name()));
+        // console.log("Owned screen ids child added", snap.name(), snap.val());
+        ScreenCollection.$timeout(function() {
+          that.add(that.resource().child(snap.name()));
+        });
         // Not sure I can do this in here. Might end up loading every screen
         // even when we don't need them. Will leave it here for the moment.
         //
@@ -180,8 +185,10 @@
       }, this);
 
       this.keyReference.on('child_removed', function(snap) {
-        // console.log("Owned screen ids child added", snap.name(), snap.val());
-        this.remove(snap.name());
+        // console.log("Owned screen ids child removed", snap.name(), snap.val());
+        ScreenCollection.$timeout(function() {
+          that.remove(snap.name());
+        });
       }, this);
 
     },

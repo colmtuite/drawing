@@ -6,9 +6,11 @@
   function Collection() {}
 
   Collection.$factory = [
+    '$timeout',
     'FBURL',
-    function(FBURL) {
+    function($timeout, FBURL) {
       angular.extend(Collection, {
+        $timeout: $timeout,
         FBURL: FBURL,
       });
 

@@ -65,10 +65,18 @@ var firebaseObjToArray = function(obj) {
 
       this._resource.once('value', function(snap) {
         // console.log("Loaded screen", snap.name(), snap.val());
-        this.$id = snap.name();
-
-        // Delete rectangles data so it doesn't overwrite the collection.
-        angular.extend(this, _.omit(snap.val(), 'rectangles'));
+        // We have to use $timeout here in order to force the UI to refresh.
+        // If we don't we can end up with race conditions where sometimes the
+        // 'value' event triggers after the UI is rendered and the screens
+        // never show up when they're loaded.
+        // Note that we can't inject $apply because it's not actually an
+        // injectable service. It's defined on the $rootScope. We can inject
+        // that but $rootScope.$apply is actually the same thing as $timeout.
+        Screen.$timeout(function() {
+          that.$id = snap.name();
+          // Delete rectangles data so it doesn't overwrite the collection.
+          angular.extend(that, _.omit(snap.val(), 'rectangles'));
+        });
 
         // this._setupAssociatedObjects();
       }, this);
