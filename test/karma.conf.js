@@ -1,61 +1,125 @@
 // Karma configuration
-// http://karma-runner.github.io/0.12/config/configuration-file.html
-// Generated on 2014-06-02 using
-// generator-karma 0.8.1
+// Generated on Mon Jul 07 2014 16:51:05 GMT+0100 (IST)
 
 module.exports = function(config) {
   config.set({
+
+    // base path that will be used to resolve all patterns (eg. files, exclude)
+    basePath: '..',
+
+
+    // frameworks to use
+    // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
+    frameworks: ['jasmine'],
+
+
+    // list of files / patterns to load in the browser
+    files: [
+      'app/scripts/banana.js',
+
+      // Vendor
+
+      "app/bower_components/jquery/dist/jquery.js",
+      "app/bower_components/angular/angular.js",
+      "app/bower_components/angular-resource/angular-resource.js",
+      "app/bower_components/angular-cookies/angular-cookies.js",
+      "app/bower_components/angular-sanitize/angular-sanitize.js",
+      "app/bower_components/angular-route/angular-route.js",
+      "app/bower_components/underscore/underscore.js",
+      "app/bower_components/angular-dnd-module/js/angular-dnd.js",
+      "app/bower_components/sifter/sifter.js",
+      "app/bower_components/microplugin/src/microplugin.js",
+      "app/bower_components/selectize/dist/js/selectize.js",
+      "app/bower_components/angular-bootstrap/ui-bootstrap-tpls.js",
+      "app/bower_components/angular-xeditable/dist/js/xeditable.js",
+      "app/bower_components/chance/chance.js",
+      "app/bower_components/firebase/firebase.js",
+      "app/bower_components/firebase-simple-login/firebase-simple-login.js",
+      "app/bower_components/eventEmitter/EventEmitter.js",
+
+      // Test Specific Vendor
+
+      "app/bower_components/angular-mocks/angular-mocks.js",
+
+      // Scripts
+
+      "app/mixins/underscore/deep.js",
+      "app/mixins/underscore/pluckDeep.js",
+      "app/scripts/app.js",
+      "app/scripts/controllers/application.js",
+      "app/scripts/controllers/screens/edit.js",
+      "app/scripts/controllers/screens/index.js",
+      "app/scripts/controllers/screens/show.js",
+      "app/scripts/controllers/interactions.js",
+      "app/scripts/controllers/registrations.js",
+      "app/scripts/controllers/sessions.js",
+      "app/scripts/factories/model.js",
+      "app/scripts/factories/collection.js",
+      "app/scripts/factories/currentUser.js",
+      "app/scripts/factories/user.js",
+      "app/scripts/factories/userCollection.js",
+      "app/scripts/factories/interactions.js",
+      "app/scripts/factories/rectangle.js",
+      "app/scripts/factories/rectangleCollection.js",
+      "app/scripts/factories/inspectedRectangle.js",
+      "app/scripts/factories/screen.js",
+      "app/scripts/factories/screenCollection.js",
+      "app/scripts/factories/groups.js",
+      "app/scripts/directives/interactive.js",
+      "app/scripts/directives/canvas.js",
+      "app/scripts/directives/keypressEvents.js",
+      "app/scripts/directives/angularSelectize.js",
+      "app/scripts/filters/actorIsSelected.js",
+
+      // Tests
+
+      "test/unit/**/*Spec.js"
+    ],
+
+
+    // list of files to exclude
+    exclude: [
+      '**/*.swp'
+    ],
+
+
+    // preprocess matching files before serving them to the browser
+    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
+    preprocessors: {
+    
+    },
+
+
+    // test results reporter to use
+    // possible values: 'dots', 'progress'
+    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
+    reporters: ['progress'],
+
+
+    // web server port
+    port: 9876,
+
+
+    // enable / disable colors in the output (reporters and logs)
+    colors: true,
+
+
+    // level of logging
+    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+    logLevel: config.LOG_DEBUG,
+
+
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: true,
 
-    // base path, that will be used to resolve files and exclude
-    basePath: '',
 
-    // testing framework to use (jasmine/mocha/qunit/...)
-    frameworks: ['jasmine'],
+    // start these browsers
+    // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
+    browsers: ['Chrome'],
 
-    // list of files / patterns to load in the browser
-    files: [],
-
-    // list of files / patterns to exclude
-    exclude: [],
-
-    // web server port
-    port: 8080,
-
-    // Start these browsers, currently available:
-    // - Chrome
-    // - ChromeCanary
-    // - Firefox
-    // - Opera
-    // - Safari (only Mac)
-    // - PhantomJS
-    // - IE (only Windows)
-    browsers: [
-      'PhantomJS'
-    ],
-
-    // Which plugins to enable
-    plugins: [
-      'karma-phantomjs-launcher',
-      'karma-jasmine'
-    ],
 
     // Continuous Integration mode
-    // if true, it capture browsers, run tests and exit
+    // if true, Karma captures browsers, runs the tests and exits
     singleRun: false
-
-    colors: true,
-
-    // level of logging
-    // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
-    logLevel: config.LOG_INFO,
-
-    // Uncomment the following lines if you are using grunt's server to run the tests
-    // proxies: {
-    //   '/': 'http://localhost:9000/'
-    // },
-    // URL root prevent conflicts with the site root
-    // urlRoot: '_karma_'
   });
 };

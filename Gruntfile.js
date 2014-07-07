@@ -22,7 +22,8 @@ module.exports = function (grunt) {
     yeoman: {
       // configurable paths
       app: require('./bower.json').appPath || 'app',
-      dist: 'dist'
+      dist: 'dist',
+      test: 'test'
     },
 
     // Watches files for changes and runs tasks based on the changed files
@@ -41,7 +42,7 @@ module.exports = function (grunt) {
       },
 
       jsTest: {
-        files: ['test/spec/{,*/}*.js'],
+        files: ['<%= yeoman.test %>/unit/{,*/}*.js'],
         tasks: ['newer:jshint:test', 'karma']
       },
 
@@ -83,6 +84,7 @@ module.exports = function (grunt) {
           ]
         }
       },
+
       test: {
         options: {
           port: 9001,
@@ -93,6 +95,7 @@ module.exports = function (grunt) {
           ]
         }
       },
+
       dist: {
         options: {
           base: '<%= yeoman.dist %>'
@@ -106,15 +109,17 @@ module.exports = function (grunt) {
         jshintrc: '.jshintrc',
         reporter: require('jshint-stylish')
       },
+
       all: [
         'Gruntfile.js',
         '<%= yeoman.app %>/scripts/{,*/}*.js'
       ],
+
       test: {
         options: {
-          jshintrc: 'test/.jshintrc'
+          jshintrc: '<%= yeoman.test %>/.jshintrc'
         },
-        src: ['test/spec/{,*/}*.js']
+        src: ['<%= yeoman.test %>/unit/{,*/}*.js']
       }
     },
 
@@ -373,12 +378,13 @@ module.exports = function (grunt) {
     // Test settings
     karma: {
       unit: {
-        configFile: 'karma.conf.js',
-        singleRun: true
+        configFile: '<%= yeoman.test %>/karma.conf.js',
+        singleRun: false
       }
     }
   });
 
+  grunt.loadNpmTasks('grunt-karma');
 
   grunt.registerTask('serve', function (target) {
     if (target === 'dist') {
