@@ -1,6 +1,6 @@
 {
   "firebase": "amber-fire-4613",
-  "public": "app",
+  "public": "dist",
   "ignore": [
     "firebase.json",
     ".*",
