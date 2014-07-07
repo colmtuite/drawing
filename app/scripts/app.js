@@ -2,8 +2,7 @@
 
 var drawingApp = angular.module('drawingApp', [
   'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'dnd',
-  'angularSelectize', 'ui.bootstrap', "xeditable",
-  'firebase'
+  'angularSelectize', 'ui.bootstrap', "xeditable"
 ]);
 
 drawingApp.constant('FBURL', 'https://amber-fire-4613.firebaseio.com/');
