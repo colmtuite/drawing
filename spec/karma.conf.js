@@ -10,13 +10,11 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['jasmine'],
+    frameworks: ['jasmine', 'sinon'],
 
 
     // list of files / patterns to load in the browser
     files: [
-      'app/scripts/banana.js',
-
       // Vendor
 
       "app/bower_components/jquery/dist/jquery.js",
@@ -40,6 +38,8 @@ module.exports = function(config) {
       // Test Specific Vendor
 
       "app/bower_components/angular-mocks/angular-mocks.js",
+      // I can't get these matchers to work at the moment.
+      // "app/bower_components/jasmine-sinon/lib/jasmine-sinon.js",
 
       // Scripts
 

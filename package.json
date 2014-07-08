@@ -32,7 +32,9 @@
     "karma-jasmine": "^0.1.5",
     "karma-ng-html2js-preprocessor": "^0.1.0",
     "karma-ng-scenario": "^0.1.0",
+    "karma-sinon": "^1.0.3",
     "load-grunt-tasks": "~0.4.0",
+    "sinon": "^1.10.2",
     "socket.io": "^1.0.6",
     "time-grunt": "~0.2.1"
   },

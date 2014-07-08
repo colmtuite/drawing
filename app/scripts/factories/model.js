@@ -16,6 +16,18 @@
   app.factory('Model', Model.$factory);
 
   angular.extend(Model.prototype, EventEmitter.prototype,  {
+    // Uncommenting this appears to override the init function defined on
+    // models which inherit from this rather than the other way around. I'm
+    // not exactly sure why.
+    // init: function() {},
+
+    // Ocasionally we have to manually create a reference using a path and
+    // the ID of an object. It happens when using models outside of collections
+    // for example.
+    setRef: function(path) {
+      // Strip any leading slash on the path.
+      this._resource = new Firebase(Model.FBURL + path.replace(/^\//, ''));
+    },
 
     basePath: function() {
       var url;

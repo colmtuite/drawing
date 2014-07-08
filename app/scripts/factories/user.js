@@ -2,9 +2,7 @@
 
 (function (app) {
   function User(futureData) {
-    // Assign this out here so that we can call methods on it before we have
-    // actually fetched the data.
-    this.ownedScreens = new User.$ScreenCollection();
+    this.init(arguments);
 
     if (!futureData) return;
 
@@ -20,10 +18,12 @@
   }
 
   User.$factory = [
+    '$timeout',
     'ScreenCollection',
     'Model',
-    function(ScreenCollection, Model) {
+    function($timeout, ScreenCollection, Model) {
       angular.extend(User, {
+        $timeout: $timeout,
         $ScreenCollection: ScreenCollection,
       });
 
@@ -35,6 +35,12 @@
   app.factory('User', User.$factory);
 
   angular.extend(User.prototype, {
+    init: function() {
+      // Assign this out here so that we can call methods on it before we have
+      // actually fetched the data.
+      this.ownedScreens = new User.$ScreenCollection();
+    },
+
     url: function() {
       return 'users/' + this.$id;
     },
@@ -43,6 +49,7 @@
     // whatever I want on this._resource once it is set.
     _unwrap: function() {
       var that = this;
+
       // There is no need for me to wait until the 'value' event to pass
       // in this reference. I can pass it in as soon user._resource is set.
       // It will then resolve when it is good and ready.
@@ -51,9 +58,10 @@
       this.ownedScreens.reset(this._resource.child('ownedScreenIds'));
 
       this._resource.once('value', function(snap) {
-        this.$id = snap.name();
-        angular.extend(this, snap.val());
-        // this._setupAssociatedObjects();
+        User.$timeout(function() {
+          that.$id = snap.name();
+          angular.extend(that, snap.val());
+        });
         this.trigger('load');
       }, this);
 
@@ -67,11 +75,5 @@
       }, this);
 
     },
-
-    // _setupAssociatedObjects: function() {
-    //   // User's have a has_many relationship with screens. We need to store
-    //   // the user's screen ids here so that we can fetch them later.
-    //   this.ownedScreens.reset(this.ownedScreenIds);
-    // }
   });
 })(drawingApp);

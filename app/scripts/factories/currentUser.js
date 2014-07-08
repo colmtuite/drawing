@@ -32,9 +32,9 @@
           angular.extend(that.user, userData);
           // We have to do this manually in this instance because we're using
           // the User model outside of a collection.
-          // All of the user's data is loaded as soon as I construct this Firebase
-          // path.
-          that.user._resource = new Firebase(CurrentUser.FBURL + 'users/' + userData.id);
+          // All of the user's data is loaded as soon as I construct this 
+          // Firebase path.
+          that.user.setRef('users/' + userData.id);
           that.user._unwrap();
           that.trigger('login');
         } else {
