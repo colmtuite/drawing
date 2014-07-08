@@ -2,10 +2,9 @@
 
 // (function(app) {
 //   app.controller('ScreensShowController', 
-//     ['$scope', '$routeParams', 'RectFactory', 'Screen', 
-//      'InteractionsFactory', 'GroupsFactory', ctrl]);
+//     ['$scope', '$stateParams', 'Screen', 'InteractionsFactory', ctrl]);
 // 
-//   function ctrl($scope, $routeParams, RectFactory, Screen, InteractionsFactory, GroupsFactory) {
+//   function ctrl($scope, $stateParams, Screen, InteractionsFactory) {
 //     Screen.find($routeParams.slug).then(function(resp) {
 //       $scope.screen = resp.screen;
 //       $scope.rectangles = RectFactory.all();

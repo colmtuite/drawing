@@ -1,7 +1,7 @@
 'use strict';
 
 var drawingApp = angular.module('drawingApp', [
-  'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'dnd',
+  'ngCookies', 'ngResource', 'ngSanitize', 'dnd',
   'angularSelectize', 'ui.bootstrap', "xeditable", 'ui.router'
 ]);
 

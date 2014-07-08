@@ -10,7 +10,6 @@
     "angular-resource": "1.2.15",
     "angular-cookies": "1.2.15",
     "angular-sanitize": "1.2.15",
-    "angular-route": "1.2.15",
     "underscore": "1.6.0",
     "angular-dnd-module": "0.1.5",
     "selectize": "~0.10.1",

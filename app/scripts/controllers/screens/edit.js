@@ -2,9 +2,9 @@
 
 (function(app) {
   app.controller('ScreensEditController', 
-    ['$scope', '$routeParams', '$filter', 'ScreenCollection', 'InspectedRectangle', 'Screen', 'Rectangle', ctrl]);
+    ['$scope', '$stateParams', 'InspectedRectangle', 'Screen', 'Rectangle', ctrl]);
 
-  function ctrl($scope, $routeParams, $filter, ScreenCollection, InspectedRectangle, Screen, Rectangle) {
+  function ctrl($scope, $stateParams, InspectedRectangle, Screen, Rectangle) {
     // This is one of the instances where I can't pass in the reference to
     // Firebase and must pass in the ID instead (well, technically I could
     // construct the reference out here with "new Firebase()" but I would
@@ -20,7 +20,7 @@
     // Another problem is that there's some sort of race condition going on
     // here. Sometimes I refresh the page and don't get any screen data
     // appearing.
-    $scope.screen = new Screen({ '$id': $routeParams.id });
+    $scope.screen = new Screen({ '$id': $stateParams.id });
     $scope.screen.fetch();
 
     $scope.rectangles = $scope.screen.rectangles.asArray();
