@@ -1,20 +1,19 @@
 <div class="header">
   <ul class="nav nav-pills pull-right">
     <li ng-hide="isLoggedIn">
-      <a ng-href="#/sessions/new">Log in</a>
+      <a ui-sref="new-session">Log in</a>
     </li>
     <li ng-hide="isLoggedIn">
-      <a ng-href="#/registrations/new">Sign up</a>
+      <a ui-sref="new-registration">Sign up</a>
     </li>
     <li ng-show="isLoggedIn">
-      <a ng-href="#/screens">Screens</a>
+      <a ui-sref="screens">Screens</a>
     </li>
     <li ng-show="isLoggedIn">
       <a href="javascript:void(0);" ng-click="logout()">Logout</a>
     </li>
-    <li><a ng-href="#">Contact</a></li>
   </ul>
   <h3 class="text-muted">
-    <a ng-href="#">drawing</a>
+    <a ui-sref="root">drawing</a>
   </h3>
 </div>

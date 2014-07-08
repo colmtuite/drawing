@@ -2,7 +2,7 @@
 
 var drawingApp = angular.module('drawingApp', [
   'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'dnd',
-  'angularSelectize', 'ui.bootstrap', "xeditable"
+  'angularSelectize', 'ui.bootstrap', "xeditable", 'ui.router'
 ]);
 
 drawingApp.constant('FBURL', 'https://amber-fire-4613.firebaseio.com/');
@@ -11,32 +11,37 @@ drawingApp.run(function(editableOptions) {
   editableOptions.theme = 'bs3';
 });
 
-drawingApp.config(function ($routeProvider) {
-  $routeProvider
-    .when('/', {
+drawingApp.config(function($stateProvider, $urlRouterProvider) {
+  $urlRouterProvider.otherwise('/');
+
+  $stateProvider
+    .state('root', {
+      url: '/',
       templateUrl: 'views/index.html'
     })
-    .when('/registrations/new', {
-      templateUrl: 'views/registrations/new.html',
-      controller: 'RegistrationsNewController'
-    })
-    .when('/sessions/new', {
-      templateUrl: 'views/sessions/new.html',
-      controller: 'SessionsNewController'
-    })
-    .when('/screens', {
+    .state('screens', {
+      url: '/screens',
       templateUrl: 'views/screens/index.html',
       controller: 'ScreensIndexController'
     })
-    .when('/screens/:id', {
+    .state('new-registration', {
+      url: '/registrations/new',
+      templateUrl: 'views/registrations/new.html',
+      controller: 'RegistrationsNewController'
+    })
+    .state('new-session', {
+      url: '/sessions/new',
+      templateUrl: 'views/sessions/new.html',
+      controller: 'SessionsNewController'
+    })
+    .state('screen', {
+      url: '/screens/:id',
       templateUrl: 'views/screens/show.html',
       controller: 'ScreensShowController'
     })
-    .when('/screens/:id/edit', {
+    .state('edit-screen', {
+      url: '/screens/:id/edit',
       templateUrl: 'views/screens/edit.html',
       controller: 'ScreensEditController'
     })
-    .otherwise({
-      redirectTo: '/'
-    });
 });
