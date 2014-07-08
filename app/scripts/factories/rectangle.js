@@ -1,36 +1,35 @@
 'use strict';
 
 (function(app) {
-  function Rectangle(futureData) {
-    this.states = [];
-    console.log("Initializing rectangle", futureData);
+  var Rectangle;
 
-    if (futureData.on) {
-      this._resource = futureData;
-      this._unwrap();
-    } else {
-      angular.extend(this, futureData);
-    }
-  }
-
-  Rectangle.$factory = [
-    '$timeout', 
+  var $factory = [
     '$filter',
     'Model',
-    function($timeout, $filter, Model) {
-      angular.extend(Rectangle, {
-        $timeout: $timeout,
-        $filter: $filter,
-      });
-
-      angular.extend(Rectangle.prototype, Model.prototype);
+    function($filter, Model) {
+      Rectangle = Model.extend(methods, angular.extend({
+        $filter: $filter
+      }, classMethods));
 
       return Rectangle;
     }];
 
-  app.factory('Rectangle', Rectangle.$factory);
+  app.factory('Rectangle', $factory);
 
-  angular.extend(Rectangle.prototype, {
+  var methods = {
+    initialize: function(futureData) {
+      this.states = [];
+
+      if (!futureData) return;
+
+      if (futureData.on) {
+        this._resource = futureData;
+        this._unwrap();
+      } else {
+        angular.extend(this, futureData);
+      }
+    },
+
     url: function() {
       return 'screens/' + this.$screenId + '/rectangles/' + this.$id;
     },
@@ -152,51 +151,53 @@
     height: function() {
       return parseInt(this.dndData.height, 10)
     },
-  });
-
-  Rectangle.selected = function() {
-    return $filter('filter')(this.all(), {isSelected: true});
   };
-  
-  Rectangle.initialAttributes = function(options) {
-    options || (options = {});
-    var guid = options.guid || chance.guid(),
-        name = options.name || chance.word();
-    delete options.guid;
-    delete options.name;
 
-    return angular.extend({
-      name: name,
-      guid: guid,
+  var classMethods = {
+    selected: function() {
+      return $filter('filter')(this.all(), {isSelected: true});
+    },
 
-      states: [{name: 'normal' }, { name: 'hover' }],
+    initialAttributes: function(options) {
+      options || (options = {});
+      var guid = options.guid || chance.guid(),
+          name = options.name || chance.word();
+      delete options.guid;
+      delete options.name;
 
-      normal: {
-        stroke: 'rgb(236, 240, 241)',
-        strokeWidth: 1,
-        fill: 'rgb(236, 240, 241)',
-      },
+      return angular.extend({
+        name: name,
+        guid: guid,
 
-      hover: {
-        stroke: 'rgb(236, 240, 241)',
-        strokeWidth: 1,
-        fill: 'rgb(236, 240, 0)',
-      },
+        states: [{name: 'normal' }, { name: 'hover' }],
 
-      isSelected: false,
-      isSelecting: false,
-      isHighlighted: false,
+        normal: {
+          stroke: 'rgb(236, 240, 241)',
+          strokeWidth: 1,
+          fill: 'rgb(236, 240, 241)',
+        },
 
-      // These are the attributes controlled by the DnD module. Any other
-      // attributes in this namespace will get smashed when DnD takes
-      // control of the positioning.
-      dndData: {
-        top: chance.natural({ max: 350 }),
-        left: chance.natural({ max: 350 }),
-        width: chance.natural({ max: 100, min: 50 }),
-        height: chance.natural({ max: 100, min: 50 })
-      },
-    }, options)
+        hover: {
+          stroke: 'rgb(236, 240, 241)',
+          strokeWidth: 1,
+          fill: 'rgb(236, 240, 0)',
+        },
+
+        isSelected: false,
+        isSelecting: false,
+        isHighlighted: false,
+
+        // These are the attributes controlled by the DnD module. Any other
+        // attributes in this namespace will get smashed when DnD takes
+        // control of the positioning.
+        dndData: {
+          top: chance.natural({ max: 350 }),
+          left: chance.natural({ max: 350 }),
+          width: chance.natural({ max: 100, min: 50 }),
+          height: chance.natural({ max: 100, min: 50 })
+        },
+      }, options)
+    }
   };
 
 })(drawingApp);

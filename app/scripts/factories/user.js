@@ -1,44 +1,38 @@
 'use strict';
 
 (function (app) {
-  function User(futureData) {
-    this.init(arguments);
+  var User;
 
-    if (!futureData) return;
-
-    if (futureData.on) {
-      // We're dealing with a firebase reference.
-      this._resource = futureData;
-      this._unwrap();
-    } else {
-      // We're dealing with literal attributes. In this case, the $id should
-      // be among them and we can use it to the the resource via #url.
-      angular.extend(this, futureData);
-    }
-  }
-
-  User.$factory = [
-    '$timeout',
+  var $factory = [
     'ScreenCollection',
     'Model',
-    function($timeout, ScreenCollection, Model) {
-      angular.extend(User, {
-        $timeout: $timeout,
+    function(ScreenCollection, Model) {
+      User = Model.extend(methods, angular.extend({
         $ScreenCollection: ScreenCollection,
-      });
-
-      angular.extend(User.prototype, Model.prototype);
+      }, classMethods));
 
       return User;
     }];
 
-  app.factory('User', User.$factory);
+  app.factory('User', $factory);
 
-  angular.extend(User.prototype, {
-    init: function() {
+  var methods = {
+    initialize: function(futureData) {
       // Assign this out here so that we can call methods on it before we have
       // actually fetched the data.
       this.ownedScreens = new User.$ScreenCollection();
+
+      if (!futureData) return;
+
+      if (futureData.on) {
+        // We're dealing with a firebase reference.
+        this._resource = futureData;
+        this._unwrap();
+      } else {
+        // We're dealing with literal attributes. In this case, the $id should
+        // be among them and we can use it to the the resource via #url.
+        angular.extend(this, futureData);
+      }
     },
 
     url: function() {
@@ -75,5 +69,9 @@
       }, this);
 
     },
-  });
+  };
+
+  var classMethods = {
+
+  };
 })(drawingApp);

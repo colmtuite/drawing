@@ -1,28 +1,22 @@
 'use strict';
 
 (function (app) {
-  function RectangleCollection() {
-    this.collection = [];
-  }
+  var RectangleCollection;
 
-  RectangleCollection.$factory = [
-    '$timeout',
+  var $factory = [
     'Rectangle',
     'Collection',
-    function($timeout, Rectangle, Collection) {
-      angular.extend(RectangleCollection, {
-        $timeout: $timeout,
-        $model: Rectangle
-      });
-
-      angular.extend(RectangleCollection.prototype, Collection.prototype);
+    function(Rectangle, Collection) {
+      RectangleCollection = Collection.extend(methods, angular.extend({
+        $model: Rectangle,
+      }, classMethods));
 
       return RectangleCollection;
     }];
 
-  app.factory('RectangleCollection', RectangleCollection.$factory);
+  app.factory('RectangleCollection', $factory);
 
-  angular.extend(RectangleCollection.prototype, {
+  var methods = {
     url: function() {
       return 'screens/' + this.$screenId + '/rectangles';
     },
@@ -31,12 +25,6 @@
       this.empty();
       this._resource = reference;
       this._unwrap();
-
-      // The _.compact prevents us from iterating over an array full
-      // of undefined values.
-      // _.map(_.compact(([].concat(models) || [])), function(model) {
-      //   that.add(model);
-      // });
     },
 
     // TODO: Optimistially add the model to the collection.
@@ -78,17 +66,18 @@
         });
       }, this);
     },
-  });
-
-  RectangleCollection._initializeModel = function(args) {
-    if (args.constructor.name === "Rectangle") return args;
-    return new this.$model(args);
   };
 
-
-  RectangleCollection.prototype._keyOfValue = function(value) {
-    return _.chain(this.collection).map(function(item, key) {
-      if (item === value) return key;
-    }).compact().value()[0];
+  var classMethods = {
+    _initializeModel: function(args) {
+      if (args.constructor.name === "Rectangle") return args;
+      return new this.$model(args);
+    }
   };
+
+  // RectangleCollection.prototype._keyOfValue = function(value) {
+  //   return _.chain(this.collection).map(function(item, key) {
+  //     if (item === value) return key;
+  //   }).compact().value()[0];
+  // };
 }(drawingApp));

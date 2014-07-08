@@ -1,18 +1,21 @@
 'use strict';
 
 (function (app) {
-  // NOTE: The constructor doesn't get run for interited classes. I'll have
-  // to build some way of calling super I think.
-  function Collection() {}
+  function Collection() {
+    this.initialize.apply(this, arguments);
+  }
 
   Collection.$factory = [
     '$timeout',
+    'Extend',
     'FBURL',
-    function($timeout, FBURL) {
+    function($timeout, Extend, FBURL) {
       angular.extend(Collection, {
         $timeout: $timeout,
         FBURL: FBURL,
       });
+
+      Collection.extend = Extend;
 
       return Collection;
     }];
@@ -20,6 +23,9 @@
   app.factory('Collection', Collection.$factory);
 
   angular.extend(Collection.prototype, EventEmitter.prototype,  {
+    initialize: function() {
+      this.collection = [];
+    },
 
     basePath: function() {
       var url;

@@ -1,14 +1,21 @@
 'use strict';
 
 (function (app) {
-  function Model() {}
+  function Model() {
+    this.initialize.apply(this, arguments);
+  }
 
   Model.$factory = [
     'FBURL',
-    function(FBURL) {
+    'Extend',
+    '$timeout',
+    function(FBURL, Extend, $timeout) {
       angular.extend(Model, {
         FBURL: FBURL,
+        $timeout: $timeout
       });
+
+      Model.extend = Extend;
 
       return Model;
     }];
@@ -16,10 +23,7 @@
   app.factory('Model', Model.$factory);
 
   angular.extend(Model.prototype, EventEmitter.prototype,  {
-    // Uncommenting this appears to override the init function defined on
-    // models which inherit from this rather than the other way around. I'm
-    // not exactly sure why.
-    // init: function() {},
+    initialize: function() {},
 
     // Ocasionally we have to manually create a reference using a path and
     // the ID of an object. It happens when using models outside of collections

@@ -1,26 +1,20 @@
 'use strict';
 
 (function (app) {
-  function ScreenCollection() {
-    this.collection = [];
-  }
+  var ScreenCollection;
 
-  ScreenCollection.$factory = [
-    '$timeout',
+  var $factory = [
     'Collection',
     'Screen',
-    function($timeout, Collection, Screen) {
-      angular.extend(ScreenCollection, {
-        $timeout: $timeout,
+    function(Collection, Screen) {
+      ScreenCollection = Collection.extend(methods, angular.extend({
         $model: Screen
-      });
-
-      angular.extend(ScreenCollection.prototype, Collection.prototype);
+      }, classMethods));
 
       return ScreenCollection;
     }];
 
-  app.factory('ScreenCollection', ScreenCollection.$factory);
+  app.factory('ScreenCollection', $factory);
 
   // This is differnt type of collection to the type the RectangleCollection
   // is. It's different because it's constructed by selecting different
@@ -42,7 +36,7 @@
   // to it and use them to sync another collection (or just an array) which 
   // holds the actual screen data.
 
-  angular.extend(ScreenCollection.prototype, {
+  var methods = {
     url: function() {
       return 'screens';
     },
@@ -192,14 +186,15 @@
       }, this);
 
     },
-  });
+  };
 
-
-  ScreenCollection._initializeModel = function(args) {
-    // We may be already dealing with a Screen instance. If we are, we need
-    // go no further.
-    if (args.constructor.name === "Screen") return args;
-    return new this.$model(args);
+  var classMethods = {
+    _initializeModel: function(args) {
+      // We may be already dealing with a Screen instance. If we are, we need
+      // go no further.
+      if (args.constructor.name === "Screen") return args;
+      return new this.$model(args);
+    }
   };
 
 })(drawingApp);

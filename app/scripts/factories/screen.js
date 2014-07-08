@@ -1,48 +1,41 @@
 'use strict';
 
-var firebaseObjToArray = function(obj) {
-  return _.map(obj, function(value, $id) {
-    value.$id = $id;
-    return value;
-  });
-};
-
 (function (app) {
-  function Screen(futureData) {
-    // Instanciate this even before the data is loaded so that we can call
-    // methods on it in the controller without having to wait.
-    this.rectangles = new Screen.$RectangleCollection();
-    // console.log("Initializing a screen", futureData, futureData.on);
+  var Screen;
 
-    if (futureData.on) {
-      // We're dealing with a firebase reference.
-      this._resource = futureData;
-      this._unwrap();
-    } else {
-      // We're dealing with literal attributes. In this case, the $id should
-      // be among them and we can use it to the the resource via #url.
-      angular.extend(this, futureData);
-    }
-  }
-
-  Screen.$factory = [
-    '$timeout',
+  var $factory = [
     'RectangleCollection',
     'Model',
-    function($timeout, RectangleCollection, Model) {
-      angular.extend(Screen, {
-        $timeout: $timeout,
+    function(RectangleCollection, Model) {
+      Screen = Model.extend(methods, angular.extend({
         $RectangleCollection: RectangleCollection,
-      });
-
-      angular.extend(Screen.prototype, Model.prototype);
+      }, classMethods));
 
       return Screen;
     }];
 
-  app.factory('Screen', Screen.$factory);
+  app.factory('Screen', $factory);
 
-  angular.extend(Screen.prototype, {
+  var methods = {
+    initialize: function(futureData) {
+      // Instanciate this even before the data is loaded so that we can call
+      // methods on it in the controller without having to wait.
+      this.rectangles = new Screen.$RectangleCollection();
+      // console.log("Initializing a screen", futureData, futureData.on);
+
+      if (!futureData) return;
+
+      if (futureData.on) {
+        // We're dealing with a firebase reference.
+        this._resource = futureData;
+        this._unwrap();
+      } else {
+        // We're dealing with literal attributes. In this case, the $id should
+        // be among them and we can use it to the the resource via #url.
+        angular.extend(this, futureData);
+      }
+    },
+
     url: function() { return 'screens/' + this.$id; },
 
     destroy: function(success) {
@@ -103,10 +96,7 @@ var firebaseObjToArray = function(obj) {
         // }
       }, this);
     },
+  };
 
-    // _setupAssociatedObjects: function() {
-    //   // Screens don't have a Has_many relationship with any other objects
-    //   // so there is nothing to do here.
-    // },
-  });
+  var classMethods = {};
 }(drawingApp));
