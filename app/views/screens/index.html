@@ -2,7 +2,7 @@
 
 <ul class="screens">
   <li ng-repeat="screen in screens">
-    <a ng-href="#/screens/{{screen.$id}}/edit" 
+    <a ui-sref="edit-screen({ id: screen.$id })" 
       editable-text="screen.name"
       e-placeholder="Screen name"
       buttons="no"

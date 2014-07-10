@@ -30,7 +30,7 @@
     // TODO: Optimistially add the model to the collection.
     create: function(attrs, success) {
       success || (success = angular.noop);
-      var that = this;
+      // var that = this;
       // Be sure to return the promise so we can chain more actions onto it.
       var newModel = this.resource().push(attrs)
       // angular.extend(attrs, { '$id': newModel.name() });

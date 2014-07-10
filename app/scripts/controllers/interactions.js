@@ -1,6 +1,14 @@
-drawingApp.controller('ElementInteractionsController', 
-  ['$scope', '$filter', 'InteractionsFactory', 'Rectangle',
-  function($scope, $filter, InteractionsFactory, Rectangle) {
+'use strict';
+
+(function (app) {
+
+  var requirements = [
+    '$scope', 
+    '$filter', 
+    ctrl
+  ];
+
+  function ctrl($scope, $filter) {
 //     // TODO: Rename to elementInteractions to represent the fact that these are
 //     // interactions between elements.
 //     $scope.interactions = InteractionsFactory.all();
@@ -48,11 +56,18 @@ drawingApp.controller('ElementInteractionsController',
 //       var elements = $scope.interactionElements();
 //       elements.forEach(function(el) { el.isHighlighted = false });
 //     }
-  }]);
+  }
 
-drawingApp.controller('StateInteractionsController', 
-  ['$scope', '$filter', 'InteractionsFactory', 'Rectangle',
-  function($scope, $filter, InteractionsFactory, Rectangle) {
+  app.controller('ElementInteractionsController', requirements);
+  
+}(drawingApp));
+
+(function (app) {
+  var requirements = [
+    ctrl
+  ];
+
+  function ctrl() {
 //     $scope.stateInteractions = InteractionsFactory.all('stateInteractions');
 //     $scope.interactionTriggers = InteractionsFactory.triggers();
 // 
@@ -73,4 +88,7 @@ drawingApp.controller('StateInteractionsController',
 //     $scope.deleteStateInteraction = function(interaction) {
 //       InteractionsFactory.destroyState(interaction);
 //     };
-  }]);
+  }
+
+  app.controller('StateInteractionsController', requirements);
+}(drawingApp));

@@ -25,6 +25,14 @@
   angular.extend(Model.prototype, EventEmitter.prototype,  {
     initialize: function() {},
 
+    toJSON: function() {
+      return _.compact(_.map(function(prop) {
+        if (this.hasOwnProperty(prop)) {
+          return prop;
+        }
+      }, this));
+    },
+
     // Ocasionally we have to manually create a reference using a path and
     // the ID of an object. It happens when using models outside of collections
     // for example.

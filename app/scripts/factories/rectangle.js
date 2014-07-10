@@ -4,11 +4,9 @@
   var Rectangle;
 
   var $factory = [
-    '$filter',
     'Model',
-    function($filter, Model) {
+    function(Model) {
       Rectangle = Model.extend(methods, angular.extend({
-        $filter: $filter
       }, classMethods));
 
       return Rectangle;
@@ -154,10 +152,6 @@
   };
 
   var classMethods = {
-    selected: function() {
-      return $filter('filter')(this.all(), {isSelected: true});
-    },
-
     initialAttributes: function(options) {
       options || (options = {});
       var guid = options.guid || chance.guid(),

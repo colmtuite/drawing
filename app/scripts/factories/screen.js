@@ -5,10 +5,12 @@
 
   var $factory = [
     'RectangleCollection',
+    'InteractionCollection',
     'Model',
-    function(RectangleCollection, Model) {
+    function(RectangleCollection, InteractionCollection, Model) {
       Screen = Model.extend(methods, angular.extend({
         $RectangleCollection: RectangleCollection,
+        $InteractionCollection: InteractionCollection
       }, classMethods));
 
       return Screen;
@@ -20,7 +22,10 @@
     initialize: function(futureData) {
       // Instanciate this even before the data is loaded so that we can call
       // methods on it in the controller without having to wait.
+      // TODO: Tie this into the associations array I've defined on this
+      // object.
       this.rectangles = new Screen.$RectangleCollection();
+      this.interactions = new Screen.$InteractionCollection();
       // console.log("Initializing a screen", futureData, futureData.on);
 
       if (!futureData) return;
@@ -50,11 +55,15 @@
       this.resource().update(attrs).then(success);
     },
 
+    associations: ['rectangles', 'interactions'],
+
     _unwrap: function() {
       var that = this;
       // Loading the screen will also load all it's nested data. That means
       // that all rectangle data is available at this point.
-      this.rectangles.reset(this.resource().child('rectangles'));
+      this.associations.forEach(function(name) {
+        that[name].reset(that.resource().child(name));
+      });
 
       this._resource.once('value', function(snap) {
         // console.log("Loaded screen", snap.name(), snap.val());
@@ -68,7 +77,7 @@
         Screen.$timeout(function() {
           that.$id = snap.name();
           // Delete rectangles data so it doesn't overwrite the collection.
-          angular.extend(that, _.omit(snap.val(), 'rectangles'));
+          angular.extend(that, _.omit(snap.val(), that.associations));
         });
 
         // this._setupAssociatedObjects();
