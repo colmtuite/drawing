@@ -42,15 +42,22 @@
     _unwrap: function() {
       var that = this;
 
+      this._resource.once('value', function(snap) {
+        this.trigger('value');
+      }, this);
+
       this._resource.on('child_added', function(newSnap, prevSiblingName) {
         InteractionCollection.$timeout(function() {
-          that.add(that._resource.child(newSnap.name()));
+          var model = that.add(that._resource.child(newSnap.name()));
+          // NOTE: The emitted data MUST be an array.
+          that.trigger('child_added', [model]);
         });
       }, this);
 
       this._resource.on('child_removed', function(snap) {
         InteractionCollection.$timeout(function() {
-          that.remove(snap.name());
+          var model = that.remove(snap.name());
+          that.trigger('child_removed', [model]);
         });
       }, this);
     },

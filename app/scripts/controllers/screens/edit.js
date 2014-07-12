@@ -36,44 +36,6 @@
     $scope.interactions = $scope.screen.interactions.asArray();
     $scope.screen.interactions.rectangles = $scope.screen.rectangles;
 
-    // I would love to do something like iterate over the interaction
-    // actorIds and match them up with rectangles. My initial thought against
-    // this was that it won't work because the interactions might not load
-    // at the same time as the rectangles. That's not true though, they both
-    // become available as soon as the screen loads.
-    //
-    // It appears to be a pain in the nuts to wire them together though.
-    // I might be better storing the actors in firebase like this:
-    //
-    // actorIds:
-    //   jkhsjkdhes:
-    //     name: 'the-rect-name'
-    //     id: 'the-shape-firebase-id'
-    //
-    // Then I could change the preview logic to apply the interaction 
-    // functions based on the shape ids which could be embedded in the DOM
-    // as ID attributes. The problem is that if the name of a shape changes
-    // I have to update it in two places. It would be much better to only
-    // rely on the ID - which can't change (or on object references which 
-    // will change together if they change at all).
-    //
-    // Perhaps this is actually a full on many-to-many relationship and I'm
-    // trying to treat it half assed. Perhaps each interaction should have
-    // a RectangleCollection for triggers and for actors. I could then
-    // properly parse the IDs on 'value' like I'm doing for the User -> Screen
-    // relationship. I'm gonna have to try a couple of different things.
-    //
-    // I tried giving the interactions collection a reference to the rectangles
-    // like this:
-    //
-    //   $scope.screen.interactions.rectangles = $scope.screen.rectangles;
-    //
-    // The problem with that is that it's in the individual interaction that
-    // I need the reference to the rectangles collection. I would imagine 
-    // it would be handy if each interaction had a reference to it's
-    // collection in general so I should probably set that up and kill two
-    // birds.
-
     $scope.interactionActions = Interaction.actions;
     $scope.interactionTriggers = Interaction.triggers;
     $scope.interactionElements = $scope.rectangles;
@@ -83,7 +45,7 @@
       $scope.screen.rectangles.create(attrs);
     };
 
-    // TODO: Move all this interaction stuff out oft here.
+    // TODO: Move all this interaction stuff out of here.
 
     $scope.createInteraction = function() {
       var attrs = Interaction.initialAttributes({

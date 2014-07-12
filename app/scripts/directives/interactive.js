@@ -1,19 +1,6 @@
 'use strict';
 
 (function(app) {
-  // type should be one of 'actor' or 'actee'.
-  var findElements = function(interaction, type) {
-    if (typeof interaction[type].elements !== "undefined") {
-      // TODO: Pluck name, join with ', #' then prefix '#'
-      var names = interaction[type].elements.map(function(shape) {
-        return '#' + shape.name;
-      }).join(', ');
-      return element.children(names);
-    } else {
-      return element.children('#' + interaction[type].name);
-      }
-    }
-
   drawingApp.directive('drInteractive', ['$timeout', '$compile', 
     function($timeout, $compile) {
       return {
@@ -22,38 +9,40 @@
           stateInteractions: '='
         },
         link: function(scope, element, attrs) {
-          // INFO: http://stackoverflow.com/a/12243086/574190
-          $timeout(function() {
-            scope.interactions.forEach(function(interaction) {
-              var actorElement, names, acteeElements;
+          scope.interactions.on('child_added', function(interaction) {
+            var triggerElement, names, actorElements, triggerIds;
 
-              // Each interaction can only have one actor element (rather
-              // than an array of elements or groups like the actees). Thus, we
-              // don't have to iteracte over it.
-              actorElement = element.children(interaction.actor.elementIds());
+            // INFO: http://stackoverflow.com/a/12243086/574190
+            $timeout(function() {
 
-              // actees is an array of shape objects. These shape objects can
-              // either be individual shapes or can be groups of shapes.
-              names = interaction.actees.map(function(actee) {
-                return actee.elementIds();
+              // TODO: The triggers don't appear to exist in time for me to
+              // access them if I move this code out of the $timeout function.
+              // That makes me suspicious that I'm just getting lucky that
+              // the've been loaded when I try to access them here rather than
+              // the event listening actually working. Needs investigation.
+              triggerIds = interaction.triggers[0].elementIds();
+              triggerElement = element.children(triggerIds);
+
+              names = interaction.actors.map(function(actor) {
+                return actor.elementIds();
               }).join(', ');
 
-              acteeElements = element.children(names);
+              actorElements = element.children(names);
 
-              actorElement.on(interaction.trigger.name, function() {
-                acteeElements[interaction.action.name]();
-              });
-            });
-
-            scope.stateInteractions.forEach(function(interaction) {
-              var actorElement = element.children(interaction.actor.elementIds());
-              var name = interaction.newState.name;
-              var newStyles = interaction.actor.previewStyle(name);
-              actorElement.on(interaction.trigger.name, function() {
-                actorElement.css(newStyles);
+              triggerElement.on(interaction.triggerVerb.name, function() {
+                actorElements[interaction.actionVerb.name]();
               });
             });
           });
+
+            // scope.stateInteractions.forEach(function(interaction) {
+            //   var actorElement = element.children(interaction.actor.elementIds());
+            //   var name = interaction.newState.name;
+            //   var newStyles = interaction.actor.previewStyle(name);
+            //   actorElement.on(interaction.trigger.name, function() {
+            //     actorElement.css(newStyles);
+            //   });
+            // });
         }
       };
   }]);
