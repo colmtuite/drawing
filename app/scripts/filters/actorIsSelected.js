@@ -9,12 +9,9 @@ drawingApp.filter('filterTriggerIs', function() {
 
     var out = [];
     for (var i = 0; i < input.length; i++) {
-      // This weird method of getting the trigger $id is a result of the
-      // convoluted way that we have to represent arrays in Firebase. I would
-      // probaby be better off writing an Underscore extension which takes
-      // a list on Firebase and turns it into an array of keys. That would
-      // simplify this situation.
-      if (input[i].triggerIds[0] === inspected.$id) {
+      // Currently I'm just pretending that there can only be one trigger
+      // to simplify the UI.
+      if (input[i].triggers && input[i].triggers[0] === inspected) {
         out.push(input[i]);
       }
     }

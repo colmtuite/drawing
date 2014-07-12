@@ -4,18 +4,20 @@
       angular-selectize
       ng-options="action.name for action in interactionActions"
       angular-selectize-watch="interactionActions"
+      angular-selectize-on-change="interaction.save()"
       angular-selectize-options="{labelField: 'name', valueField: 'name'}">
     </select>
 
-    <select ng-model="interaction.actorIds"
+    <select ng-model="interaction.actors"
       multiple
       angular-selectize
-      angular-selectize-options="{labelField: 'name', valueField: '$id'}"
+      angular-selectize-options="{labelField: 'name', valueField: 'name'}"
       angular-selectize-on-mouseover-item="highlightElement"
       angular-selectize-on-mouseout-item="unhighlightAll"
       angular-selectize-on-mouseover-option="highlightElement"
       angular-selectize-on-mouseout-option="unhighlightAll"
       angular-selectize-watch="interactionElements"
+      angular-selectize-on-change="interaction.save()"
       ng-options="element.name for element in interactionElements">
     </select>
 
@@ -25,6 +27,7 @@
       angular-selectize
       ng-options="trigger.name for trigger in interactionTriggers"
       angular-selectize-watch="interactionTriggers"
+      angular-selectize-on-change="interaction.save()"
       angular-selectize-options="{labelField: 'name', valueField: 'name'}">
     </select>
 

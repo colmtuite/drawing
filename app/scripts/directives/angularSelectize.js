@@ -21,14 +21,12 @@ angular.module('angularSelectize', [])
       model: '=ngModel'
     },
     link: function(scope, element, attrs, ngModel) {
-      console.log("Creating selectize element", scope, element, attrs);
-      
       // INFO: http://stackoverflow.com/a/17570515/574190
-      var onChange = scope.onChange() || angular.noop,
-          onMouseoverItem = scope.onMouseoverItem() || angular.noop,
-          onMouseoutItem = scope.onMouseoutItem() || angular.noop,
-          onMouseoverOption = scope.onMouseoverOption() || angular.noop,
-          onMouseoutOption = scope.onMouseoutOption() || angular.noop,
+      var onChange = scope.onChange || angular.noop,
+          onMouseoverItem = scope.onMouseoverItem || angular.noop,
+          onMouseoutItem = scope.onMouseoutItem || angular.noop,
+          onMouseoverOption = scope.onMouseoverOption || angular.noop,
+          onMouseoutOption = scope.onMouseoutOption || angular.noop,
           options,
           selectize,
           select;
@@ -68,7 +66,6 @@ angular.module('angularSelectize', [])
       // otherwise, the application is expecting a single value back.
       function getObjects() {
         var values = getValues();
-        console.log("Got the selectize valies", values);
         if ($.isArray(values)) {
           return $filter('filter')(scope.toWatch(), function(el) {
             return $.inArray(el[selectize.settings.valueField], values) !== -1;
@@ -84,7 +81,7 @@ angular.module('angularSelectize', [])
         $timeout((function() {
           var objects = getObjects();
           ngModel.$setViewValue(objects);
-          onChange(objects);
+          onChange();
         }));
       }));
 

@@ -34,6 +34,7 @@
 
     $scope.rectangles = $scope.screen.rectangles.asArray();
     $scope.interactions = $scope.screen.interactions.asArray();
+    $scope.screen.interactions.rectangles = $scope.screen.rectangles;
 
     console.log("The interactions", $scope.interactions);
 
@@ -81,14 +82,12 @@
 
     $scope.createRectangle = function() {
       var attrs = Rectangle.initialAttributes();
-      $scope.screen.rectangles.create();
+      $scope.screen.rectangles.create(attrs);
     };
 
     $scope.createInteraction = function() {
-      var data = {};
-      data[$scope.inspectedShape.$id] = true;
       var attrs = Interaction.initialAttributes({
-        triggerIds: data
+        triggers: [$scope.inspectedShape]
       });
       $scope.screen.interactions.create(attrs);
     };

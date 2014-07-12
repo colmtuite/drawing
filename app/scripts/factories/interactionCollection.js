@@ -25,12 +25,16 @@
 
     create: function(attrs, success) {
       success || (success = angular.noop);
-      this._resource.push(attrs);
+      // We have to initialize a model so that we can call it's toJSON method
+      // and convert the element references in the actors and triggers into
+      // IDs that we can store in Firebase.
+      var model = InteractionCollection._initializeModel(attrs);
+      this._resource.push(model.toJSON());
     },
 
     add: function(ref) {
       var model = InteractionCollection._initializeModel(ref);
-      console.log("Adding an interaction", model);
+      model.collection = this;
       this.collection.push(model);
       return model;
     },

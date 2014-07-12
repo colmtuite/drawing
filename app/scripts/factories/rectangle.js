@@ -54,14 +54,17 @@
       return _.pick(this, 'dndData', 'name', 'guid', 'normal', 'hover', 'isSelected', 'isSelecting', 'isHighlighted');
     },
 
+    parseSnapshot: function(name, val) {
+      return angular.extend(val, { '$id': name });
+    },
+
     _unwrap: function() {
       var that = this;
 
       this.resource().once('value', function(snap) {
         // console.log("Rect value change", snap.val());
         Rectangle.$timeout(function() {
-          that.$id = snap.name();
-          angular.extend(that, snap.val());
+          angular.extend(that, that.parseSnapshot(snap.name(), snap.val()));
         });
       }, this);
 

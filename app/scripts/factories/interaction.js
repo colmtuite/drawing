@@ -35,22 +35,40 @@
     },
 
     toJSON: function() {
+      var triggerIds = {};
+      this.triggers.forEach(function(trigger) {
+        triggerIds[trigger.$id] = true;
+      });
+      
+      var actorIds = {};
+      this.actors.forEach(function(actor) {
+        actorIds[actor.$id] = true;
+      });
+
       return angular.extend(_.pick(this, 'actionVerb', 'triggerVerb'), {
-        triggerIds: this.triggerIds,
-        acttorIds: this.actorIds
+        triggerIds: triggerIds,
+        actorIds: actorIds
       });
     },
 
-    // TODO: turn this into a passthrough and move to Model.
+    // TODO: move to Model and override.
     parseSnapshot: function(name, val) {
-      var actorIds = _.keys(val.actorIds);
-      console.log("parsing", name, val, actorIds, this.rectangles);
+      if (!this.collection.rectangles) {
+        throw "Rectangles not set when parsing snapshot";
+      }
 
+      var that = this;
+      var actors = _.keys(val.actorIds).map(function(id) {
+        return that.collection.rectangles.get(id);
+      });
+      var triggers = _.keys(val.triggerIds).map(function(id) {
+        return that.collection.rectangles.get(id);
+      });
 
       return angular.extend(val, {
         '$id': name,
-        actorIds: _.keys(val.actorIds),
-        triggerIds: _.keys(val.triggerIds),
+        actors: actors,
+        triggers: triggers
       });
     },
 
@@ -83,8 +101,8 @@
     ],
 
     initialAttributes: function(options) {
-      if (!_.has(options, 'triggerIds') || _.isEmpty(options.triggerIds)) {
-        throw "Cannot create interactin without a triggerID";
+      if (!_.has(options, 'triggers') || _.isEmpty(options.triggers)) {
+        throw "Cannot create interactin without triggers";
       }
           
       // The interaction occurs when when we click/mouseover/whatever 
@@ -94,7 +112,7 @@
       // triggerVerb is the thing we have to do to the trigger to kick off
       // the show.
       return angular.extend({
-        actorIds: [],
+        actors: [],
         actionVerb: this.actions[0],
         triggerVerb: this.triggers[2]
       }, options);

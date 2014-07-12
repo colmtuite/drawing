@@ -28,20 +28,6 @@
 //       return $scope.rectangles.concat($scope.groups);
 //     };
 // 
-//     $scope.createInteraction = function() {
-//       // Initialize the new state with some data so that the select boxes
-//       // are preset with some value when the user sees them.
-//       InteractionsFactory.create({
-//         actor: $scope.inspectedShape,
-//         trigger: $scope.interactionTriggers[0],
-//         action: $scope.interactionActions[0]
-//       });
-//     };
-// 
-//     $scope.deleteInteraction = function(interaction) {
-//       InteractionsFactory.destroy(interaction);
-//     };
-// 
 //     $scope.highlightElement = function(name) {
 //       $scope.unhighlightAll();
 //       var elements = $scope.interactionElements();
