@@ -53,23 +53,20 @@
 
     // TODO: move to Model and override.
     parseSnapshot: function(name, val) {
-      if (!this.collection.rectangles) {
-        throw "Rectangles not set when parsing snapshot";
+      var data = angular.extend(val, { '$id': name });
+
+      if (this.collection.rectangles) {
+        var that = this;
+        var actors = _.keys(val.actorIds).map(function(id) {
+          return that.collection.rectangles.get(id);
+        });
+        var triggers = _.keys(val.triggerIds).map(function(id) {
+          return that.collection.rectangles.get(id);
+        });
+        angular.extend(data, { actors: actors, triggers: triggers });
       }
 
-      var that = this;
-      var actors = _.keys(val.actorIds).map(function(id) {
-        return that.collection.rectangles.get(id);
-      });
-      var triggers = _.keys(val.triggerIds).map(function(id) {
-        return that.collection.rectangles.get(id);
-      });
-
-      return angular.extend(val, {
-        '$id': name,
-        actors: actors,
-        triggers: triggers
-      });
+      return data;
     },
 
     _unwrap: function() {
