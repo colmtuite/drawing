@@ -50,6 +50,12 @@
       });
     },
 
+    unhighlightAll: function() {
+      this.collection.forEach(function(item) {
+        item.unhighlight();
+      });
+    },
+
     _unwrap: function() {
       var that = this;
 

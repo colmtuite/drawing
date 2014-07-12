@@ -27,21 +27,6 @@
 //     $scope.interactionElements = function() {
 //       return $scope.rectangles.concat($scope.groups);
 //     };
-// 
-//     $scope.highlightElement = function(name) {
-//       $scope.unhighlightAll();
-//       var elements = $scope.interactionElements();
-//       $filter('filter')(elements, function(el) {
-//         return el.name === name;
-//       }).map(function(el) {
-//         el.isHighlighted = true;
-//       });
-//     };
-// 
-//     $scope.unhighlightAll = function() {
-//       var elements = $scope.interactionElements();
-//       elements.forEach(function(el) { el.isHighlighted = false });
-//     }
   }
 
   app.controller('ElementInteractionsController', requirements);

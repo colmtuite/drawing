@@ -36,8 +36,6 @@
     $scope.interactions = $scope.screen.interactions.asArray();
     $scope.screen.interactions.rectangles = $scope.screen.rectangles;
 
-    console.log("The interactions", $scope.interactions);
-
     // I would love to do something like iterate over the interaction
     // actorIds and match them up with rectangles. My initial thought against
     // this was that it won't work because the interactions might not load
@@ -85,11 +83,25 @@
       $scope.screen.rectangles.create(attrs);
     };
 
+    // TODO: Move all this interaction stuff out oft here.
+
     $scope.createInteraction = function() {
       var attrs = Interaction.initialAttributes({
         triggers: [$scope.inspectedShape]
       });
       $scope.screen.interactions.create(attrs);
+    };
+
+    $scope.highlightElement = function(name) {
+      $scope.unhighlightAll();
+      var elements = $scope.screen.rectangles.where({ name: name })
+      elements.forEach(function(rect) {
+        rect.highlight();
+      });
+    };
+
+    $scope.unhighlightAll = function() {
+      $scope.screen.rectangles.unhighlightAll();
     };
 
     $scope.inspectedShape = InspectedRectangle.inspected();

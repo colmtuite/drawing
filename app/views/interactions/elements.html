@@ -13,9 +13,9 @@
       angular-selectize
       angular-selectize-options="{labelField: 'name', valueField: 'name'}"
       angular-selectize-on-mouseover-item="highlightElement"
-      angular-selectize-on-mouseout-item="unhighlightAll"
+      angular-selectize-on-mouseout-item="unhighlightAll()"
       angular-selectize-on-mouseover-option="highlightElement"
-      angular-selectize-on-mouseout-option="unhighlightAll"
+      angular-selectize-on-mouseout-option="unhighlightAll()"
       angular-selectize-watch="interactionElements"
       angular-selectize-on-change="interaction.save()"
       ng-options="element.name for element in interactionElements">

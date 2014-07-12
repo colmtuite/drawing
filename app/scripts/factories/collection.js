@@ -69,6 +69,10 @@
       return _.findWhere(this.collection, { '$id': id });
     },
 
+    where: function(conditions) {
+      return _.where(this.collection, conditions);
+    },
+
     // Remove a model from the internal collection.
     remove: function(model) {
       var index = this.collection.indexOf(model);

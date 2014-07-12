@@ -23,9 +23,9 @@ angular.module('angularSelectize', [])
     link: function(scope, element, attrs, ngModel) {
       // INFO: http://stackoverflow.com/a/17570515/574190
       var onChange = scope.onChange || angular.noop,
-          onMouseoverItem = scope.onMouseoverItem || angular.noop,
+          onMouseoverItem = scope.onMouseoverItem() || angular.noop,
           onMouseoutItem = scope.onMouseoutItem || angular.noop,
-          onMouseoverOption = scope.onMouseoverOption || angular.noop,
+          onMouseoverOption = scope.onMouseoverOption() || angular.noop,
           onMouseoutOption = scope.onMouseoutOption || angular.noop,
           options,
           selectize,

@@ -126,6 +126,11 @@
       this.isSelected = !this.isSelected
     },
 
+    highlight: function() { this.isHighlighted = true; },
+    unhighlight: function() { this.isHighlighted = false; },
+
+    toggleHighlighted: function() { this.isHighlighted = !this.isHighlighted },
+
     // Positioning Getters
     // ===================
 
