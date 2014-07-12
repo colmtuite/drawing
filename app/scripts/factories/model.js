@@ -33,6 +33,10 @@
       }, this));
     },
 
+    save: function() {
+      this._resource.update(this.toJSON());
+    },
+
     // Ocasionally we have to manually create a reference using a path and
     // the ID of an object. It happens when using models outside of collections
     // for example.

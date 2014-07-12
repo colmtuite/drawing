@@ -43,7 +43,7 @@
       var that = this;
 
       this._resource.once('value', function(snap) {
-        this.trigger('value');
+        this.trigger('load');
       }, this);
 
       this._resource.on('child_added', function(newSnap, prevSiblingName) {

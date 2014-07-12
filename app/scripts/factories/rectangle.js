@@ -42,10 +42,6 @@
       this.resource().remove();
     },
 
-    save: function() {
-      this.resource().update(this.toJSON());
-    },
-
     toJSON: function() {
       // Firebase appears to be very choosy about the keys of the JSON
       // you send to the server. Might be worth having a look at the AngularFire
@@ -62,14 +58,12 @@
       var that = this;
 
       this.resource().once('value', function(snap) {
-        // console.log("Rect value change", snap.val());
         Rectangle.$timeout(function() {
           angular.extend(that, that.parseSnapshot(snap.name(), snap.val()));
         });
       }, this);
 
       this.resource().on('child_changed', function(newSnap, prevSibling) {
-        console.log("Rect child changed", newSnap.name(), newSnap.val());
         // Only applying changes if they have no children is not sophisticated
         // enough in this instance because rectangle data contains some nested
         // structures like states which, when changed, we want to update the

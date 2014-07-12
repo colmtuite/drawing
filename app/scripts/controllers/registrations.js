@@ -10,13 +10,18 @@
 
   function ctrl($scope, CurrentUser, $location) {
     $scope.createUser = function(email, password) {
-      CurrentUser.$create(email, password)
-        .then(function(user) {
-          $location.path('/screens');
-        })
-        .catch(function(err) {
-          console.log("Error creating", err);
-        });
+      $scope.currentUser.create(email, password, function(error, user) {
+        if (error) {
+          console.log("ERROR", error);
+        } else {
+          $scope.currentUser.login(email, password, function(user) {
+            // Save the user's DB record (which is different than the details
+            // that Firebase tracks so they can handle authentication).
+            user.save();
+            $location.path('/screens');
+          });
+        }
+      });
     };
   }
 }(drawingApp));

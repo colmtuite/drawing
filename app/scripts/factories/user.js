@@ -35,6 +35,10 @@
       }
     },
 
+    toJSON: function() {
+      return _.pick(this, 'email', 'provider');
+    },
+
     url: function() {
       return 'users/' + this.$id;
     },
@@ -55,8 +59,8 @@
         User.$timeout(function() {
           that.$id = snap.name();
           angular.extend(that, snap.val());
+          that.trigger('load');
         });
-        this.trigger('load');
       }, this);
 
       this._resource.on('child_changed', function(newSnap) {

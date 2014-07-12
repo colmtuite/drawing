@@ -28,7 +28,6 @@
         if (error) {
           console.warn("error logging in the user", error);
         } else if (userData) {
-          that.user.$id = userData.id;
           angular.extend(that.user, userData);
           // We have to do this manually in this instance because we're using
           // the User model outside of a collection.
@@ -36,7 +35,7 @@
           // Firebase path.
           that.user.setRef('users/' + userData.id);
           that.user._unwrap();
-          that.trigger('login');
+          that.trigger('login', [that.user]);
         } else {
           // Guest user
         }
@@ -50,10 +49,19 @@
 
     login: function(email, password, success) {
       success || (success = angular.noop);
-      return this.auth.login('password', {
-        email: email, password: password
-      });
-    }
+      var that = this;
+      var loginHandler = function() {
+        success.apply(that, arguments);
+        that.off('login', loginHandler);
+      };
+      this.on('login', loginHandler);
+      this.auth.login('password', { email: email, password: password });
+    },
+
+    create: function(email, password, success) {
+      success || (success = angular.noop);
+      return this.auth.createUser(email, password, success);
+    },
   });
 
   // CurrentUser.$create = function(email, password) {

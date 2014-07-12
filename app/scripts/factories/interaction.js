@@ -30,10 +30,6 @@
       this._resource.remove();
     },
 
-    save: function() {
-      this._resource.update(this.toJSON());
-    },
-
     toJSON: function() {
       var triggerIds = {};
       this.triggers.forEach(function(trigger) {
