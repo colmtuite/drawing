@@ -33,13 +33,16 @@
         this._resource = futureData;
         this._unwrap();
       } else {
-        // We're dealing with literal attributes. In this case, the $id should
-        // be among them and we can use it to the the resource via #url.
+        // We're dealing with literal attributes. In this case, the path
+        // attribute should be among them.
+        this.setRef(futureData.path);
         angular.extend(this, futureData);
       }
     },
 
     initializeAssociations: function() {},
+
+    associations: [],
 
     destroy: function(success) {
       success || (success = angular.noop);
@@ -82,33 +85,8 @@
       this._resource = new Firebase(Model.FBURL + path.replace(/^\//, ''));
     },
 
-    basePath: function() {
-      var url;
-
-      if (_.isFunction(this.url)) {
-        url = this.url();
-      } else {
-        url = this.url;
-      }
-
-      return Model.FBURL + url;
-    },
-
-    // TODO: Instead of this, trigger an event whenever the $id changes and
-    // update the path that way. Can also update the _resource at the same time.
-    resource: function() {
-      var basePath = this.basePath();
-
-      // Only create the resource once. It won't change since the $id won't.
-      if (!this._resource) {
-        this._resource = new Firebase(basePath);
-      }
-
-      return this._resource;
-    },
-
     fetch: function() {
-      return this._unwrap(this.resource());
+      return this._unwrap(this._resource);
     },
   });
 

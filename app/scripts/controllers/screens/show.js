@@ -5,7 +5,7 @@
     ['$scope', '$stateParams', 'Screen', ctrl]);
 
   function ctrl($scope, $stateParams, Screen) {
-    $scope.screen = new Screen({ '$id': $stateParams.id });
+    $scope.screen = new Screen({ path: 'screens/' + $stateParams.id });
     $scope.screen.fetch();
 
     $scope.rectangles = $scope.screen.rectangles.asArray();

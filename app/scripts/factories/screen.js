@@ -19,22 +19,18 @@
   app.factory('Screen', $factory);
 
   var methods = {
-    url: function() { return 'screens/' + this.$id; },
-
     initializeAssociations: function() {
       var that = this;
 
-      if (this.associations) {
-        // Instanciate this even before the data is loaded so that we can call
-        // methods on it in the controller without having to wait.
-        this.associations.forEach(function(name) {
-          // NOTE: I'm having trouble moving this up into Model because
-          // it calls 'new Screen.RectangleCollection' (for example). That
-          // class isn't defined on Model and thus is unfound when it goes
-          // looking for it.
-          that[name] = new Screen['$' + _.classify(name) + 'Collection']();
-        });
-      }
+      // Instanciate this even before the data is loaded so that we can call
+      // methods on it in the controller without having to wait.
+      this.associations.forEach(function(name) {
+        // NOTE: I'm having trouble moving this up into Model because
+        // it calls 'new Screen.RectangleCollection' (for example). That
+        // class isn't defined on Model and thus is unfound when it goes
+        // looking for it.
+        that[name] = new Screen['$' + _.classify(name) + 'Collection']();
+      });
     },
 
     associations: ['rectangles', 'interactions'],
@@ -44,7 +40,7 @@
       // Loading the screen will also load all it's nested data. That means
       // that all rectangle data is available at this point.
       this.associations.forEach(function(name) {
-        that[name].reset(that.resource().child(name));
+        that[name].reset(that._resource.child(name));
       });
 
       this._resource.once('value', function(snap) {
@@ -57,12 +53,11 @@
         // injectable service. It's defined on the $rootScope. We can inject
         // that but $rootScope.$apply is actually the same thing as $timeout.
         Screen.$timeout(function() {
-          that.$id = snap.name();
-          // Delete rectangles data so it doesn't overwrite the collection.
-          angular.extend(that, _.omit(snap.val(), that.associations));
+          var data = that.parseSnapshot(snap.name(), snap.val());
+          data = _.omit(data, that.associations);
+          angular.extend(that, data);
+          that.trigger('load');
         });
-
-        // this._setupAssociatedObjects();
       }, this);
 
       this._resource.on('child_changed', function(newSnap, prevSibling) {
@@ -70,9 +65,9 @@
         // The rectangles collection etc. can setup their own listeners
         // and use them to respond to updates.
         if (!newSnap.hasChildren()) {
-          console.log("Screen child changed", newSnap.name(), newSnap.val());
           Screen.$timeout(function() {
             that[newSnap.name()] = newSnap.val();
+            that.trigger('child_changed');
           });
         }
 

@@ -19,10 +19,6 @@
       this.states = [];
     },
 
-    url: function() {
-      return 'screens/' + this.$screenId + '/rectangles/' + this.$id;
-    },
-
     toJSON: function() {
       // Firebase appears to be very choosy about the keys of the JSON
       // you send to the server. Might be worth having a look at the AngularFire
@@ -34,13 +30,16 @@
     _unwrap: function() {
       var that = this;
 
-      this.resource().once('value', function(snap) {
+      this._resource.once('value', function(snap) {
         Rectangle.$timeout(function() {
-          angular.extend(that, that.parseSnapshot(snap.name(), snap.val()));
+          var data = that.parseSnapshot(snap.name(), snap.val());
+          data = _.omit(data, that.associations);
+          angular.extend(that, data);
+          that.trigger('load');
         });
       }, this);
 
-      this.resource().on('child_changed', function(newSnap, prevSibling) {
+      this._resource.on('child_changed', function(newSnap, prevSibling) {
         // Only applying changes if they have no children is not sophisticated
         // enough in this instance because rectangle data contains some nested
         // structures like states which, when changed, we want to update the
@@ -56,6 +55,7 @@
         // system. Thus, I can skip the hasChildren test.
         Rectangle.$timeout(function() {
           angular.extend(that[newSnap.name()], newSnap.val());
+          that.trigger('child_changed');
         });
       }, this);
     },

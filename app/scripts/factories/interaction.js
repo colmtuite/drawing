@@ -54,7 +54,10 @@
 
       this._resource.once('value', function(snap) {
         Interaction.$timeout(function() {
-          angular.extend(that, that.parseSnapshot(snap.name(), snap.val()));
+          var data = that.parseSnapshot(snap.name(), snap.val());
+          data = _.omit(data, that.associations);
+          angular.extend(that, data);
+          that.trigger('load');
         });
       }, this);
 
@@ -62,6 +65,7 @@
         Interaction.$timeout(function() {
           // TODO: Parse the snapshot again.
           angular.extend(that[newSnap.name()], newSnap.val());
+          that.trigger('child_changed');
         });
       }, this);
     },

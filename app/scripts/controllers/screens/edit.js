@@ -28,7 +28,7 @@
     // appearing. (Update: I suspect the actual cause of this might have been
     // the fact that screens weren't appearing when transitioning between
     // pages).
-    $scope.screen = new Screen({ '$id': $stateParams.id });
+    $scope.screen = new Screen({ path: 'screens/' + $stateParams.id });
     $scope.screen.fetch();
 
     $scope.rectangles = $scope.screen.rectangles.asArray();
