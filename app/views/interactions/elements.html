@@ -1,4 +1,4 @@
-<div>
+<div ng-controller="ElementInteractionsController">
   <div ng-repeat="interaction in interactions | filterTriggerIs:inspectedShape">
     <select ng-model="interaction.actionVerb"
       angular-selectize

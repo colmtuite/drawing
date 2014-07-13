@@ -5,13 +5,12 @@
     '$scope',
     '$stateParams',
     'InspectedRectangle', 
-    'Interaction',
     'Screen', 
     'Rectangle', 
     ctrl
   ]);
 
-  function ctrl($scope, $stateParams, InspectedRectangle, Interaction, Screen, Rectangle) {
+  function ctrl($scope, $stateParams, InspectedRectangle, Screen, Rectangle) {
     // This is one of the instances where I can't pass in the reference to
     // Firebase and must pass in the ID instead (well, technically I could
     // construct the reference out here with "new Firebase()" but I would
@@ -33,37 +32,10 @@
     $scope.screen.fetch();
 
     $scope.rectangles = $scope.screen.rectangles.asArray();
-    $scope.interactions = $scope.screen.interactions.asArray();
-    $scope.screen.interactions.rectangles = $scope.screen.rectangles;
-
-    $scope.interactionActions = Interaction.actions;
-    $scope.interactionTriggers = Interaction.triggers;
-    $scope.interactionElements = $scope.rectangles;
 
     $scope.createRectangle = function() {
       var attrs = Rectangle.initialAttributes();
       $scope.screen.rectangles.create(attrs);
-    };
-
-    // TODO: Move all this interaction stuff out of here.
-
-    $scope.createInteraction = function() {
-      var attrs = Interaction.initialAttributes({
-        triggers: [$scope.inspectedShape]
-      });
-      $scope.screen.interactions.create(attrs);
-    };
-
-    $scope.highlightElement = function(name) {
-      $scope.unhighlightAll();
-      var elements = $scope.screen.rectangles.where({ name: name })
-      elements.forEach(function(rect) {
-        rect.highlight();
-      });
-    };
-
-    $scope.unhighlightAll = function() {
-      $scope.screen.rectangles.unhighlightAll();
     };
 
     $scope.inspectedShape = InspectedRectangle.inspected();

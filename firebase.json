@@ -1,5 +1,5 @@
 {
-  "firebase": "amber-fire-4613",
+  "firebase": "drawing-prod",
   "public": "dist",
   "ignore": [
     "firebase.json",
