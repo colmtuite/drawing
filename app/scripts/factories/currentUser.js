@@ -7,11 +7,11 @@
   }
 
   CurrentUser.$factory = [
-    'FBURL',
+    'ENV',
     'User',
-    function(FBURL, User) {
+    function(ENV, User) {
       angular.extend(CurrentUser, {
-        FBURL: FBURL,
+        FBURL: ENV.firebaseUrl,
         $model: User
       });
 

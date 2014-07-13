@@ -2,10 +2,9 @@
 
 var drawingApp = angular.module('drawingApp', [
   'ngCookies', 'ngResource', 'ngSanitize', 'dnd',
-  'angularSelectize', 'ui.bootstrap', "xeditable", 'ui.router'
+  'angularSelectize', 'ui.bootstrap', "xeditable", 'ui.router',
+  'config'
 ]);
-
-drawingApp.constant('FBURL', 'https://amber-fire-4613.firebaseio.com/');
 
 drawingApp.run(function(editableOptions) {
   editableOptions.theme = 'bs3';

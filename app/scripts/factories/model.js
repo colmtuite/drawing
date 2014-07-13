@@ -6,12 +6,12 @@
   }
 
   Model.$factory = [
-    'FBURL',
+    'ENV',
     'Extend',
     '$timeout',
-    function(FBURL, Extend, $timeout) {
+    function(ENV, Extend, $timeout) {
       angular.extend(Model, {
-        FBURL: FBURL,
+        FBURL: ENV.firebaseUrl,
         $timeout: $timeout
       });
 

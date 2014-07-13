@@ -26,6 +26,40 @@ module.exports = function (grunt) {
       test: 'spec'
     },
 
+    ngconstant: {
+      // Options for all targets
+      options: {
+        space: '  ',
+        wrap: '"use strict";\n\n {%= __ngModule %}',
+        name: 'config',
+      },
+
+      // Environment targets
+      development: {
+        options: {
+          dest: '<%= yeoman.app %>/scripts/config.js'
+        },
+        constants: {
+          ENV: {
+            name: 'development',
+            firebaseUrl: 'https://amber-fire-4613.firebaseio.com/'
+          }
+        }
+      },
+
+      production: {
+        options: {
+          dest: '<%= yeoman.dist %>/scripts/config.js'
+        },
+        constants: {
+          ENV: {
+            name: 'production',
+            firebaseUrl: 'https://drawing-prod.firebaseio.com/'
+          }
+        }
+      }
+    },
+
     // Watches files for changes and runs tasks based on the changed files
     watch: {
       bower: {
@@ -75,6 +109,7 @@ module.exports = function (grunt) {
         hostname: 'localhost',
         livereload: 35729
       },
+
       livereload: {
         options: {
           open: true,
@@ -384,6 +419,7 @@ module.exports = function (grunt) {
     }
   });
 
+  grunt.loadNpmTasks('grunt-ng-constant');
   grunt.loadNpmTasks('grunt-karma');
 
   grunt.registerTask('serve', function (target) {
@@ -393,6 +429,7 @@ module.exports = function (grunt) {
 
     grunt.task.run([
       'clean:server',
+      'ngconstant:development',
       'bowerInstall',
       'concurrent:server',
       'autoprefixer',
@@ -416,6 +453,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
+    'ngconstant:production',
     'bowerInstall',
     'useminPrepare',
     'concurrent:dist',

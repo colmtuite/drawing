@@ -8,11 +8,11 @@
   Collection.$factory = [
     '$timeout',
     'Extend',
-    'FBURL',
-    function($timeout, Extend, FBURL) {
+    'ENV',
+    function($timeout, Extend, ENV) {
       angular.extend(Collection, {
         $timeout: $timeout,
-        FBURL: FBURL,
+        FBURL: ENV.firebaseUrl,
       });
 
       Collection.extend = Extend;
