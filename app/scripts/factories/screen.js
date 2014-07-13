@@ -19,40 +19,22 @@
   app.factory('Screen', $factory);
 
   var methods = {
-    initialize: function(futureData) {
-      // Instanciate this even before the data is loaded so that we can call
-      // methods on it in the controller without having to wait.
-      // TODO: Tie this into the associations array I've defined on this
-      // object.
-      this.rectangles = new Screen.$RectangleCollection();
-      this.interactions = new Screen.$InteractionCollection();
-      // console.log("Initializing a screen", futureData, futureData.on);
-
-      if (!futureData) return;
-
-      if (futureData.on) {
-        // We're dealing with a firebase reference.
-        this._resource = futureData;
-        this._unwrap();
-      } else {
-        // We're dealing with literal attributes. In this case, the $id should
-        // be among them and we can use it to the the resource via #url.
-        angular.extend(this, futureData);
-      }
-    },
-
     url: function() { return 'screens/' + this.$id; },
 
-    destroy: function(success) {
-      success || (success = angular.noop);
-      this.resource().remove();
-      success();
-      return this;
-    },
+    initializeAssociations: function() {
+      var that = this;
 
-    update: function(attrs, success) {
-      success || (success = angular.noop);
-      this.resource().update(attrs).then(success);
+      if (this.associations) {
+        // Instanciate this even before the data is loaded so that we can call
+        // methods on it in the controller without having to wait.
+        this.associations.forEach(function(name) {
+          // NOTE: I'm having trouble moving this up into Model because
+          // it calls 'new Screen.RectangleCollection' (for example). That
+          // class isn't defined on Model and thus is unfound when it goes
+          // looking for it.
+          that[name] = new Screen['$' + _.classify(name) + 'Collection']();
+        });
+      }
     },
 
     associations: ['rectangles', 'interactions'],

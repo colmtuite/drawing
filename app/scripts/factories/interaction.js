@@ -15,21 +15,6 @@
   app.factory('Interaction', $factory);
 
   var methods = {
-    initialize: function(futureData) {
-      if (!futureData) return;
-
-      if (futureData.on) {
-        this._resource = futureData;
-        this._unwrap();
-      } else {
-        angular.extend(this, futureData);
-      }
-    },
-
-    destroy: function() {
-      this._resource.remove();
-    },
-
     toJSON: function() {
       var triggerIds = {};
       this.triggers.forEach(function(trigger) {
@@ -47,7 +32,6 @@
       });
     },
 
-    // TODO: move to Model and override.
     parseSnapshot: function(name, val) {
       var data = angular.extend(val, { '$id': name });
 

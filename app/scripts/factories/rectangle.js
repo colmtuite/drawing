@@ -15,31 +15,12 @@
   app.factory('Rectangle', $factory);
 
   var methods = {
-    initialize: function(futureData) {
+    initializeAssociations: function() {
       this.states = [];
-
-      if (!futureData) return;
-
-      if (futureData.on) {
-        this._resource = futureData;
-        this._unwrap();
-      } else {
-        angular.extend(this, futureData);
-      }
     },
 
     url: function() {
       return 'screens/' + this.$screenId + '/rectangles/' + this.$id;
-    },
-
-    destroy: function() {
-      // Removing a rectangle doesn't appear to remove the item from the
-      // UI on another user's screen. I've tried wrapping this line in a
-      // $timeout but that doesn't appear to fix the issue. I'll have to
-      // investigate what is going wrong. I suspect it's because I'm not
-      // listenting to the 'value' event of the rectangle and using that
-      // to remove it from the UI.
-      this.resource().remove();
     },
 
     toJSON: function() {
@@ -48,10 +29,6 @@
       // toJSON implementation to try and get a better way to pick out keys
       // which are going to cause trouble.
       return _.pick(this, 'dndData', 'name', 'guid', 'normal', 'hover', 'isSelected', 'isSelecting', 'isHighlighted');
-    },
-
-    parseSnapshot: function(name, val) {
-      return angular.extend(val, { '$id': name });
     },
 
     _unwrap: function() {
