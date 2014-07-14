@@ -93,6 +93,11 @@ Partials can be used via the `ng-include` directive. For example, the following 
 
     <div ng-include src="'views/layouts/header.html'"></div>
 
+### Frontend Plugins
+
+Two notable plugins we're using are [Angular-xeditable](http://vitalets.github.io/angular-xeditable/) for in-place editing and [selectize.js](http://brianreavis.github.io/selectize.js/) for select boxes.
+
+Both of these plugins come with their own theming capabilities. 
 
 ### Database
 

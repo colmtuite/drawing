@@ -1,7 +1,4 @@
-$icon-font-path: "/bower_components/bootstrap-sass-official/vendor/assets/fonts/bootstrap/";
-
 // bower:scss
-@import "../bower_components/bootstrap-sass-official/vendor/assets/stylesheets/bootstrap.scss";
 // endbower
 
 @import "dnd";
@@ -62,7 +59,3 @@ $icon-font-path: "/bower_components/bootstrap-sass-official/vendor/assets/fonts/
   width: 100%;
   position: relative;
 }
-
-// Required by angular-bootstrap.
-// INFO: http://angular-ui.github.io/bootstrap/#/getting_started
-.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
