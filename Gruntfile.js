@@ -61,6 +61,18 @@ module.exports = function (grunt) {
             firebaseUrl: 'https://drawing-prod.firebaseio.com/'
           }
         }
+      },
+
+      staging: {
+        options: {
+          dest: '<%= yeoman.app %>/scripts/config.js'
+        },
+        constants: {
+          ENV: {
+            name: 'staging',
+            firebaseUrl: 'https://drawing-stage.firebaseio.com/'
+          }
+        }
       }
     },
 
@@ -457,7 +469,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
-    'ngconstant:production',
+    'ngconstant:staging',
     'bowerInstall',
     'useminPrepare',
     'concurrent:dist',
