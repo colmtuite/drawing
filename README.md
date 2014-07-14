@@ -97,7 +97,7 @@ Partials can be used via the `ng-include` directive. For example, the following 
 
 Two notable plugins we're using are [Angular-xeditable](http://vitalets.github.io/angular-xeditable/) for in-place editing and [selectize.js](http://brianreavis.github.io/selectize.js/) for select boxes.
 
-Both of these plugins come with their own theming capabilities. 
+Both of these plugins come with their own theming capabilities. I'm not sure how they work exactly but I would reccommend we figure it out if we're going to make changes to them. I'm sure it must be fairly simple. Just make sure you let me know if you're gonna tackle it.
 
 ### Database
 
