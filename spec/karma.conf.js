@@ -43,14 +43,17 @@ module.exports = function(config) {
 
       // Scripts
 
+      "app/mixins/underscore/titleize.js",
       "app/mixins/underscore/deep.js",
       "app/mixins/underscore/pluckDeep.js",
       "app/scripts/app.js",
+      "app/scripts/config.js",
       "app/scripts/controllers/application.js",
       "app/scripts/controllers/screens/edit.js",
       "app/scripts/controllers/screens/index.js",
       "app/scripts/controllers/screens/show.js",
-      "app/scripts/controllers/interactions.js",
+      "app/scripts/controllers/interactions/element/edit.js",
+      "app/scripts/controllers/interactions/state/edit.js",
       "app/scripts/controllers/registrations.js",
       "app/scripts/controllers/sessions.js",
       "app/scripts/factories/extend.js",
@@ -58,7 +61,8 @@ module.exports = function(config) {
       "app/scripts/factories/collection.js",
       "app/scripts/factories/currentUser.js",
       "app/scripts/factories/user.js",
-      "app/scripts/factories/interactions.js",
+      "app/scripts/factories/interaction.js",
+      "app/scripts/factories/interactionCollection.js",
       "app/scripts/factories/rectangle.js",
       "app/scripts/factories/rectangleCollection.js",
       "app/scripts/factories/inspectedRectangle.js",
@@ -68,7 +72,8 @@ module.exports = function(config) {
       "app/scripts/directives/canvas.js",
       "app/scripts/directives/keypressEvents.js",
       "app/scripts/directives/angularSelectize.js",
-      "app/scripts/filters/actorIsSelected.js",
+      "app/scripts/filters/triggerIs.js",
+      "app/scripts/filters/actorsInclude.js",
 
       // Tests
 

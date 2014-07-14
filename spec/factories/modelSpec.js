@@ -4,8 +4,10 @@ describe('Model', function() {
   var FBURL = 'https://drawing-test.firebaseio.com/';
 
   beforeEach(function() {
-    angular.module('appMocks', [])
-      .constant('FBURL', FBURL);
+    angular.module('appMocks', []).constant('ENV', {
+      name: 'test',
+      firebaseUrl: FBURL
+    });
     angular.module('testApp', ['drawingApp', 'appMocks'])
     module('testApp');
   });
