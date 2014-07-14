@@ -140,7 +140,7 @@
           // point).
           // that.add(that.resource().child(subSnap.name()));
         });
-        this.trigger('load');
+        this.trigger('key_load');
       }, this);
 
       // I have to listen to this and add models on fire because of the
@@ -150,8 +150,8 @@
       this.keyReference.on('child_added', function(snap) {
         // console.log("Owned screen ids child added", snap.name(), snap.val());
         ScreenCollection.$timeout(function() {
-          that.add(that._resource.child(snap.name()));
-          that.trigger('child_added');
+          var model = that.add(that._resource.child(snap.name()));
+          that.trigger('child_added', [model]);
         });
         // Not sure I can do this in here. Might end up loading every screen
         // even when we don't need them. Will leave it here for the moment.
@@ -172,8 +172,8 @@
       this.keyReference.on('child_removed', function(snap) {
         // console.log("Owned screen ids child removed", snap.name(), snap.val());
         ScreenCollection.$timeout(function() {
-          that.remove(snap.name());
-          that.trigger('child_removed');
+          var model = that.remove(snap.name());
+          that.trigger('child_removed', [model]);
         });
       }, this);
 
