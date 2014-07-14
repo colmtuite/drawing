@@ -123,7 +123,7 @@
       var that = this;
 
       this.keyReference.once('value', function(snap) {
-        console.log("Owned screen ids value", snap.name(), snap.val());
+        // console.log("Owned screen ids value", snap.name(), snap.val());
         snap.forEach(function(subSnap) {
           // I have two choices here. I can either pass the $id of the screen
           // or I can pass a reference to the screen. Either way, I end up

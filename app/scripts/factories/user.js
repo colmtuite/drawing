@@ -25,6 +25,8 @@
       return _.pick(this, 'email', 'provider');
     },
 
+    associations: ['ownedScreenIds'],
+
     _unwrap: function() {
       var that = this;
 
@@ -43,6 +45,10 @@
           that.trigger('load');
         });
       }, this);
+
+      this._resource.on('value', function() {
+        that.trigger('value');
+      });
 
       this._resource.on('child_changed', function(newSnap) {
         if (!newSnap.hasChildren()) {

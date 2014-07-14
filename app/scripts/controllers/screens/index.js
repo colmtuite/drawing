@@ -11,7 +11,10 @@
     var screens = $scope.currentUser.user.ownedScreens;
     $scope.screens = screens.asArray();
 
-    $scope.currentUser.user.on('load', function() {
+    $scope.currentUser.user.on('value', function() {
+      // I'm doing this in here rather than in the user model because I don't
+      // want to fetch and unwrap the user's screens everytime the user loads.
+      // Otherwise it would load all screens on all pages.
       screens._unwrap();
     });
 
