@@ -9,7 +9,11 @@
     $scope.screen.fetch();
 
     $scope.rectangles = $scope.screen.rectangles.asArray();
+
     $scope.interactions = $scope.screen.interactions;
     $scope.screen.interactions.rectangles = $scope.screen.rectangles;
+
+    $scope.stateInteractions = $scope.screen.stateInteractions;
+    $scope.screen.stateInteractions.rectangles = $scope.screen.rectangles;
   }
 })(drawingApp);

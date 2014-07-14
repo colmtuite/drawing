@@ -6,11 +6,13 @@
   var $factory = [
     'RectangleCollection',
     'InteractionCollection',
+    'StateInteractionCollection',
     'Model',
-    function(RectangleCollection, InteractionCollection, Model) {
+    function(RectangleCollection, InteractionCollection, StateInteractionCollection, Model) {
       Screen = Model.extend(methods, angular.extend({
         $RectangleCollection: RectangleCollection,
-        $InteractionCollection: InteractionCollection
+        $InteractionCollection: InteractionCollection,
+        $StateInteractionCollection: StateInteractionCollection
       }, classMethods));
 
       return Screen;
@@ -33,7 +35,7 @@
       });
     },
 
-    associations: ['rectangles', 'interactions'],
+    associations: ['rectangles', 'interactions', 'stateInteractions'],
 
     _unwrap: function() {
       var that = this;

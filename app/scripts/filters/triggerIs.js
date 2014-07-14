@@ -2,7 +2,8 @@
 
 // TODO: This filter runs like 10 times when you inspect a shape. Can't be
 // efficient. Put a console.log in it and watch how many times it shows up.
-// I should figure out why at some stage.
+// I should figure out why at some stage. It's probably the same for other
+// filters so they need investigation too.
 drawingApp.filter('filterTriggerIs', function() {
   return function(input, inspected) {
     if (!inspected || !input || _.isEmpty(input)) return;

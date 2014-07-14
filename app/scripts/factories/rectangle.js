@@ -62,16 +62,21 @@
 
     style: function(state) {
       state || (state = this.states[0] && this.states[0].name);
+      // Angular seems to call this function way before the states have been
+      // initilaized when it is preparing the page. For that reason, we have
+      // to be able to handle the case where this.states is undefined.
       if (state) {
         return {
           "background-color": this[state].fill,
           "border":  this[state].strokeWidth + 'px solid ' + this[state].stroke
         };
+      } else {
+        return {};
       }
     },
 
     previewStyle: function(state) {
-      return $.extend(this.style(state), this.dndData);
+      return angular.extend(this.style(state), this.dndData);
     },
     
     // This method is here for consistency with the Group object. Often we

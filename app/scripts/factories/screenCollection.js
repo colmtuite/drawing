@@ -37,10 +37,6 @@
   // holds the actual screen data.
 
   var methods = {
-    url: function() {
-      return 'screens';
-    },
-
     fetch: function() {
       this.collection.forEach(function(model) { model.fetch(); });
       return this;
@@ -104,7 +100,7 @@
     // TODO: Optimistially add the model to the collection.
     create: function(attrs, success) {
       success || (success = angular.noop);
-      var newModel = this.resource().push(attrs);
+      var newModel = this._resource.push(attrs);
       this.addForeignKey(newModel.name());
       success(attrs);
     },
@@ -160,7 +156,7 @@
       this.keyReference.on('child_added', function(snap) {
         // console.log("Owned screen ids child added", snap.name(), snap.val());
         ScreenCollection.$timeout(function() {
-          that.add(that.resource().child(snap.name()));
+          that.add(that._resource.child(snap.name()));
         });
         // Not sure I can do this in here. Might end up loading every screen
         // even when we don't need them. Will leave it here for the moment.

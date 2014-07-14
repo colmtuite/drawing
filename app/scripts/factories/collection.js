@@ -27,32 +27,33 @@
       this.collection = [];
     },
 
-    basePath: function() {
-      var url;
-
-      if (_.isFunction(this.url)) {
-        url = this.url();
-      } else {
-        url = this.url;
-      }
-
-      return Collection.FBURL + url;
+    reset: function(reference) {
+      this.empty();
+      this._resource = reference;
+      this._unwrap();
     },
 
-    // TODO: Instead of this, trigger an event whenever the $id changes and
-    // update the path that way. Can also update the _resource at the same time.
-    resource: function() {
-      // NOTE: Collections won't have an $id. This is one place where their
-      // #resource method needs to differ from Models.
+    _unwrap: function() {
+      var that = this;
 
-      var basePath = this.basePath();
+      this._resource.once('value', function(snap) {
+        this.trigger('load');
+      }, this);
 
-      // Only create the resource once. It won't change since the $id won't.
-      if (!this._resource) {
-        this._resource = new Firebase(basePath);
-      }
+      this._resource.on('child_added', function(newSnap, prevSiblingName) {
+        Collection.$timeout(function() {
+          var model = that.add(that._resource.child(newSnap.name()));
+          // NOTE: The emitted data MUST be an array.
+          that.trigger('child_added', [model]);
+        });
+      }, this);
 
-      return this._resource;
+      this._resource.on('child_removed', function(snap) {
+        Collection.$timeout(function() {
+          var model = that.remove(snap.name());
+          that.trigger('child_removed', [model]);
+        });
+      }, this);
     },
 
     // If we just set this.collection to a new array literal then any bindings

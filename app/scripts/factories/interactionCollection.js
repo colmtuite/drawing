@@ -17,12 +17,6 @@
   app.factory('InteractionCollection', $factory);
 
   var methods = {
-    reset: function(reference) {
-      this.empty();
-      this._resource = reference;
-      this._unwrap();
-    },
-
     create: function(attrs, success) {
       success || (success = angular.noop);
       // We have to initialize a model so that we can call it's toJSON method
@@ -37,29 +31,6 @@
       model.collection = this;
       this.collection.push(model);
       return model;
-    },
-
-    _unwrap: function() {
-      var that = this;
-
-      this._resource.once('value', function(snap) {
-        this.trigger('load');
-      }, this);
-
-      this._resource.on('child_added', function(newSnap, prevSiblingName) {
-        InteractionCollection.$timeout(function() {
-          var model = that.add(that._resource.child(newSnap.name()));
-          // NOTE: The emitted data MUST be an array.
-          that.trigger('child_added', [model]);
-        });
-      }, this);
-
-      this._resource.on('child_removed', function(snap) {
-        InteractionCollection.$timeout(function() {
-          var model = that.remove(snap.name());
-          that.trigger('child_removed', [model]);
-        });
-      }, this);
     },
   };
 

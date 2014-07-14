@@ -4,10 +4,7 @@
   drawingApp.directive('drInteractive', ['$timeout', '$compile', 
     function($timeout, $compile) {
       return {
-        scope: {
-          interactions: '=',
-          stateInteractions: '='
-        },
+        scope: true,
         link: function(scope, element, attrs) {
           scope.interactions.on('child_added', function(interaction) {
             var triggerElement, names, actorElements, triggerIds;
@@ -35,14 +32,23 @@
             });
           });
 
-            // scope.stateInteractions.forEach(function(interaction) {
-            //   var actorElement = element.children(interaction.actor.elementIds());
-            //   var name = interaction.newState.name;
-            //   var newStyles = interaction.actor.previewStyle(name);
-            //   actorElement.on(interaction.trigger.name, function() {
-            //     actorElement.css(newStyles);
-            //   });
-            // });
+          scope.stateInteractions.on('child_added', function(interaction) {
+            var actorElement, actorIds, name, newStyles;
+
+            $timeout(function() {
+              actorIds = interaction.actors[0].elementIds();
+              actorElement = element.children(actorIds);
+              name = interaction.newState.name;
+              newStyles = interaction.actors[0].previewStyle(name);
+              actorElement.on(interaction.triggerVerb.name, function() {
+                actorElement.css(newStyles);
+              });
+            });
+          });
+
+          // TODO: Remove the listeners when the 'child_removed' event is
+          // fired.
+
         }
       };
   }]);

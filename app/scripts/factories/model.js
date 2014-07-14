@@ -35,7 +35,7 @@
       } else {
         // We're dealing with literal attributes. In this case, the path
         // attribute should be among them.
-        this.setRef(futureData.path);
+        if (futureData.path) this.setRef(futureData.path);
         angular.extend(this, futureData);
       }
     },
