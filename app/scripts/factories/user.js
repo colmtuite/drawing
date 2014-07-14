@@ -46,8 +46,12 @@
         });
       }, this);
 
-      this._resource.on('value', function() {
-        that.trigger('value');
+      this._resource.on('value', function(snap) {
+        // Make sure the event only triggers when an attribute which is not
+        // an association gets triggered.
+        if (!snap.hasChildren()) {
+          that.trigger('value');
+        }
       });
 
       this._resource.on('child_changed', function(newSnap) {
