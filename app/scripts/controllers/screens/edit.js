@@ -71,22 +71,6 @@
       $scope.selectedShapes.forEach(function(shape) { shape.destroy(); });
       InspectedRectangle.clear();
     };
-
-    // $scope.selectOnlyShape($scope.rectangles.collection[0]);
-
-//      $scope.groups = GroupsFactory.parse(contents.groups);
-//
-//
-//      $scope.createGroup = function() {
-//        GroupsFactory.create({ elements: RectFactory.selected() });
-//      }
-//
-//      // NOTE: This is being broken by the dnd-selectable="true" directive
-//      // on the rectangles. You can notice that the rectangle is not selected
-//      // correctly when the page first loads. Removing this directive will
-//      // fix this at the expense of making shapes not lasso selectable.
-//      $scope.selectOnlyShape($scope.rectangles[0]);
-//    });
   }
 })(drawingApp);
 
