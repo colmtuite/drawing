@@ -6,6 +6,7 @@
       angular-selectize
       angular-selectize-watch="inspectedShape.states"
       angular-selectize-options="{labelField: 'name', valueField: 'name'}"
+      angular-selectize-on-change="interaction.save()"
       ng-options="state.name for state in inspectedShape.states">
     </select>
 
@@ -15,6 +16,7 @@
       angular-selectize
       angular-selectize-watch="stateInteractionTriggers"
       angular-selectize-options="{labelField: 'name', valueField: 'name'}"
+      angular-selectize-on-change="interaction.save()"
       ng-options="trigger.name for trigger in stateInteractionTriggers">
     </select>
 
