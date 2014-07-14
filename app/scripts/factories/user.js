@@ -17,34 +17,14 @@
   app.factory('User', $factory);
 
   var methods = {
-    initialize: function(futureData) {
-      // Assign this out here so that we can call methods on it before we have
-      // actually fetched the data.
-      this.ownedScreens = new User.$ScreenCollection();
-
-      if (!futureData) return;
-
-      if (futureData.on) {
-        // We're dealing with a firebase reference.
-        this._resource = futureData;
-        this._unwrap();
-      } else {
-        // We're dealing with literal attributes. In this case, the $id should
-        // be among them and we can use it to the the resource via #url.
-        angular.extend(this, futureData);
-      }
+    initializeAssociations: function() {
+      this.ownedScreens = new User.$ScreenCollection({ path: '/screens' });
     },
 
     toJSON: function() {
       return _.pick(this, 'email', 'provider');
     },
 
-    url: function() {
-      return 'users/' + this.$id;
-    },
-
-    // TODO: I'm pretty sure there is no need to pass this in. I can just call
-    // whatever I want on this._resource once it is set.
     _unwrap: function() {
       var that = this;
 
@@ -57,17 +37,18 @@
 
       this._resource.once('value', function(snap) {
         User.$timeout(function() {
-          that.$id = snap.name();
-          angular.extend(that, snap.val());
+          var data = that.parseSnapshot(snap.name(), snap.val());
+          data = _.omit(data, that.associations);
+          angular.extend(that, data);
           that.trigger('load');
         });
       }, this);
 
       this._resource.on('child_changed', function(newSnap) {
         if (!newSnap.hasChildren()) {
-          console.log("user child changed", newSnap.name(), newSnap.val());
           Screen.$timeout(function() {
             that[newSnap.name()] = newSnap.val();
+            that.trigger('child_changed');
           });
         }
       }, this);

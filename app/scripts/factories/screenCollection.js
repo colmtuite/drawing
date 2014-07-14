@@ -37,16 +37,9 @@
   // holds the actual screen data.
 
   var methods = {
-    fetch: function() {
-      this.collection.forEach(function(model) { model.fetch(); });
-      return this;
-    },
-
     reset: function(keyReference) {
       this.empty();
       this.keyReference = keyReference;
-      // this.trigger('reset');
-      // this._unwrap(keyReference);
     },
 
     // Add a screen to the internal collection.
@@ -147,6 +140,7 @@
           // point).
           // that.add(that.resource().child(subSnap.name()));
         });
+        this.trigger('load');
       }, this);
 
       // I have to listen to this and add models on fire because of the
@@ -157,6 +151,7 @@
         // console.log("Owned screen ids child added", snap.name(), snap.val());
         ScreenCollection.$timeout(function() {
           that.add(that._resource.child(snap.name()));
+          that.trigger('child_added');
         });
         // Not sure I can do this in here. Might end up loading every screen
         // even when we don't need them. Will leave it here for the moment.
@@ -178,6 +173,7 @@
         // console.log("Owned screen ids child removed", snap.name(), snap.val());
         ScreenCollection.$timeout(function() {
           that.remove(snap.name());
+          that.trigger('child_removed');
         });
       }, this);
 

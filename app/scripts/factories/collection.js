@@ -23,8 +23,21 @@
   app.factory('Collection', Collection.$factory);
 
   angular.extend(Collection.prototype, EventEmitter.prototype,  {
-    initialize: function() {
+    initialize: function(options) {
+      options || (options = {});
       this.collection = [];
+
+      if (options.path) {
+        this.setRef(options.path);
+      }
+    },
+
+    // Ocasionally we have to manually create a reference using a path and
+    // the ID of an object. It happens when using models outside of collections
+    // for example.
+    setRef: function(path) {
+      // Strip any leading slash on the path.
+      this._resource = new Firebase(Collection.FBURL + path.replace(/^\//, ''));
     },
 
     reset: function(reference) {
@@ -81,6 +94,10 @@
       return model;
     },
 
+    fetch: function() {
+      this.collection.forEach(function(model) { model.fetch(); });
+      return this;
+    },
   });
 
 }(drawingApp));

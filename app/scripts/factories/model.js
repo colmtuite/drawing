@@ -24,6 +24,8 @@
 
   angular.extend(Model.prototype, EventEmitter.prototype,  {
     initialize: function(futureData) {
+      // Assign associations out here so that we can call methods on them
+      // before we have actually fetched the data.
       this.initializeAssociations();
 
       if (!futureData) return;
