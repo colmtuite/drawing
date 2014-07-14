@@ -49,7 +49,11 @@ module.exports = function (grunt) {
 
       production: {
         options: {
-          dest: '<%= yeoman.dist %>/scripts/config.js'
+          // This has to go in the app directory rather than the dest
+          // directory because that's where the minification expects to find
+          // it. If we put it in dest directly, minification will have already
+          // included the development configs from app.
+          dest: '<%= yeoman.app %>/scripts/config.js'
         },
         constants: {
           ENV: {
