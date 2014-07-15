@@ -17,15 +17,11 @@
   app.factory('RectangleCollection', $factory);
 
   var methods = {
-    // TODO: Optimistially add the model to the collection.
     create: function(attrs, success) {
       success || (success = angular.noop);
-      // var that = this;
-      // Be sure to return the promise so we can chain more actions onto it.
-      var newModel = this._resource.push(attrs)
-      // angular.extend(attrs, { '$id': newModel.name() });
-      // var model = that.add(attrs);
-      // success(model);
+      var model = RectangleCollection._initializeModel(attrs);
+      this._resource.push(model.toJSON());
+      success();
     },
 
     add: function(ref) {
@@ -50,10 +46,4 @@
       return new this.$model(args);
     }
   };
-
-  // RectangleCollection.prototype._keyOfValue = function(value) {
-  //   return _.chain(this.collection).map(function(item, key) {
-  //     if (item === value) return key;
-  //   }).compact().value()[0];
-  // };
 }(drawingApp));

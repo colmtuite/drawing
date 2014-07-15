@@ -38,7 +38,7 @@
             $timeout(function() {
               actorIds = interaction.actors[0].elementIds();
               actorElement = element.children(actorIds);
-              name = interaction.newState.name;
+              name = interaction.newStateName;
               newStyles = interaction.actors[0].previewStyle(name);
               actorElement.on(interaction.triggerVerb.name, function() {
                 actorElement.css(newStyles);

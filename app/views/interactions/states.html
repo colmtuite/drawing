@@ -2,12 +2,11 @@
   <div ng-repeat="interaction in stateInteractions | filterActorsInclude:inspectedShape">
     Change to
 
-    <select ng-model="interaction.newState"
+    <select ng-model="interaction.newStateName"
       angular-selectize
       angular-selectize-watch="inspectedShape.states"
-      angular-selectize-options="{labelField: 'name', valueField: 'name'}"
       angular-selectize-on-change="interaction.save()"
-      ng-options="state.name for state in inspectedShape.states">
+      ng-options="name as name for (name, details) in inspectedShape.states">
     </select>
 
     on

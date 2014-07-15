@@ -24,6 +24,7 @@
       // IDs that we can store in Firebase.
       var model = InteractionCollection._initializeModel(attrs);
       this._resource.push(model.toJSON());
+      success();
     },
 
     add: function(ref) {

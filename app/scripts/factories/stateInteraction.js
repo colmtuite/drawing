@@ -16,7 +16,7 @@
 
   var methods = {
     toJSON: function() {
-      var json = _.pick(this, 'newState', 'triggerVerb');
+      var json = _.pick(this, 'newStateName', 'triggerVerb');
 
       json.actorIds = {};
       this.actors.forEach(function(actor) {

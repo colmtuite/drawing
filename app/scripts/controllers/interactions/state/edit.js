@@ -18,7 +18,7 @@
       $scope.screen.stateInteractions.create({
         actors: [$scope.inspectedShape],
         triggerVerb: $scope.stateInteractionTriggers[0],
-        newState: $scope.inspectedShape.states[1]
+        newStateName: _.keys($scope.inspectedShape.states)[0]
       });
     };
   }

@@ -16,7 +16,7 @@
 
   var methods = {
     initializeAssociations: function() {
-      this.states = [];
+      this.states = { normal: {} };
     },
 
     toJSON: function() {
@@ -24,7 +24,7 @@
       // you send to the server. Might be worth having a look at the AngularFire
       // toJSON implementation to try and get a better way to pick out keys
       // which are going to cause trouble.
-      return _.pick(this, 'dndData', 'name', 'guid', 'normal', 'hover', 'isSelected', 'isSelecting', 'isHighlighted');
+      return _.pick(this, 'dndData', 'name', 'guid', 'states');
     },
 
     _unwrap: function() {
@@ -60,19 +60,22 @@
       }, this);
     },
 
-    style: function(state) {
-      state || (state = this.states[0] && this.states[0].name);
+    // Ranem to stateName and state.
+    style: function(stateName) {
+      // NOTE: Do not try to infer this by doing _.keys(this.states)[0]. We
+      // can never be sure of the order the keys will arrive in.
+      stateName || (stateName = 'normal');
       // Angular seems to call this function way before the states have been
       // initilaized when it is preparing the page. For that reason, we have
       // to be able to handle the case where this.states is undefined.
-      if (state) {
-        return {
-          "background-color": this[state].fill,
-          "border":  this[state].strokeWidth + 'px solid ' + this[state].stroke
-        };
-      } else {
-        return {};
-      }
+      if (!stateName) return {};
+
+      var state = this.states[stateName];
+
+      return {
+        "background-color": state.fill,
+        "border":  state.strokeWidth + 'px solid ' + state.stroke
+      };
     },
 
     previewStyle: function(state) {
@@ -90,21 +93,12 @@
       return ('#' + this.elementNames().join(', #'));
     },
 
-    select: function() {
-      this.isSelected = true; 
-    },
-    
-    deselect: function() {
-      this.isSelected = false; 
-    },
-
-    toggleSelected: function() {
-      this.isSelected = !this.isSelected
-    },
+    select: function() { this.isSelected = true; },
+    deselect: function() { this.isSelected = false; },
+    toggleSelected: function() { this.isSelected = !this.isSelected },
 
     highlight: function() { this.isHighlighted = true; },
     unhighlight: function() { this.isHighlighted = false; },
-
     toggleHighlighted: function() { this.isHighlighted = !this.isHighlighted },
 
     // Positioning Getters
@@ -147,18 +141,55 @@
         name: name,
         guid: guid,
 
-        states: [{name: 'normal' }, { name: 'hover' }],
+        // There's a number of issues with making this an array rather than
+        // an object. 
+        //
+        // Firstly, when it get's sent to Firebase it needs to be
+        // stored as an object rather than an array (because of this:
+        // http://goo.gl/a1zMlu ). Initially I thought this would simply
+        // involve converting it to an object in the toJSON method and back
+        // to an array in the parseSnapshot method. That would mean using the
+        // push() method to create unique ID's for each state before saving
+        // them to the DB. I don't really understand how I can do that
+        // without creating complicated objects for each state (perhaps a
+        // dedicated State model like I have for Rectangle).
+        //
+        // One thing I could do is simply convert it to an object which is
+        // keyed with the names of each state. i.e., in the toJSON method
+        // I would just convert the array of states from this:
+        //
+        // [{ name: 'normal', stroke: '..' }, { name: 'hover', stroke: '..' }]
+        //
+        // into an object which looks like this:
+        //
+        // { normal: { stroke: '..' }, hover: { stroke: '..' } }
+        //
+        // I'm not sure there would be any point though. This wouldn't actually 
+        // solve any of the problems that they list in their docs. The thing
+        // is, I'm not sure it's important that I actually address those
+        // problems. I don't really care about clashes with renaming states
+        // (at least at the moment, I can always sort it out later). Thus,
+        // I might as well just straight up save the array and let the keys
+        // be indexed strings.
+        //
+        // One thing I've learned though is that I should just comment out
+        // the code rather than delete it because I've changed my mind about
+        // this so many times already.
+        //
+        // The other problem relates to making AngularSelectize work with
+        // objects.
 
-        normal: {
-          stroke: 'rgb(236, 240, 241)',
-          strokeWidth: 1,
-          fill: 'rgb(236, 240, 241)',
-        },
-
-        hover: {
-          stroke: 'rgb(236, 240, 241)',
-          strokeWidth: 1,
-          fill: 'rgb(236, 240, 0)',
+        states: {
+          normal: {
+            stroke: 'rgb(236, 240, 241)',
+            strokeWidth: 1,
+            fill: 'rgb(236, 240, 241)',
+          },
+          hover: {
+            stroke: 'rgb(236, 240, 241)',
+            strokeWidth: 1,
+            fill: 'rgb(236, 240, 0)',
+          },
         },
 
         isSelected: false,

@@ -12,10 +12,6 @@ describe('Rectangle', function() {
     module('testApp');
   });
 
-  it('should be defined', inject(function(Rectangle) {
-    expect(Rectangle).toBeDefined();
-  }));
-
   describe('#initializeAssociations', function() {
     var model;
 
@@ -24,7 +20,41 @@ describe('Rectangle', function() {
     }));
 
     it('should initialize the states', function() {
-      expect(model.states).toEqual([]);
+      expect(model.states).toEqual({ normal: {} });
+    });
+  });
+
+  describe('#style', function() {
+    var model;
+
+    beforeEach(inject(function(Rectangle) {
+      model = new Rectangle({
+        states: {
+          normal: {
+            fill: 'blue',
+            strokeWidth: 3,
+            stroke: 'red'
+          }, 
+          hover: {
+            fill: 'green',
+            strokeWidth: 3,
+            stroke: 'pink'
+          }
+        }
+      });
+    }));
+
+    it('should return normal styling by default', function() {
+      expect(model.style()['background-color']).toEqual('blue');
+    });
+
+    it('should return the styling matching the argument', function() {
+      expect(model.style('hover')['background-color']).toEqual('green');
+    });
+
+    it('should return {} on initialization', function() {
+      model.states = { normal: {} };
+      expect(model.style()['stroke']).not.toBeDefined();
     });
   });
 });
