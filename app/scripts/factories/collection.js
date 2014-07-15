@@ -5,22 +5,24 @@
     this.initialize.apply(this, arguments);
   }
 
-  Collection.$factory = [
+  Collection.$requirements = [
     '$timeout',
     'Extend',
     'ENV',
-    function($timeout, Extend, ENV) {
+    'Model',
+    function($timeout, Extend, ENV, Model) {
       angular.extend(Collection, {
         $timeout: $timeout,
         FBURL: ENV.firebaseUrl,
       });
 
       Collection.extend = Extend;
+      angular.extend(Collection.prototype, { model: Model });
 
       return Collection;
     }];
 
-  app.factory('Collection', Collection.$factory);
+  app.factory('Collection', Collection.$requirements);
 
   angular.extend(Collection.prototype, EventEmitter.prototype,  {
     initialize: function(options) {
@@ -44,6 +46,22 @@
       this.empty();
       this._resource = reference;
       this._unwrap();
+    },
+
+    create: function(attrs, complete) {
+      complete || (complete = this.onCreate) || (complete = angular.noop);
+      // We have to initialize a model so that we can call it's toJSON method
+      // and convert the element references in the actors and triggers into
+      // IDs that we can store in Firebase.
+      var model = this._initializeModel(attrs);
+      this._resource.push(model.toJSON(), complete);
+    },
+
+    add: function(ref) {
+      var model = this._initializeModel(ref);
+      model.collection = this;
+      this.collection.push(model);
+      return model;
     },
 
     _unwrap: function() {
@@ -97,6 +115,11 @@
     fetch: function() {
       this.collection.forEach(function(model) { model.fetch(); });
       return this;
+    },
+
+    _initializeModel: function(args) {
+      if (args.constructor.name === String(this.model)) return args;
+      return new this.model(args);
     },
   });
 

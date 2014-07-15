@@ -46,10 +46,9 @@
 
     associations: [],
 
-    destroy: function(success) {
-      success || (success = angular.noop);
-      this._resource.remove();
-      success();
+    destroy: function(complete) {
+      complete || (complete = this.onDestroy) || (complete = angular.noop);
+      this._resource.remove(complete);
       return this;
     },
 
@@ -70,9 +69,10 @@
       return json;
     },
 
-    save: function(attrs) {
+    save: function(attrs, complete) {
+      complete || (complete = this.onSave) || (complete = angular.noop);
       attrs || (attrs = this.toJSON());
-      this._resource.update(attrs);
+      this._resource.update(attrs, complete);
     },
 
     parseSnapshot: function(name, val) {

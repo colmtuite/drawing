@@ -27,6 +27,12 @@
       return _.pick(this, 'dndData', 'name', 'guid', 'states');
     },
 
+    onDestroy: function(err) {
+      if (!err) {
+        
+      }
+    },
+
     _unwrap: function() {
       var that = this;
 

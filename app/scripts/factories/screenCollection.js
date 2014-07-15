@@ -3,18 +3,20 @@
 (function (app) {
   var ScreenCollection;
 
-  var $factory = [
+  var $requirements = [
     'Collection',
     'Screen',
-    function(Collection, Screen) {
-      ScreenCollection = Collection.extend(methods, angular.extend({
-        $model: Screen
-      }, classMethods));
+    '$timeout',
+    function(Collection, Screen, $timeout) {
+      angular.extend(methods, { model: Screen });
+      angular.extend(classMethods, { $timeout: $timeout });
+      ScreenCollection = Collection.extend(methods, classMethods);
 
       return ScreenCollection;
     }];
 
-  app.factory('ScreenCollection', $factory);
+  app.factory('ScreenCollection', $requirements);
+
 
   // This is differnt type of collection to the type the RectangleCollection
   // is. It's different because it's constructed by selecting different
@@ -40,17 +42,6 @@
     reset: function(keyReference) {
       this.empty();
       this.keyReference = keyReference;
-    },
-
-    // Add a screen to the internal collection.
-    add: function(model) {
-      // Do nothing if the model already exists in the collection. This is
-      // what Backbone does.
-      // console.log("Model Id", model.$id);
-      model = ScreenCollection._initializeModel(model);
-      // if (this.get(model.$id)) return;
-      this.collection.push(model);
-      return model;
     },
 
     // Choices and tradeoffs.
@@ -90,33 +81,41 @@
     // I suspect I will have a better idea what to do after I deal with routing
     // and moving between pages so I will hold off on a decision until then.
 
-    // TODO: Optimistially add the model to the collection.
-    create: function(attrs, success) {
-      success || (success = angular.noop);
-      var newModel = this._resource.push(attrs);
-      this.addForeignKey(newModel.name());
-      success(attrs);
+    create: function(attrs, complete) {
+      complete || (complete = this.onCreate) || (complete = angular.noop);
+      var that = this;
+      var newModel = this._resource.push(attrs, function(err) {
+        if (!err) {
+          that.addForeignKey(newModel.name(), complete);
+        }
+      });
     },
 
-    destroy: function(screen, success) {
-      success || (success = angular.noop);
-      screen.destroy();
-      this.removeForeignKey(screen.$id);
-      success(screen);
+    destroy: function(screen, complete) {
+      complete || (complete = this.onDestroy) || (complete = angular.noop);
+      var that = this;
+      screen.destroy(function(err) {
+        if (!err) {
+          that.removeForeignKey(screen.$id, complete);
+        }
+      });
     },
 
-    addForeignKey: function(key) {
-      this.setForeignKey(key, true);
+    addForeignKey: function(key, complete) {
+      complete || (complete = this.onAddForeignKey) || (complete = angular.noop);
+      this.setForeignKey(key, true, complete);
     },
 
-    removeForeignKey: function(key) {
-      this.setForeignKey(key, null);
+    removeForeignKey: function(key, complete) {
+      complete || (complete = this.onRemoveForeignKey) || (complete = angular.noop);
+      this.setForeignKey(key, null, complete);
     },
 
-    setForeignKey: function(key, value) {
+    setForeignKey: function(key, value, complete) {
+      complete || (complete = this.onSetForeignKey) || (complete = angular.noop);
       var data = {};
       data[key] = value;
-      this.keyReference.update(data);
+      this.keyReference.update(data, complete);
     },
 
     _unwrap: function() {
@@ -180,13 +179,6 @@
     },
   };
 
-  var classMethods = {
-    _initializeModel: function(args) {
-      // We may be already dealing with a Screen instance. If we are, we need
-      // go no further.
-      if (args.constructor.name === "Screen") return args;
-      return new this.$model(args);
-    }
-  };
+  var classMethods = {};
 
 })(drawingApp);
