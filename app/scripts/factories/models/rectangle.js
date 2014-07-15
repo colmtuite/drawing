@@ -6,9 +6,7 @@
   var $factory = [
     'Model',
     function(Model) {
-      Rectangle = Model.extend(methods, angular.extend({
-      }, classMethods));
-
+      Rectangle = Model.extend(methods, classMethods);
       return Rectangle;
     }];
 
