@@ -1,0 +1,47 @@
+<div ng-show="inspectedShape">
+  <div>
+    <label for="inspected-shape-name">Name</label>
+    <span id="inspected-shape-name">{{inspectedShape.name}}</span>
+  </div>
+
+  <div>
+    <label for="inspected-shape-top">Top</label>
+    <input type="text" ng-model="inspectedShape.dndData.top"
+      id="inspected-shape-top">
+  </div>
+
+  <div>
+    <label for="inspected-shape-left">Left</label>
+    <input type="text" ng-model="inspectedShape.dndData.left" 
+      id="inspected-shape-left"/>
+  </div>
+
+  <div>
+    <label for="inspected-shape-height">Height</label>
+    <input type="text" ng-model="inspectedShape.dndData.height" 
+      id="inspected-shape-height"/>
+  </div>
+
+  <div>
+    <label for="inspected-shape-width">Width</label>
+    <input type="text" ng-model="inspectedShape.dndData.width"
+      id="inspected-shape-width"/>
+  </div>
+
+  <div>
+    <label for="inspected-shape-states-normal-fill">Normal Fill</label>
+    <input type="text" ng-model="inspectedShape.states.normal.fill"
+      id="inspected-shape-states-normal-fill" ng-blur="inspectedShape.save()">
+  </div>
+
+  <div>
+    <label for="inspected-shape-states-hover-fill">Hover Fill</label>
+    <input type="text" ng-model="inspectedShape.states.hover.fill"
+    id="inspected-shape-states-hover-fill" ng-blur="inspectedShape.save()">
+  </div>
+
+  <hr>
+
+  <div ng-include src="'views/interactions/elements.html'"></div>
+  <div ng-include src="'views/interactions/states.html'"></div>
+</div>

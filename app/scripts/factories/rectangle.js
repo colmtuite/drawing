@@ -184,11 +184,13 @@
             stroke: 'rgb(236, 240, 241)',
             strokeWidth: 1,
             fill: 'rgb(236, 240, 241)',
+            opacity: 1
           },
           hover: {
             stroke: 'rgb(236, 240, 241)',
             strokeWidth: 1,
             fill: 'rgb(236, 240, 0)',
+            opacity: 1
           },
         },
 
