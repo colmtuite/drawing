@@ -1,87 +1,97 @@
-<div ng-controller="InspectionPanelController" ng-show="inspectedShape">
+<div ng-show="inspectedShape">
   <div>
     <label for="inspected-shape-name">Name</label>
     <span id="inspected-shape-name">{{inspectedShape.name}}</span>
   </div>
 
   <div class="form-group">
-    <label for="inspected-shape-top">Top</label>
-    <input type="text" 
-      ng-model="inspectedShape.dndData.top"
-      class="form-control"
-      id="inspected-shape-top">
+    <label>
+      <span>Top: </span>
+      <a editable-text="inspectedShape.dndData.top"
+        e-placeholder="Top"
+        onaftersave="inspectedShape.save()">
+        {{inspectedShape.dndData.top}}
+      </a>
+    </label>
   </div>
 
   <div class="form-group">
-    <label for="inspected-shape-left">Left</label>
-    <input type="text" 
-      ng-model="inspectedShape.dndData.left" 
-      class="form-control"
-      id="inspected-shape-left"/>
+    <label>
+      <span>Left: </span>
+      <a editable-text="inspectedShape.dndData.left"
+        e-placeholder="Left"
+        onaftersave="inspectedShape.save()">
+        {{inspectedShape.dndData.left}}
+      </a>
+    </label>
   </div>
 
   <div class="form-group">
-    <label for="inspected-shape-height">Height</label>
-    <input type="text" 
-      ng-model="inspectedShape.dndData.height" 
-      class="form-control"
-      id="inspected-shape-height"/>
+    <label>
+      <span>Height: </span>
+      <a editable-text="inspectedShape.dndData.height"
+        e-placeholder="Height"
+        onaftersave="inspectedShape.save()">
+        {{inspectedShape.dndData.height}}
+      </a>
+    </label>
   </div>
 
   <div class="form-group">
-    <label for="inspected-shape-width">Width</label>
-    <input type="text" 
-      ng-model="inspectedShape.dndData.width"
-      class="form-control"
-      id="inspected-shape-width"/>
+    <label>
+      <span>Width: </span>
+      <a editable-text="inspectedShape.dndData.width"
+        e-placeholder="Width"
+        onaftersave="inspectedShape.save()">
+        {{inspectedShape.dndData.width}}
+      </a>
+    </label>
   </div>
 
   <tabset>
-    <tab ng-repeat="state in inspectedShapeStateNames"
-         heading="{{state}}">
-
+    <tab ng-repeat="state in inspectedShapeStateNames" heading="{{state}}">
       <div class="form-group">
-        <label for="inspected-shape-states-{{state}}-fill">
-          Fill
+        <label>
+          <span>Fill: </span>
+          <a editable-color="inspectedShape.states[state].fill"
+            e-placeholder="Fill"
+            onaftersave="inspectedShape.save()">
+            {{inspectedShape.states[state].fill}}
+          </a>
         </label>
-        <input type="text" 
-          ng-model="inspectedShape.states[state].fill"
-          id="inspected-shape-states-{{state}}-fill" 
-          class="form-control"
-          ng-blur="inspectedShape.save()">
       </div>
 
       <div class="form-group">
-        <label for="inspected-shape-states-{{state}}-stroke">
-          Stroke
+        <label>
+          <span>Stroke: </span>
+          <a editable-color="inspectedShape.states[state].stroke"
+            e-placeholder="Stroke"
+            onaftersave="inspectedShape.save()">
+            {{inspectedShape.states[state].stroke}}
+          </a>
         </label>
-        <input type="text" 
-          ng-model="inspectedShape.states[state].stroke"
-          id="inspected-shape-states-{{state}}-stroke" 
-          class="form-control"
-          ng-blur="inspectedShape.save()">
       </div>
 
       <div class="form-group">
-        <label for="inspected-shape-states-{{state}}-opacity">
-          Opacity
+        <label>
+          <span>Stroke width: </span>
+          <a editable-number="inspectedShape.states[state].strokeWidth"
+            e-placeholder="Stroke width"
+            onaftersave="inspectedShape.save()">
+            {{inspectedShape.states[state].strokeWidth}}
+          </a>
         </label>
-        <input type="text" 
-          ng-model="inspectedShape.states[state].opacity"
-          id="inspected-shape-states-{{state}}-opacity" 
-          class="form-control"
-          ng-blur="inspectedShape.save()">
       </div>
 
       <div class="form-group">
-        <label for="inspected-shape-states-{{state}}-stroke-width">
-          Stroke width
+        <label>
+          <span>Opacity: </span>
+          <a editable-number="inspectedShape.states[state].opacity"
+            e-placeholder="Stroke width"
+            onaftersave="inspectedShape.save()">
+            {{inspectedShape.states[state].opacity}}
+          </a>
         </label>
-        <input type="text" 
-          ng-model="inspectedShape.states[state].strokeWidth"
-          id="inspected-shape-states-{{state}}-stroke-width" 
-          class="form-control"
-          ng-blur="inspectedShape.save()">
       </div>
     </tab>
   </tabset>
