@@ -16,20 +16,21 @@
 
   var methods = {
     toJSON: function() {
-      var triggerIds = {};
+      var json = _.pick(this, 'actionVerb', 'triggerVerb');
+      json.triggerIds = {};
+      json.actorIds = {};
+
       this.triggers.forEach(function(trigger) {
-        triggerIds[trigger.$id] = true;
+        json.triggerIds[trigger.$id] = true;
       });
       
-      var actorIds = {};
       this.actors.forEach(function(actor) {
-        actorIds[actor.$id] = true;
+        json.actorIds[actor.$id] = true;
       });
 
-      return angular.extend(_.pick(this, 'actionVerb', 'triggerVerb'), {
-        triggerIds: triggerIds,
-        actorIds: actorIds
-      });
+      console.log("Interaction.toJSON()", this.actors);
+
+      return json;
     },
 
     parseSnapshot: function(name, val) {

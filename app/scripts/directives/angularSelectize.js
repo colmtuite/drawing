@@ -62,6 +62,8 @@ angular.module('angularSelectize', [])
       function getObjects() {
         var values = selectize.getValue(),
             watches = scope.toWatch();
+            
+        var allValuesAreObjects;
         
         // We have to be able to handle both the case where we're watching
         // an array (either of strings, numbers or objects) like this:
@@ -91,19 +93,25 @@ angular.module('angularSelectize', [])
           // values will be an array because it must (obviously) be able to 
           // contain multiple selected values at any one time.
           if (angular.isArray(values)) {
+            
+            allValuesAreObjects = $filter('filter')(values, function(value) {
+              return typeof value !== "object";
+            }).lenght == 0;
+            
             return $filter('filter')(watches, function(el) {
-              if ($.isPlainObject(el)) {
-                return $.inArray(el[selectize.settings.valueField], values) !== -1;
-              } else {
+              
+              if (allValuesAreObjects) {
                 return $.inArray(el, values) !== -1;
+              } else {
+                return $.inArray(el[selectize.settings.valueField], values) !== -1;
               }
             });
           } else {
             return $filter('filter')(watches, function(el) {
-              if ($.isPlainObject(el)) {
-                return el[selectize.settings.valueField] === values;
-              } else {
+              if (typeof values !== "object" && typeof el !== "object") {
                 return el === values;
+              } else if (typeof values !== "object" && typeof el === "object") {
+                return el[selectize.settings.valueField] === values;
               }
             })[0];
           }
