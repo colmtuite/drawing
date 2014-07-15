@@ -42,6 +42,9 @@
     $scope.$watch(function() { return InspectedRectangle.inspected(); },
       function(newVal, oldVal) {
         $scope.inspectedShape = newVal;
+        if (newVal) {
+          $scope.inspectedShapeStateNames = _.keys(newVal.states);
+        }
     });
 
     // IDEA: Perhaps this should be done by calling "rect.select()" in the

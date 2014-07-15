@@ -74,7 +74,8 @@
 
       return {
         "background-color": state.fill,
-        "border":  state.strokeWidth + 'px solid ' + state.stroke
+        "border":  state.strokeWidth + 'px solid ' + state.stroke,
+        "opacity": state.opacity
       };
     },
 
