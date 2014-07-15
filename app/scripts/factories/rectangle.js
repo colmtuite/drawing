@@ -75,7 +75,8 @@
       return {
         "background-color": state.fill,
         "border":  state.strokeWidth + 'px solid ' + state.stroke,
-        "opacity": state.opacity
+        "opacity": state.opacity,
+        "border-radius": state.borderRadius
       };
     },
 
@@ -185,13 +186,15 @@
             stroke: 'rgb(236, 240, 241)',
             strokeWidth: 1,
             fill: 'rgb(236, 240, 241)',
-            opacity: 1
+            opacity: 1,
+            borderRadius: 0
           },
           hover: {
             stroke: 'rgb(236, 240, 241)',
             strokeWidth: 1,
             fill: 'rgb(236, 240, 0)',
-            opacity: 1
+            opacity: 1,
+            borderRadius: 0
           },
         },
 
