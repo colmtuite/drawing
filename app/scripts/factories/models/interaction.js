@@ -15,10 +15,17 @@
   app.factory('Interaction', $factory);
 
   var methods = {
-    onSaveSuccess: function() {
-      var that = this;
+    beforeInit: function() {
+      this.actors = [];
+      this.triggers = [];
+    },
 
-      console.log("Saving interaction", this.$id);
+    afterLoad: function() {
+      this.addActorListeners();
+    },
+
+    addActorListeners: function() {
+      var that = this;
 
       // We need to remove the actor from our internal list of actors if
       // it get's destroyed.
@@ -35,9 +42,14 @@
         });
       });
     },
+  
+    onSaveSuccess: function() {
+      this.addActorListeners();
+    },
 
     removeActor: function(actor) {
       this.actors.splice(this.actors.indexOf(actor), 1);
+      this.save();
     },
 
     removeTrigger: function(trigger) {
@@ -49,6 +61,8 @@
       // removing one we should delete the whole interaction.
       if (this.triggers.length === 0) {
         this.destroy();
+      } else {
+        this.save();
       }
     },
 
@@ -73,12 +87,15 @@
 
       if (this.collection.rectangles) {
         var that = this;
+
         var actors = _.keys(val.actorIds).map(function(id) {
           return that.collection.rectangles.get(id);
         });
+
         var triggers = _.keys(val.triggerIds).map(function(id) {
           return that.collection.rectangles.get(id);
         });
+
         angular.extend(data, { actors: actors, triggers: triggers });
       }
 
@@ -94,6 +111,7 @@
           data = _.omit(data, that.associations);
           angular.extend(that, data);
           that.trigger('load');
+          that.afterLoad();
         });
       }, this);
 

@@ -24,6 +24,7 @@
 
   angular.extend(Model.prototype, EventEmitter.prototype,  {
     initialize: function(futureData) {
+      this.beforeInit();
       // Assign associations out here so that we can call methods on them
       // before we have actually fetched the data.
       this.initializeAssociations();
@@ -46,13 +47,14 @@
 
     associations: [],
 
+    beforeInit: function() {},
+    afterInit: function() {},
+
     destroy: function(options) {
       options || (options = {});
       var success = options.success || this.onDestroySuccess || angular.noop;
       var failure = options.failure || this.onDestroyFailure || angular.noop;
       var that = this;
-
-      console.log("Destroying", this.name, this._resource.name());
 
       this._resource.remove(function(err) {
         if (err) {
