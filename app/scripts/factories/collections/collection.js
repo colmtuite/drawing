@@ -48,13 +48,24 @@
       this._unwrap();
     },
 
-    create: function(attrs, complete) {
-      complete || (complete = this.onCreate) || (complete = angular.noop);
+    create: function(attrs, options) {
+      options || (options = {});
+      var success = options.success || this.onCreateSuccess || angular.noop;
+      var failure = options.failure || this.onCreateFailure || angular.noop;
+      var that = this;
+
       // We have to initialize a model so that we can call it's toJSON method
       // and convert the element references in the actors and triggers into
       // IDs that we can store in Firebase.
       var model = this._initializeModel(attrs);
-      this._resource.push(model.toJSON(), complete);
+      var modelRef = this._resource.push(model.toJSON(), function(err) {
+        if (err) {
+          failure.apply(that, [err]);
+        } else {
+          model._resource = modelRef;
+          success.apply(that);
+        }
+      });
     },
 
     add: function(ref) {
@@ -105,8 +116,14 @@
       return _.where(this.collection, conditions);
     },
 
+    // Get a model from a collection, specified by index.
+    at: function(index) {
+      this.collection[index];
+    },
+
     // Remove a model from the internal collection.
-    remove: function(model) {
+    remove: function($id) {
+      var model = this.get($id);
       var index = this.collection.indexOf(model);
       this.collection.splice(index, 1);
       return model;

@@ -41,6 +41,15 @@
     $scope.inspectedShape = InspectedRectangle.inspected();
     $scope.$watch(function() { return InspectedRectangle.inspected(); },
       function(newVal, oldVal) {
+        // TODO: This line of code is causing interactions to be saved to
+        // Firebase tons of time for no reason. I should figure out why and
+        // prevent it. Put a console.log into interaction#save to see the
+        // effect.
+        //
+        // I suspect it's related to all the angular selectize watches 
+        // triggering at once when the inspectedShape changes. It could
+        // be fixed by checking if they're the same values as before and not
+        // saving the interaction if so.
         $scope.inspectedShape = newVal;
         if (newVal) {
           $scope.inspectedShapeStateNames = _.keys(newVal.states);

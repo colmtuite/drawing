@@ -46,9 +46,24 @@
 
     associations: [],
 
-    destroy: function(complete) {
-      complete || (complete = this.onDestroy) || (complete = angular.noop);
-      this._resource.remove(complete);
+    destroy: function(options) {
+      options || (options = {});
+      var success = options.success || this.onDestroySuccess || angular.noop;
+      var failure = options.failure || this.onDestroyFailure || angular.noop;
+      var that = this;
+
+      console.log("Destroying", this.name, this._resource.name());
+
+      this._resource.remove(function(err) {
+        if (err) {
+          console.warn("ERROR DELETING SHAPE", err);
+          failure.apply(that, [err]);
+        } else {
+          success.apply(that);
+          that.trigger('destroy');
+        }
+      });
+
       return this;
     },
 
@@ -69,10 +84,21 @@
       return json;
     },
 
-    save: function(attrs, complete) {
-      complete || (complete = this.onSave) || (complete = angular.noop);
+    save: function(attrs, options) {
+      options || (options = {});
+      var success = options.success || this.onSaveSuccess || angular.noop;
+      var failure = options.failure || this.onSaveFailure || angular.noop;
+      var that = this;
+
       attrs || (attrs = this.toJSON());
-      this._resource.update(attrs, complete);
+      this._resource.update(attrs, function(err) {
+        if (err) {
+          failure.apply(that, [err]);
+        } else {
+          success.apply(that);
+          that.trigger('save');
+        }
+      });
     },
 
     parseSnapshot: function(name, val) {

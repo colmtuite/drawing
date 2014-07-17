@@ -15,6 +15,41 @@
   app.factory('Interaction', $factory);
 
   var methods = {
+    onSaveSuccess: function() {
+      var that = this;
+
+      // We need to remove the actor from our internal list of actors if
+      // it get's destroyed.
+      this.actors.forEach(function(actor) {
+        actor.once('destroy', function() {
+          that.removeActor(actor);
+        });
+      });
+
+      // Same for triggers.
+      this.triggers.forEach(function(trigger) {
+        trigger.once('destroy', function() {
+          that.removeTrigger(trigger);
+        });
+      });
+    },
+
+    removeActor: function(actor) {
+      this.actors.splice(this.actors.indexOf(actor), 1);
+    },
+
+    removeTrigger: function(trigger) {
+      this.triggers.splice(this.triggers.indexOf(trigger), 1);
+
+      // You can't have an interaction with no triggers (because there is no
+      // UI for replacing a deleted trigger with a new one like there is for
+      // deleted actors). Thus, if we're left with zero triggers after
+      // removing one we should delete the whole interaction.
+      if (this.triggers.length === 0) {
+        this.destroy();
+      }
+    },
+
     toJSON: function() {
       var json = _.pick(this, 'actionVerb', 'triggerVerb');
       json.triggerIds = {};
@@ -27,8 +62,6 @@
       this.actors.forEach(function(actor) {
         json.actorIds[actor.$id] = true;
       });
-
-      console.log("Interaction.toJSON()", this.actors);
 
       return json;
     },
