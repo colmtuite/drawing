@@ -18,6 +18,8 @@
     onSaveSuccess: function() {
       var that = this;
 
+      console.log("Saving interaction", this.$id);
+
       // We need to remove the actor from our internal list of actors if
       // it get's destroyed.
       this.actors.forEach(function(actor) {

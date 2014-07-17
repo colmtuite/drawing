@@ -62,9 +62,9 @@ angular.module('angularSelectize', [])
       function getObjects() {
         var values = selectize.getValue(),
             watches = scope.toWatch();
-            
+
         var allValuesAreObjects;
-        
+
         // We have to be able to handle both the case where we're watching
         // an array (either of strings, numbers or objects) like this:
         //
@@ -87,19 +87,19 @@ angular.module('angularSelectize', [])
         //    }
         //  }
         //
-        
+
         if (angular.isArray(watches)) {
           // This first branch takes care of multiple selects. In this case,
           // values will be an array because it must (obviously) be able to 
           // contain multiple selected values at any one time.
           if (angular.isArray(values)) {
-            
+
             allValuesAreObjects = $filter('filter')(values, function(value) {
               return typeof value !== "object";
             }).lenght == 0;
-            
+
             return $filter('filter')(watches, function(el) {
-              
+
               if (allValuesAreObjects) {
                 return $.inArray(el, values) !== -1;
               } else {
@@ -119,12 +119,16 @@ angular.module('angularSelectize', [])
           return values;
         }
       }
-      
+
       selectize.on('change', (function() {
         $timeout((function() {
           var objects = getObjects();
-          ngModel.$setViewValue(objects);
-          onChange();
+          // We have to check or else we end up triggering the onChange
+          // callback tons of times in rapid succession with the same changes.
+          if (!angular.equals(ngModel.$modelValue, objects)) {
+            ngModel.$setViewValue(objects);
+            onChange();
+          }
         }));
       }));
 

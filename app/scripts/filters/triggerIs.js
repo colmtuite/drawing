@@ -1,9 +1,7 @@
 'use strict';
 
-// TODO: This filter runs like 10 times when you inspect a shape. Can't be
-// efficient. Put a console.log in it and watch how many times it shows up.
-// I should figure out why at some stage. It's probably the same for other
-// filters so they need investigation too.
+// This filter runs like 10 times when you inspect a shape. It looks
+// like this is normal and ok: http://stackoverflow.com/a/11677377/574190
 drawingApp.filter('filterTriggerIs', function() {
   return function(input, inspected) {
     if (!inspected || !input || _.isEmpty(input)) return;
